@@ -1,0 +1,18 @@
+{
+  "name": "creator-reps-build",
+  "version": "1.0.0",
+  "description": "Generator for the Creator Reps academy site (train.skyryd.ai). Parses content/*.md into site/*.html.",
+  "main": "generate.mjs",
+  "scripts": {
+    "build": "node generate.mjs",
+    "shot": "node shot.mjs",
+    "verify": "node verify.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "puppeteer-core": "^24.43.1"
+  }
+}

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Course Creator &middot; Lesson 1: Validate Demand Before You Build</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+  <header class="topbar-mobile">
+    <button data-nav-open aria-label="Open lesson menu" style="display:flex;align-items:center;gap:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+      <span class="brand-word">Course Creator</span>
+    </button>
+    <div class="topbar-mobile-stats">
+      <div class="aperture" data-progress-auto style="--ap-size:30px" data-progress="0" data-blades="8" data-label="0/13" data-label-size="26"></div>
+      <div class="stat-compact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+        <span class="mono" data-streak>0</span>
+      </div>
+    </div>
+  </header>
+<div class="breadcrumb-row-mobile">Module 1 <span class="current">&middot; Lesson 1 of 13</span></div>
+
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <a class="brand-group" href="../index.html">
+        <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg>
+        <span class="brand-word">Creator Reps</span>
+      </a>
+      <button class="sidebar-close" data-nav-close aria-label="Close lesson menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg></button>
+    </div>
+
+    <div class="course-info">
+      <p class="course-eyebrow">Track</p>
+      <h2 class="course-title">Course Creator</h2>
+    </div>
+
+    <nav class="skill-tree">
+      <div class="module">
+        <p class="module-label">Module 1 &middot; Validate and Define</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="1">
+            <span class="lesson-index">1</span>
+            <span class="lesson-name">Validate Demand Before You Build</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="2">
+            <span class="lesson-index">2</span>
+            <span class="lesson-name">Define the Transformation and the Starting Point</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 2 &middot; Map the Curriculum</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="3">
+            <span class="lesson-index">3</span>
+            <span class="lesson-name">Action-Map Your Curriculum</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="4">
+            <span class="lesson-index">4</span>
+            <span class="lesson-name">Write Objectives in Mager Form</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="5">
+            <span class="lesson-index">5</span>
+            <span class="lesson-name">Design the Drill and Feedback Loop</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 3 &middot; Script and Produce</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="6">
+            <span class="lesson-index">6</span>
+            <span class="lesson-name">Write a Lesson Script You Can Actually Record</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="7">
+            <span class="lesson-index">7</span>
+            <span class="lesson-name">Record Talking-Head Video Efficiently</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="8">
+            <span class="lesson-index">8</span>
+            <span class="lesson-name">Batch Record Talking-Head and Screen Capture Footage</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 4 &middot; Package and Position</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="9">
+            <span class="lesson-index">9</span>
+            <span class="lesson-name">Choose a Delivery Platform Pragmatically</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="10">
+            <span class="lesson-index">10</span>
+            <span class="lesson-name">Price and Position Your Course Honestly</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 5 &middot; Launch and Listen</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="11">
+            <span class="lesson-index">11</span>
+            <span class="lesson-name">Run a Minimum Viable Launch</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="12">
+            <span class="lesson-index">12</span>
+            <span class="lesson-name">Build a Feedback Loop Tied to Real Checkpoints</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 6 &middot; Capstone</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="13">
+            <span class="lesson-index">13</span>
+            <span class="lesson-name">Capstone, Ship a Mini-Course to a Real Learner</span>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label"><span>Track progress</span><span class="mono" data-progress-fraction>0/13</span></div>
+      <div class="linear-track"><div class="linear-fill" data-progress-bar style="width:0%"></div></div>
+    </div>
+  </aside>
+  <div class="nav-backdrop" data-nav-close></div>
+
+  <main class="stage">
+
+    <header class="statusbar">
+      <div class="breadcrumb">Course Creator <span class="sep">/</span> <span class="current">Module 1 &middot; Lesson 1 of 13</span></div>
+      <div class="stats-cluster">
+        <div class="stat">
+          <div class="aperture" data-progress-auto style="--ap-size:52px" data-progress="0" data-blades="8" data-label="0/13"></div>
+          <div class="stat-copy"><span class="stat-caption">Track Progress</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+          <div class="stat-copy"><span class="stat-value mono" data-streak>0</span><span class="stat-label">day streak</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <span class="btn-nav" disabled><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</span>
+        <a class="btn-nav" href="lesson-02.html">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </header>
+
+    <div class="content-pad">
+
+    <section class="lesson-head">
+      <p class="lesson-eyebrow">Lesson 1 of 13 &middot; Module 1: Validate and Define</p>
+      <h1 class="lesson-title">Validate Demand Before You Build</h1>
+      <p class="lesson-objective">Run a real demand-validation test on one candidate course topic and produce a written go/no-go decision.</p>
+    </section>
+
+    <section class="video-stage">
+      <div class="video-grid two-up">
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/z1iF1c8w5Lg?rel=0&start=358&end=877" title="How To Talk To Users" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">How To Talk To Users</p>
+            <p class="video-caption-meta">Y Combinator, Startup School &middot; 17:31 &middot; 5:58–14:37</p>
+            <p class="video-caption-why">real interview technique from a credible non-hype source, covers exactly how to avoid leading questions and ask about the problem instead of pitching. Does not show a literal side-by-side message rewrite.</p>
+          </div>
+        </div>
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/tt8hj0Ajh0I?rel=0" title="How to ask better questions during customer discovery interviews" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">How to ask better questions during customer discovery interviews</p>
+            <p class="video-caption-meta">Gorilla 76 &middot; 4:10</p>
+            <p class="video-caption-why">short, dense, real question-phrasing craft. Slightly older than the 3-year preference.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content-col">
+
+      <section class="section">
+        <p class="section-eyebrow">Objective</p>
+        <div class="objective-card">
+          <div class="objective-row"><span class="objective-tag">Behavior</span><span class="objective-text">Run a real demand-validation test on one candidate course topic and produce a written go/no-go decision.</span></div>
+          <div class="objective-row"><span class="objective-tag">Condition</span><span class="objective-text">Approaching at least 10 people who fit the target audience and are not friends, direct reports, or anyone with a reason to be polite to you, through direct conversation, DM, or call, asking about their actual problem rather than pitching a course.</span></div>
+          <div class="objective-row"><span class="objective-tag">Criterion</span><span class="objective-text">All 10+ responses are logged individually with specific notes or quotes (not summarized from memory), and the write-up ends in a 3-sentence-or-fewer go/no-go decision that follows from the log, not from your gut.</span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Why This Matters</p>
+        <div class="prose"><p>You already know how to build a curriculum. That was never the risk. The risk is spending three weeks building a beautifully action-mapped course for a transformation nobody outside your own head wants badly enough to act on. Validation isn’t a survey you send to be thorough, it’s the one step that decides whether the other twelve lessons in this track are worth doing for this particular topic. Skip it and you’re action-mapping a hypothesis.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">The Technique</p>
+        <div class="prose"><p>Pick one candidate topic you actually have earned expertise in, something you could teach without notes. Then go find out if the pain is real before you write a single objective.</p>
+<p>Run pain interviews, not pitches. Ask about the problem, not the course: “How are you currently handling X?” “What have you tried?” “What’s that costing you, in time or money or stress?” Never open with “would you take a course on this,” because everyone says yes to a hypothetical that costs them nothing.</p>
+<p>Approach the right sample. Ten people from your team’s Slack channel validates that people who report to you will be nice to you. Find people who are actually trying to solve the problem right now, with a duct-tape workaround, a competitor’s tool, or nothing at all.</p>
+<p>Look for a specific signal, not enthusiasm. “Sounds interesting!” is noise. “I’d pay for that,” “I looked for this and couldn’t find it,” or a named dollar figure they’re already losing to the problem, that’s signal. Write down the actual words.</p>
+<p>Avoid leading questions that fish for the answer you want. “Don’t you think X is hard?” gets you agreement, not information.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Watch For This</p>
+        <div class="watch-grid">
+      <div class="watch-card good">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Good</p>
+        <ul class="watch-list">
+          <li>Specific quotes about a named pain, not general enthusiasm.</li>
+          <li>At least one unprompted “when can I get this” or a named price.</li>
+          <li>Responses came from people with no relationship reason to be kind to you.</li>
+        </ul>
+      </div>
+      <div class="watch-card fail">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Classic Failure</p>
+        <ul class="watch-list">
+          <li>Validation ran on friends, direct reports, or people who like you and it feels great and means nothing.</li>
+          <li>Every response is a version of “sounds cool,” with no specific problem named.</li>
+          <li>The questions were leading (“wouldn’t this be useful?”) instead of open (“how do you currently handle this?”).</li>
+        </ul>
+      </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Your Drill</p>
+        <div class="card drill-card">
+          <div class="prose" style="font-size:var(--fs-16);color:var(--text-primary);"><p>Pick one candidate course topic from your own real expertise. Approach at least 10 people who fit the target audience and have no social reason to be nice to you. Ask about their actual problem, not the course. Log every response in a simple table: name, what they said (specific quotes where possible), and whether a would-pay or would-prioritize-time signal showed up. Write a go/no-go decision in 3 sentences or fewer, based only on the log.</p></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Pass Checklist</p>
+        <div class="checklist-card">
+          <div class="celebration" data-celebration="1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <p class="celebration-title">Lesson complete</p>
+              <p class="celebration-body">Criterion met: All 10+ responses are logged individually with specific notes or quotes (not summarized from memory), and the write-up ends in a 3-sentence-or-fewer go/no-go decision that follows from the log, not from your gut.</p>
+            </div>
+          </div>
+          <div class="checklist-head">
+            <span class="checklist-progress" data-checklist-progress="1">0 / 4</span>
+          </div>
+          <div class="checklist" data-lesson-checklist="1">
+            <label class="check-item"><input type="checkbox" id="check-1-0"><span class="check-text">At least 10 real target-audience contacts approached, none of them friends or direct reports doing you a favor.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-1-1"><span class="check-text">Every response logged individually with actual notes or quotes, not a summary written from memory afterward.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-1-2"><span class="check-text">At least one specific “would pay” or “would prioritize time for this” signal captured, or an honest no-go recorded if none appeared.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-1-3"><span class="check-text">Go/no-go decision written in 3 sentences or fewer, and it follows from the log, not from how you felt going in.</span></label>
+          </div>
+          <div class="checklist-footer">
+            <span style="font-size:12px;color:var(--text-tertiary);">Redoing a drill is part of the method, not a failure.</span>
+            <button class="reshoot-btn" data-reshoot="1" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 1 3 6.7" stroke-linecap="round"/><path d="M3 17v-4h4" stroke-linecap="round" stroke-linejoin="round"/></svg>Reshoot this lesson</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Coach Note</p>
+        <div class="coach-card">
+          <div class="coach-note-row">
+            <div class="coach-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8.5" r="3.2"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke-linecap="round"/></svg></div>
+            <p class="coach-text">If your validation sample is your own team, you’ve validated that people who work for you will say nice things to you. That’s a fact about your management style, not about market demand. Go find someone with zero reason to be polite and ask again.</p>
+          </div>
+        </div>
+      </section>
+
+    <section class="section">
+      <p class="section-eyebrow">Resurfaces In</p>
+      <p class="resurfaces-row"><a href="lesson-02.html">Lesson 2</a> (the responses become evidence for your transformation statement), <a href="lesson-11.html">Lesson 11</a> (this same contact list becomes your launch outreach list), <a href="lesson-13.html">Lesson 13</a> (Capstone).</p>
+    </section>
+
+    <nav class="lesson-footer-nav">
+      <a class="footer-nav-card prev" href="index.html"><span class="footer-nav-label"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to</span><span class="footer-nav-title">Track Dashboard</span></a>
+      <a class="footer-nav-card next" href="lesson-02.html"><span class="footer-nav-label">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="footer-nav-title">Lesson 2: Define the Transformation and the Starting Point</span></a>
+    </nav>
+
+    </div>
+    </div>
+  </main>
+</div>
+
+  <nav class="tabbar-mobile">
+    <a class="tab-item" href="#" aria-disabled="true" style="opacity:0.3;pointer-events:none;"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+    <a class="tab-item" href="index.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11.5L12 4l8 7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</a>
+    <button class="tab-item" data-nav-open type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>Lessons</button>
+    <a class="tab-item accent" href="lesson-02.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Next</a>
+  </nav>
+
+<script src="../assets/tracks-data.js"></script>
+<script src="../assets/progress.js"></script>
+<script>
+  window.SF_TRACK = "course-creator";
+  document.addEventListener('DOMContentLoaded', function(){
+    SF.hydrateChecklist("course-creator", 1);
+  });
+</script>
+
+</body>
+</html>

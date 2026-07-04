@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pro-Camera Filmmaker &middot; Lesson 4: ISO and Finding Your Noise Ceiling</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+  <header class="topbar-mobile">
+    <button data-nav-open aria-label="Open lesson menu" style="display:flex;align-items:center;gap:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+      <span class="brand-word">Pro-Camera Filmmaker</span>
+    </button>
+    <div class="topbar-mobile-stats">
+      <div class="aperture" data-progress-auto style="--ap-size:30px" data-progress="0" data-blades="8" data-label="0/12" data-label-size="26"></div>
+      <div class="stat-compact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+        <span class="mono" data-streak>0</span>
+      </div>
+    </div>
+  </header>
+<div class="breadcrumb-row-mobile">Module 1 <span class="current">&middot; Lesson 4 of 12</span></div>
+
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <a class="brand-group" href="../index.html">
+        <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg>
+        <span class="brand-word">Creator Reps</span>
+      </a>
+      <button class="sidebar-close" data-nav-close aria-label="Close lesson menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg></button>
+    </div>
+
+    <div class="course-info">
+      <p class="course-eyebrow">Track</p>
+      <h2 class="course-title">Pro-Camera Filmmaker</h2>
+    </div>
+
+    <nav class="skill-tree">
+      <div class="module">
+        <p class="module-label">Module 1 &middot; Manual Exposure Foundations</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="1">
+            <span class="lesson-index">1</span>
+            <span class="lesson-name">Camera Handling and Manual Exposure Orientation</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="2">
+            <span class="lesson-index">2</span>
+            <span class="lesson-name">Aperture Priority, Depth of Field on Purpose</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="3">
+            <span class="lesson-index">3</span>
+            <span class="lesson-name">Shutter Priority, Motion on Purpose</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="4">
+            <span class="lesson-index">4</span>
+            <span class="lesson-name">ISO and Finding Your Noise Ceiling</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="5">
+            <span class="lesson-index">5</span>
+            <span class="lesson-name">Full Manual, Combining the Triangle</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 2 &middot; Lenses and Focus</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="6">
+            <span class="lesson-index">6</span>
+            <span class="lesson-name">Focal Length and Lens Choice</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="7">
+            <span class="lesson-index">7</span>
+            <span class="lesson-name">Manual Focus and Focus Peaking</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 3 &middot; Color and Image Control</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="8">
+            <span class="lesson-index">8</span>
+            <span class="lesson-name">Manual White Balance, By Kelvin and By Custom Preset</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="9">
+            <span class="lesson-index">9</span>
+            <span class="lesson-name">Picture Profiles and Exposing for Log</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 4 &middot; Motion, Filters, and Rigging</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="10">
+            <span class="lesson-index">10</span>
+            <span class="lesson-name">The 180-Degree Shutter Rule and ND Filters</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="11">
+            <span class="lesson-index">11</span>
+            <span class="lesson-name">Tripod and Fluid Head, Controlled Pans and Locked-Off Shots</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 5 &middot; Capstone</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="12">
+            <span class="lesson-index">12</span>
+            <span class="lesson-name">Capstone, Short Scene</span>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label"><span>Track progress</span><span class="mono" data-progress-fraction>0/12</span></div>
+      <div class="linear-track"><div class="linear-fill" data-progress-bar style="width:0%"></div></div>
+    </div>
+  </aside>
+  <div class="nav-backdrop" data-nav-close></div>
+
+  <main class="stage">
+
+    <header class="statusbar">
+      <div class="breadcrumb">Pro-Camera Filmmaker <span class="sep">/</span> <span class="current">Module 1 &middot; Lesson 4 of 12</span></div>
+      <div class="stats-cluster">
+        <div class="stat">
+          <div class="aperture" data-progress-auto style="--ap-size:52px" data-progress="0" data-blades="8" data-label="0/12"></div>
+          <div class="stat-copy"><span class="stat-caption">Track Progress</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+          <div class="stat-copy"><span class="stat-value mono" data-streak>0</span><span class="stat-label">day streak</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <a class="btn-nav" href="lesson-03.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+        <a class="btn-nav" href="lesson-05.html">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </header>
+
+    <div class="content-pad">
+
+    <section class="lesson-head">
+      <p class="lesson-eyebrow">Lesson 4 of 12 &middot; Module 1: Manual Exposure Foundations</p>
+      <h1 class="lesson-title">ISO and Finding Your Noise Ceiling</h1>
+      <p class="lesson-objective">In Manual mode with aperture and shutter held fixed, raise ISO in steps through a dim room, identify by eye (zoomed to 100% on a computer or tablet, not the camera’s LCD) the highest ISO your camera holds usable detail at, write that number down, then shoot one final 8 second clip at that identified ceiling.</p>
+    </section>
+
+    <section class="video-stage">
+      <div class="video-grid two-up">
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/Advt2plMJnE?rel=0" title="Find your own ISO noise limit! Forget spec sheets and graphs. This camera sensor test is COMPULSORY." loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">Find your own ISO noise limit! Forget spec sheets and graphs. This camera sensor test is COMPULSORY.</p>
+            <p class="video-caption-meta">Fil Nenna &middot; 4:30</p>
+            <p class="video-caption-why">this is the lesson’s exact philosophy on screen, find your own ceiling rather than trusting a spec sheet. Shot on a Canon R5 (not entry-level, but the technique transfers directly).</p>
+          </div>
+        </div>
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/BXL-5YE32Wo?rel=0&start=514&end=857" title="The Sensor That Downsamples vs. The Sensor That Upscales" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">The Sensor That Downsamples vs. The Sensor That Upscales</p>
+            <p class="video-caption-meta">Belal Khancept &middot; 17:26 &middot; 8:34–14:17</p>
+            <p class="video-caption-why">a real ISO 100–25600 ladder shot on a Sony a6400, entry a6xxx-class body, with zoomed side-by-side noise comparison. Flag: original upload is from 2020, older than the recency preference, but it’s the strongest entry-mirrorless match found.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content-col">
+
+      <section class="section">
+        <p class="section-eyebrow">Objective</p>
+        <div class="objective-card">
+          <div class="objective-row"><span class="objective-tag">Behavior</span><span class="objective-text">In Manual mode with aperture and shutter held fixed, raise ISO in steps through a dim room, identify by eye (zoomed to 100% on a computer or tablet, not the camera’s LCD) the highest ISO your camera holds usable detail at, write that number down, then shoot one final 8 second clip at that identified ceiling.</span></div>
+          <div class="objective-row"><span class="objective-tag">Condition</span><span class="objective-text">Manual mode, fixed aperture and shutter speed for the whole test, dim available-light room (lamp-lit, not pitch black), no additional lighting added, footage reviewed on a screen larger than the camera’s LCD.</span></div>
+          <div class="objective-row"><span class="objective-tag">Criterion</span><span class="objective-text">A specific ISO number is written down as the personal ceiling, and the final clip shot at that number shows a properly exposed subject where grain reads as fine texture rather than blotchy color noise, when reviewed at full size on a computer or tablet.</span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Why This Matters</p>
+        <div class="prose"><p>ISO is the control everyone reaches for first because it’s the easiest to change and the one most associated with “make it brighter.” It’s also the one with a real cost: past a certain point specific to your camera’s sensor, brightness comes with noise that no amount of wishing fixes in the edit. Every camera has a different ceiling. You don’t know yours yet, and guessing it wrong either means noisy unusable footage or footage that’s darker than it needed to be because you were too scared to push ISO higher.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">The Technique</p>
+        <div class="prose"><p>Set the camera to Manual mode. Pick a room lit only by a lamp or similar dim available light, nothing pitch black, nothing bright. Fix your aperture and shutter speed at reasonable values and leave them untouched for the entire test, ISO is the only variable changing.</p>
+<p>Starting around ISO 800, take a still photo or short clip of the same static subject. Move up in steps, roughly 1600, 3200, 6400, and your camera’s native maximum ISO (check the menu, entry bodies often max out somewhere between 12800 and 51200 depending on model). Don’t judge any of these on the camera’s own LCD screen, it’s too small and too optimistic to show real noise. Pull the files onto a computer or tablet and zoom to 100 percent.</p>
+<p>Look specifically at shadow areas and skin tone. At some ISO step, grain will stop looking like fine, even texture (acceptable, sometimes even attractive) and start looking like blotchy, colored noise, especially in shadows, with detail smearing away entirely. The step right before that turn is your personal ceiling for this camera, in this kind of light.</p>
+<p>Write that number down somewhere you’ll actually reference again, a notes app, a sticky note on the camera itself. Then shoot one final 8 second clip at that exact ISO, confirming it holds up as a real usable clip, not just a still-frame test.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Watch For This</p>
+        <div class="watch-grid">
+      <div class="watch-card good">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Good</p>
+        <ul class="watch-list">
+          <li>A specific ISO number is identified and written down, not a vague range.</li>
+          <li>The final clip at that number shows grain that reads as texture, not color blotching.</li>
+          <li>The test was judged on a real screen, not the camera’s small LCD.</li>
+        </ul>
+      </div>
+      <div class="watch-card fail">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Classic Failure</p>
+        <ul class="watch-list">
+          <li>Judging noise on the camera’s LCD, which smooths and brightens the preview enough to hide real problems.</li>
+          <li>Changing aperture or shutter speed mid-test, contaminating the comparison with a second variable.</li>
+          <li>Never actually writing the ceiling number down, so the lesson evaporates the next time low light shows up.</li>
+        </ul>
+      </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Your Drill</p>
+        <div class="card drill-card">
+          <div class="prose" style="font-size:var(--fs-16);color:var(--text-primary);"><p>In a dim, lamp-lit room, with aperture and shutter fixed, shoot stills or short clips at ISO 800, 1600, 3200, 6400, and your camera’s native max. Review on a computer or tablet at 100 percent. Write down your personal ISO ceiling. Shoot one final 8 second clip at that ceiling.</p></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Pass Checklist</p>
+        <div class="checklist-card">
+          <div class="celebration" data-celebration="4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <p class="celebration-title">Lesson complete</p>
+              <p class="celebration-body">Criterion met: A specific ISO number is written down as the personal ceiling, and the final clip shot at that number shows a properly exposed subject where grain reads as fine texture rather than blotchy color noise, when reviewed at full size on a computer or tablet.</p>
+            </div>
+          </div>
+          <div class="checklist-head">
+            <span class="checklist-progress" data-checklist-progress="4">0 / 4</span>
+          </div>
+          <div class="checklist" data-lesson-checklist="4">
+            <label class="check-item"><input type="checkbox" id="check-4-0"><span class="check-text">Aperture and shutter speed stayed fixed for the entire ISO ladder test.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-4-1"><span class="check-text">Files were reviewed at full size on a computer or tablet, not the camera’s LCD.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-4-2"><span class="check-text">A specific ISO number is written down as the personal ceiling.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-4-3"><span class="check-text">The final clip at that ceiling shows usable, texture-like grain rather than blotchy color noise.</span></label>
+          </div>
+          <div class="checklist-footer">
+            <span style="font-size:12px;color:var(--text-tertiary);">Redoing a drill is part of the method, not a failure.</span>
+            <button class="reshoot-btn" data-reshoot="4" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 1 3 6.7" stroke-linecap="round"/><path d="M3 17v-4h4" stroke-linecap="round" stroke-linejoin="round"/></svg>Reshoot this lesson</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Coach Note</p>
+        <div class="coach-card">
+          <div class="coach-note-row">
+            <div class="coach-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8.5" r="3.2"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke-linecap="round"/></svg></div>
+            <p class="coach-text">You called your ceiling at ISO 12800 based on the camera’s LCD preview, and on the laptop it was a mess of color blotches two full steps earlier. The small screen was lying to you the same way it lied about exposure back in Lesson 1. Redo the review on a real screen and pick the honest number.</p>
+          </div>
+        </div>
+      </section>
+
+    <section class="section">
+      <p class="section-eyebrow">Resurfaces In</p>
+      <p class="resurfaces-row"><a href="lesson-05.html">Lesson 5</a> (Full Manual, Combining the Triangle), <a href="lesson-09.html">Lesson 9</a> (Picture Profiles and Exposing for Log), <a href="lesson-12.html">Lesson 12</a> (Capstone).</p>
+    </section>
+
+    <nav class="lesson-footer-nav">
+      <a class="footer-nav-card prev" href="index.html"><span class="footer-nav-label"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to</span><span class="footer-nav-title">Track Dashboard</span></a>
+      <a class="footer-nav-card next" href="lesson-05.html"><span class="footer-nav-label">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="footer-nav-title">Lesson 5: Full Manual, Combining the Triangle</span></a>
+    </nav>
+
+    </div>
+    </div>
+  </main>
+</div>
+
+  <nav class="tabbar-mobile">
+    <a class="tab-item" href="lesson-03.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+    <a class="tab-item" href="index.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11.5L12 4l8 7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</a>
+    <button class="tab-item" data-nav-open type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>Lessons</button>
+    <a class="tab-item accent" href="lesson-05.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Next</a>
+  </nav>
+
+<script src="../assets/tracks-data.js"></script>
+<script src="../assets/progress.js"></script>
+<script>
+  window.SF_TRACK = "pro-camera";
+  document.addEventListener('DOMContentLoaded', function(){
+    SF.hydrateChecklist("pro-camera", 4);
+  });
+</script>
+
+</body>
+</html>

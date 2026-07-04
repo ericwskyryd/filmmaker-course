@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pro-Camera Filmmaker &middot; Lesson 10: The 180-Degree Shutter Rule and ND Filters</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+  <header class="topbar-mobile">
+    <button data-nav-open aria-label="Open lesson menu" style="display:flex;align-items:center;gap:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+      <span class="brand-word">Pro-Camera Filmmaker</span>
+    </button>
+    <div class="topbar-mobile-stats">
+      <div class="aperture" data-progress-auto style="--ap-size:30px" data-progress="0" data-blades="8" data-label="0/12" data-label-size="26"></div>
+      <div class="stat-compact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+        <span class="mono" data-streak>0</span>
+      </div>
+    </div>
+  </header>
+<div class="breadcrumb-row-mobile">Module 4 <span class="current">&middot; Lesson 10 of 12</span></div>
+
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <a class="brand-group" href="../index.html">
+        <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg>
+        <span class="brand-word">Creator Reps</span>
+      </a>
+      <button class="sidebar-close" data-nav-close aria-label="Close lesson menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg></button>
+    </div>
+
+    <div class="course-info">
+      <p class="course-eyebrow">Track</p>
+      <h2 class="course-title">Pro-Camera Filmmaker</h2>
+    </div>
+
+    <nav class="skill-tree">
+      <div class="module">
+        <p class="module-label">Module 1 &middot; Manual Exposure Foundations</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="1">
+            <span class="lesson-index">1</span>
+            <span class="lesson-name">Camera Handling and Manual Exposure Orientation</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="2">
+            <span class="lesson-index">2</span>
+            <span class="lesson-name">Aperture Priority, Depth of Field on Purpose</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="3">
+            <span class="lesson-index">3</span>
+            <span class="lesson-name">Shutter Priority, Motion on Purpose</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="4">
+            <span class="lesson-index">4</span>
+            <span class="lesson-name">ISO and Finding Your Noise Ceiling</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="5">
+            <span class="lesson-index">5</span>
+            <span class="lesson-name">Full Manual, Combining the Triangle</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 2 &middot; Lenses and Focus</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="6">
+            <span class="lesson-index">6</span>
+            <span class="lesson-name">Focal Length and Lens Choice</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="7">
+            <span class="lesson-index">7</span>
+            <span class="lesson-name">Manual Focus and Focus Peaking</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 3 &middot; Color and Image Control</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="8">
+            <span class="lesson-index">8</span>
+            <span class="lesson-name">Manual White Balance, By Kelvin and By Custom Preset</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="9">
+            <span class="lesson-index">9</span>
+            <span class="lesson-name">Picture Profiles and Exposing for Log</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 4 &middot; Motion, Filters, and Rigging</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="10">
+            <span class="lesson-index">10</span>
+            <span class="lesson-name">The 180-Degree Shutter Rule and ND Filters</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="11">
+            <span class="lesson-index">11</span>
+            <span class="lesson-name">Tripod and Fluid Head, Controlled Pans and Locked-Off Shots</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 5 &middot; Capstone</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="12">
+            <span class="lesson-index">12</span>
+            <span class="lesson-name">Capstone, Short Scene</span>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label"><span>Track progress</span><span class="mono" data-progress-fraction>0/12</span></div>
+      <div class="linear-track"><div class="linear-fill" data-progress-bar style="width:0%"></div></div>
+    </div>
+  </aside>
+  <div class="nav-backdrop" data-nav-close></div>
+
+  <main class="stage">
+
+    <header class="statusbar">
+      <div class="breadcrumb">Pro-Camera Filmmaker <span class="sep">/</span> <span class="current">Module 4 &middot; Lesson 10 of 12</span></div>
+      <div class="stats-cluster">
+        <div class="stat">
+          <div class="aperture" data-progress-auto style="--ap-size:52px" data-progress="0" data-blades="8" data-label="0/12"></div>
+          <div class="stat-copy"><span class="stat-caption">Track Progress</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+          <div class="stat-copy"><span class="stat-value mono" data-streak>0</span><span class="stat-label">day streak</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <a class="btn-nav" href="lesson-09.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+        <a class="btn-nav" href="lesson-11.html">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </header>
+
+    <div class="content-pad">
+
+    <section class="lesson-head">
+      <p class="lesson-eyebrow">Lesson 10 of 12 &middot; Module 4: Motion, Filters, and Rigging</p>
+      <h1 class="lesson-title">The 180-Degree Shutter Rule and ND Filters</h1>
+      <p class="lesson-objective">Shoot one 8 second clip in bright daylight with shutter speed set to double your frame rate (the 180-degree rule), using an ND filter to control light so that shutter speed doesn’t overexpose the shot, then shoot a comparison clip of the same motion at a shutter speed far faster than the rule calls for.</p>
+    </section>
+
+    <section class="video-stage">
+      <div class="video-grid two-up">
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/JILle1--1qk?rel=0" title="How to Use ND Filters for Perfect Motion Blur in Daylight" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">How to Use ND Filters for Perfect Motion Blur in Daylight</p>
+            <p class="video-caption-meta">Andrew Murphy &middot; 0:40</p>
+            <p class="video-caption-why">extremely short, real before/after with an ND16 filter on camera in daylight, shows the exact overexposed-without-filter vs. correct-with-filter problem the lesson is built on.</p>
+          </div>
+        </div>
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/YPs4oFoykbE?rel=0" title="Shutter Angle and the 180 Degree Rule | Why Does It Matter?" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">Shutter Angle and the 180 Degree Rule | Why Does It Matter?</p>
+            <p class="video-caption-meta">NiSi Optics USA &middot; 1:13</p>
+            <p class="video-caption-why">quick, clear explanation of doubling frame rate for shutter speed and why an ND filter is the tool that makes it possible outdoors, reinforces the math from the primary pick.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content-col">
+
+      <section class="section">
+        <p class="section-eyebrow">Objective</p>
+        <div class="objective-card">
+          <div class="objective-row"><span class="objective-tag">Behavior</span><span class="objective-text">Shoot one 8 second clip in bright daylight with shutter speed set to double your frame rate (the 180-degree rule), using an ND filter to control light so that shutter speed doesn’t overexpose the shot, then shoot a comparison clip of the same motion at a shutter speed far faster than the rule calls for.</span></div>
+          <div class="objective-row"><span class="objective-tag">Condition</span><span class="objective-text">Outdoor bright daylight, a known and fixed frame rate (24fps or 30fps), a screw-on or variable ND filter sized to the kit lens’s filter thread, a subject with visible motion (a walking person, a waving hand).</span></div>
+          <div class="objective-row"><span class="objective-tag">Criterion</span><span class="objective-text">The 180-rule clip shows natural, filmic motion blur with correct exposure per the histogram check, achieved using the ND filter rather than an unnaturally fast shutter; the comparison clip visibly looks harsh and stroboscopic by contrast, and a one-line written note documents the visible difference between the two.</span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Why This Matters</p>
+        <div class="prose"><p>Lesson 3 let you feel the extremes of shutter speed with nothing constraining your choice. In real daylight, though, a properly exposed image at a slow, natural-looking shutter speed is often impossible without an ND filter, because bright sun forces you toward a fast shutter just to avoid blowing out the exposure. The 180-degree rule is the convention that gives motion blur its familiar, filmic look, and the ND filter is the tool that lets you keep that shutter speed without the image getting flooded with light. This is the first lesson where an exposure choice and a piece of glass in front of the lens work together on purpose.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">The Technique</p>
+        <div class="prose"><p>The 180-degree rule is simple math: set your shutter speed to roughly double your frame rate. At 24fps, that’s close to 1/48, which most cameras round to 1/50. At 30fps, that’s close to 1/60. This produces the amount of motion blur per frame that most narrative and documentary footage has trained your eye to expect as “normal” motion, not stuttery, not smeared.</p>
+<p>In bright daylight, dial in that shutter speed along with your desired aperture and your Lesson 4 ISO ceiling (probably near its floor in this much light). Check the meter. In direct sun, it will likely be badly overexposed at 1/50 or 1/60, because that’s a slow shutter for how much light is available. This is exactly the gap an ND filter closes: it’s a darkened piece of glass that sits in front of the lens and cuts light reaching the sensor, without changing color or requiring you to compromise shutter speed or aperture to compensate.</p>
+<p>Screw the ND filter onto the front of the kit lens (check the lens barrel or its cap for the filter thread size in millimeters before buying one). If it’s a variable ND, rotate the filter ring while watching the meter and histogram until exposure lands back at 0. If it’s a fixed-strength ND, you may need to also adjust ISO or aperture slightly to finish closing the gap. Record 8 seconds of your subject in motion once exposure is correct.</p>
+<p>Now remove the ND filter (or dial a variable one back to its lightest setting) and shoot a comparison clip of the same motion at a shutter speed several stops faster than the 180-degree target, fast enough to properly expose without the filter. Compare the two: the 180-rule clip should show smooth, familiar motion blur, the fast-shutter comparison should look choppy or stroboscopic, similar to the fast extreme you tested in Lesson 3, but now you can see exactly why the convention exists and what the ND filter is protecting you from.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Watch For This</p>
+        <div class="watch-grid">
+      <div class="watch-card good">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Good</p>
+        <ul class="watch-list">
+          <li>The 180-rule clip is correctly exposed (histogram clean) at a shutter speed close to double the frame rate.</li>
+          <li>Motion in that clip reads as smooth and natural, not frozen and not overly smeared.</li>
+          <li>The comparison clip is visibly harsher and choppier by contrast, with a written note capturing the difference.</li>
+        </ul>
+      </div>
+      <div class="watch-card fail">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Classic Failure</p>
+        <ul class="watch-list">
+          <li>Trying to hit the 180-degree shutter speed in bright sun without an ND filter, forcing either a badly overexposed shot or a much smaller aperture than the creative spec called for.</li>
+          <li>Buying an ND filter in the wrong thread size for the kit lens, or forgetting to check the size before ordering.</li>
+          <li>Skipping the written comparison note, losing the chance to put the visible difference into your own words.</li>
+        </ul>
+      </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Your Drill</p>
+        <div class="card drill-card">
+          <div class="prose" style="font-size:var(--fs-16);color:var(--text-primary);"><p>In bright daylight, set shutter speed to roughly double your frame rate. Use an ND filter to bring exposure back to 0 without changing that shutter speed. Shoot 8 seconds of a subject in motion. Then shoot a comparison clip of the same motion at a much faster shutter speed, without the ND filter. Submit both plus a one-line written comparison.</p></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Pass Checklist</p>
+        <div class="checklist-card">
+          <div class="celebration" data-celebration="10">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <p class="celebration-title">Lesson complete</p>
+              <p class="celebration-body">Criterion met: The 180-rule clip shows natural, filmic motion blur with correct exposure per the histogram check, achieved using the ND filter rather than an unnaturally fast shutter; the comparison clip visibly looks harsh and stroboscopic by contrast, and a one-line written note documents the visible difference between the two.</p>
+            </div>
+          </div>
+          <div class="checklist-head">
+            <span class="checklist-progress" data-checklist-progress="10">0 / 4</span>
+          </div>
+          <div class="checklist" data-lesson-checklist="10">
+            <label class="check-item"><input type="checkbox" id="check-10-0"><span class="check-text">Shutter speed for the main clip is roughly double the frame rate (1/50 at 24fps, 1/60 at 30fps).</span></label>
+            <label class="check-item"><input type="checkbox" id="check-10-1"><span class="check-text">The main clip is correctly exposed using the ND filter, not an unnaturally fast shutter.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-10-2"><span class="check-text">The comparison clip visibly looks harsher or more stroboscopic by contrast.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-10-3"><span class="check-text">A one-line written note documents the visible difference between the two clips.</span></label>
+          </div>
+          <div class="checklist-footer">
+            <span style="font-size:12px;color:var(--text-tertiary);">Redoing a drill is part of the method, not a failure.</span>
+            <button class="reshoot-btn" data-reshoot="10" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 1 3 6.7" stroke-linecap="round"/><path d="M3 17v-4h4" stroke-linecap="round" stroke-linejoin="round"/></svg>Reshoot this lesson</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Coach Note</p>
+        <div class="coach-card">
+          <div class="coach-note-row">
+            <div class="coach-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8.5" r="3.2"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke-linecap="round"/></svg></div>
+            <p class="coach-text">You ordered a 52mm ND filter for a lens with a 40.5mm thread and it didn’t fit on shoot day. Check the filter thread size printed on the lens barrel or the inside of the lens cap before you buy anything, it takes ten seconds and saves a wasted order.</p>
+          </div>
+        </div>
+      </section>
+
+    <section class="section">
+      <p class="section-eyebrow">Resurfaces In</p>
+      <p class="resurfaces-row"><a href="lesson-12.html">Lesson 12</a> (Capstone).</p>
+    </section>
+
+    <nav class="lesson-footer-nav">
+      <a class="footer-nav-card prev" href="index.html"><span class="footer-nav-label"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to</span><span class="footer-nav-title">Track Dashboard</span></a>
+      <a class="footer-nav-card next" href="lesson-11.html"><span class="footer-nav-label">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="footer-nav-title">Lesson 11: Tripod and Fluid Head, Controlled Pans and Locked-Off Shots</span></a>
+    </nav>
+
+    </div>
+    </div>
+  </main>
+</div>
+
+  <nav class="tabbar-mobile">
+    <a class="tab-item" href="lesson-09.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+    <a class="tab-item" href="index.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11.5L12 4l8 7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</a>
+    <button class="tab-item" data-nav-open type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>Lessons</button>
+    <a class="tab-item accent" href="lesson-11.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Next</a>
+  </nav>
+
+<script src="../assets/tracks-data.js"></script>
+<script src="../assets/progress.js"></script>
+<script>
+  window.SF_TRACK = "pro-camera";
+  document.addEventListener('DOMContentLoaded', function(){
+    SF.hydrateChecklist("pro-camera", 10);
+  });
+</script>
+
+</body>
+</html>

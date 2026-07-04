@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Creator &middot; Lesson 8: AI Audio Cleanup</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+  <header class="topbar-mobile">
+    <button data-nav-open aria-label="Open lesson menu" style="display:flex;align-items:center;gap:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+      <span class="brand-word">AI Creator</span>
+    </button>
+    <div class="topbar-mobile-stats">
+      <div class="aperture" data-progress-auto style="--ap-size:30px" data-progress="0" data-blades="8" data-label="0/13" data-label-size="26"></div>
+      <div class="stat-compact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+        <span class="mono" data-streak>0</span>
+      </div>
+    </div>
+  </header>
+<div class="breadcrumb-row-mobile">Module 3 <span class="current">&middot; Lesson 8 of 13</span></div>
+
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <a class="brand-group" href="../index.html">
+        <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg>
+        <span class="brand-word">Creator Reps</span>
+      </a>
+      <button class="sidebar-close" data-nav-close aria-label="Close lesson menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg></button>
+    </div>
+
+    <div class="course-info">
+      <p class="course-eyebrow">Track</p>
+      <h2 class="course-title">AI Creator</h2>
+    </div>
+
+    <nav class="skill-tree">
+      <div class="module">
+        <p class="module-label">Module 1 &middot; Image Generation Craft</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="1">
+            <span class="lesson-index">1</span>
+            <span class="lesson-name">Prompt Craft for Composition and Style Control</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="2">
+            <span class="lesson-index">2</span>
+            <span class="lesson-name">The Edit Loop</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="3">
+            <span class="lesson-index">3</span>
+            <span class="lesson-name">Character and Style Consistency Across a Set</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 2 &middot; AI Video Generation</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="4">
+            <span class="lesson-index">4</span>
+            <span class="lesson-name">Shot Planning for Text-to-Video</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="5">
+            <span class="lesson-index">5</span>
+            <span class="lesson-name">Image-to-Video: Directing Motion From a Still</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="6">
+            <span class="lesson-index">6</span>
+            <span class="lesson-name">Cutting Together a 3-Shot AI Sequence</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 3 &middot; AI-Assisted Post-Production</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="7">
+            <span class="lesson-index">7</span>
+            <span class="lesson-name">Text-Based Editing</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="8">
+            <span class="lesson-index">8</span>
+            <span class="lesson-name">AI Audio Cleanup</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="9">
+            <span class="lesson-index">9</span>
+            <span class="lesson-name">AI Voiceover</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 4 &middot; AI Writing and Working Practice</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="10">
+            <span class="lesson-index">10</span>
+            <span class="lesson-name">AI Writing as Drafting Partner</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="11">
+            <span class="lesson-index">11</span>
+            <span class="lesson-name">Disclosure, Rights, and Consent as a Working Checklist</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 5 &middot; Pipeline and Capstone</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="12">
+            <span class="lesson-index">12</span>
+            <span class="lesson-name">Building a Repeatable AI Content Pipeline</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="13">
+            <span class="lesson-index">13</span>
+            <span class="lesson-name">Capstone</span>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label"><span>Track progress</span><span class="mono" data-progress-fraction>0/13</span></div>
+      <div class="linear-track"><div class="linear-fill" data-progress-bar style="width:0%"></div></div>
+    </div>
+  </aside>
+  <div class="nav-backdrop" data-nav-close></div>
+
+  <main class="stage">
+
+    <header class="statusbar">
+      <div class="breadcrumb">AI Creator <span class="sep">/</span> <span class="current">Module 3 &middot; Lesson 8 of 13</span></div>
+      <div class="stats-cluster">
+        <div class="stat">
+          <div class="aperture" data-progress-auto style="--ap-size:52px" data-progress="0" data-blades="8" data-label="0/13"></div>
+          <div class="stat-copy"><span class="stat-caption">Track Progress</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+          <div class="stat-copy"><span class="stat-value mono" data-streak>0</span><span class="stat-label">day streak</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <a class="btn-nav" href="lesson-07.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+        <a class="btn-nav" href="lesson-09.html">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </header>
+
+    <div class="content-pad">
+
+    <section class="lesson-head">
+      <p class="lesson-eyebrow">Lesson 8 of 13 &middot; Module 3: AI-Assisted Post-Production</p>
+      <h1 class="lesson-title">AI Audio Cleanup</h1>
+      <p class="lesson-objective">Clean one noisy or roughly captured clip to reduce background noise and isolate the speaking voice, without introducing robotic or underwater artifacts.</p>
+    </section>
+
+    <section class="video-stage">
+      <div class="video-grid two-up">
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/xFxU4iQipLk?rel=0" title="Pick A: “Best 3 FREE AI Tools to Turn Trash Audio to Studio Sound!" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">Pick A: “Best 3 FREE AI Tools to Turn Trash Audio to Studio Sound!</p>
+            <p class="video-caption-meta">PiXimperfect &middot; 13:24</p>
+            <p class="video-caption-why">Reputable, high-production channel, tests real trash audio (car horns, traffic, extreme environments) across multiple free AI cleanup tools, which surfaces the “ceiling” concept the lesson is built around. Not Descript-specific; flag as a rival-tool demonstration of the same workflow.</p>
+          </div>
+        </div>
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/caGP-Ps4kn4?rel=0" title="Pick B (flagged as older): “Can Descript Studio Sound Really Fix Bad Audio? I Tested It" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">Pick B (flagged as older): “Can Descript Studio Sound Really Fix Bad Audio? I Tested It</p>
+            <p class="video-caption-meta">Entrepreneur Nut &middot; 7:22</p>
+            <p class="video-caption-why">Descript-specific, tests Studio Sound across three different microphones, which is a genuine before/after comparison even if not a three-way intensity test. Include only if Pick A’s tool mismatch is a bigger problem than this pick’s age.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content-col">
+
+      <section class="section">
+        <p class="section-eyebrow">Objective</p>
+        <div class="objective-card">
+          <div class="objective-row"><span class="objective-tag">Behavior</span><span class="objective-text">Clean one noisy or roughly captured clip to reduce background noise and isolate the speaking voice, without introducing robotic or underwater artifacts.</span></div>
+          <div class="objective-row"><span class="objective-tag">Condition</span><span class="objective-text">Given a clip with a real-world noise problem (room echo, hum, background chatter, wind), using an AI audio cleanup tool (Descript’s Studio Sound class of feature is the default).</span></div>
+          <div class="objective-row"><span class="objective-tag">Criterion</span><span class="objective-text">On A/B playback against the original, the cleaned clip has audibly reduced background noise while the voice retains natural pitch variation and doesn’t sound thin, warbly, or robotic, judged on one full playback.</span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Why This Matters</p>
+        <div class="prose"><p>Bad audio ends a piece of content faster than bad video ever does. Viewers forgive mediocre picture quality far more readily than they forgive audio they have to strain to understand. AI cleanup is now good enough to save a real recording made in imperfect conditions, but it has a ceiling, and pushing it past that ceiling replaces a noise problem with a worse and more obviously artificial one. The skill isn’t “run the cleanup,” it’s knowing where that ceiling is by ear.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">The Technique</p>
+        <div class="prose"><p>Apply cleanup at a moderate setting first and listen before reaching for maximum strength. The instinct to max out the slider because “more is safer” is exactly backwards here, over-processing is its own distinct failure and it’s often worse than the noise you started with.</p>
+<p>Listen specifically for the over-processing artifacts: a swishy or underwater quality, a voice that sounds thin or hollow, natural breath sounds disappearing entirely (which reads as unnatural even though technically “cleaner”). If you hear any of these, back the setting off, don’t push forward assuming the next notch fixes it.</p>
+<p>Know what cleanup can’t fix. Severe clipping or distortion captured at the source, the audio equivalent of a blown-out overexposed image, is not repairable after the fact. Noise reduction reduces noise, it does not un-distort audio that was recorded too hot. If a clip has that problem, the actual fix is recording cleaner audio next time, not a heavier cleanup pass this time.</p>
+<p>Always keep the unprocessed original file. Apply cleanup as a non-destructive pass, never overwrite the source, because you will occasionally need to go back and try a different setting once your ear catches something you missed the first time.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Watch For This</p>
+        <div class="watch-grid">
+      <div class="watch-card good">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Good</p>
+        <ul class="watch-list">
+          <li>Background noise floor is audibly reduced.</li>
+          <li>The voice still sounds present, natural, and retains pitch variation.</li>
+        </ul>
+      </div>
+      <div class="watch-card fail">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Classic Failure</p>
+        <ul class="watch-list">
+          <li>An underwater or swishy artifact from pushing the noise reduction setting too far past where it should have stopped.</li>
+          <li>Cleanup applied to a source problem (clipping, distortion) it structurally cannot fix, wasting effort on the wrong repair.</li>
+          <li>The original file was overwritten, leaving no way to back off a setting that turned out too aggressive.</li>
+        </ul>
+      </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Your Drill</p>
+        <div class="card drill-card">
+          <div class="prose" style="font-size:var(--fs-16);color:var(--text-primary);"><p>Take one clip with a real noise problem. Process it at two different settings, moderate and aggressive. Submit the original, both processed versions, and a written call on which one you’d actually use and why.</p></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Pass Checklist</p>
+        <div class="checklist-card">
+          <div class="celebration" data-celebration="8">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <p class="celebration-title">Lesson complete</p>
+              <p class="celebration-body">Criterion met: On A/B playback against the original, the cleaned clip has audibly reduced background noise while the voice retains natural pitch variation and doesn’t sound thin, warbly, or robotic, judged on one full playback.</p>
+            </div>
+          </div>
+          <div class="checklist-head">
+            <span class="checklist-progress" data-checklist-progress="8">0 / 4</span>
+          </div>
+          <div class="checklist" data-lesson-checklist="8">
+            <label class="check-item"><input type="checkbox" id="check-8-0"><span class="check-text">Background noise is audibly reduced in the chosen version compared to the original.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-8-1"><span class="check-text">The voice retains natural pitch variation, no robotic or underwater quality.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-8-2"><span class="check-text">Both a moderate and an aggressive pass were tested and compared, not just one setting accepted blind.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-8-3"><span class="check-text">The original unprocessed file was preserved.</span></label>
+          </div>
+          <div class="checklist-footer">
+            <span style="font-size:12px;color:var(--text-tertiary);">Redoing a drill is part of the method, not a failure.</span>
+            <button class="reshoot-btn" data-reshoot="8" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 1 3 6.7" stroke-linecap="round"/><path d="M3 17v-4h4" stroke-linecap="round" stroke-linejoin="round"/></svg>Reshoot this lesson</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Coach Note</p>
+        <div class="coach-card">
+          <div class="coach-note-row">
+            <div class="coach-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8.5" r="3.2"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke-linecap="round"/></svg></div>
+            <p class="coach-text">Put on headphones for this one, not laptop speakers. The underwater artifact that’s obvious on headphones is nearly invisible on a laptop’s built-in speakers, and that gap is exactly how over-processed audio slips through unnoticed until it’s live.</p>
+          </div>
+        </div>
+      </section>
+
+    <section class="section">
+      <p class="section-eyebrow">Resurfaces In</p>
+      <p class="resurfaces-row"><a href="lesson-09.html">Lesson 9</a> (AI Voiceover), <a href="lesson-12.html">Lesson 12</a> (Pipeline), <a href="lesson-13.html">Lesson 13</a> (Capstone).</p>
+    </section>
+
+    <nav class="lesson-footer-nav">
+      <a class="footer-nav-card prev" href="index.html"><span class="footer-nav-label"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to</span><span class="footer-nav-title">Track Dashboard</span></a>
+      <a class="footer-nav-card next" href="lesson-09.html"><span class="footer-nav-label">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="footer-nav-title">Lesson 9: AI Voiceover</span></a>
+    </nav>
+
+    </div>
+    </div>
+  </main>
+</div>
+
+  <nav class="tabbar-mobile">
+    <a class="tab-item" href="lesson-07.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+    <a class="tab-item" href="index.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11.5L12 4l8 7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</a>
+    <button class="tab-item" data-nav-open type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>Lessons</button>
+    <a class="tab-item accent" href="lesson-09.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Next</a>
+  </nav>
+
+<script src="../assets/tracks-data.js"></script>
+<script src="../assets/progress.js"></script>
+<script>
+  window.SF_TRACK = "ai-creator";
+  document.addEventListener('DOMContentLoaded', function(){
+    SF.hydrateChecklist("ai-creator", 8);
+  });
+</script>
+
+</body>
+</html>

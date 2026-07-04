@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Creator &middot; Lesson 3: Character and Style Consistency Across a Set</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+  <header class="topbar-mobile">
+    <button data-nav-open aria-label="Open lesson menu" style="display:flex;align-items:center;gap:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+      <span class="brand-word">AI Creator</span>
+    </button>
+    <div class="topbar-mobile-stats">
+      <div class="aperture" data-progress-auto style="--ap-size:30px" data-progress="0" data-blades="8" data-label="0/13" data-label-size="26"></div>
+      <div class="stat-compact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+        <span class="mono" data-streak>0</span>
+      </div>
+    </div>
+  </header>
+<div class="breadcrumb-row-mobile">Module 1 <span class="current">&middot; Lesson 3 of 13</span></div>
+
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <a class="brand-group" href="../index.html">
+        <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg>
+        <span class="brand-word">Creator Reps</span>
+      </a>
+      <button class="sidebar-close" data-nav-close aria-label="Close lesson menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg></button>
+    </div>
+
+    <div class="course-info">
+      <p class="course-eyebrow">Track</p>
+      <h2 class="course-title">AI Creator</h2>
+    </div>
+
+    <nav class="skill-tree">
+      <div class="module">
+        <p class="module-label">Module 1 &middot; Image Generation Craft</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="1">
+            <span class="lesson-index">1</span>
+            <span class="lesson-name">Prompt Craft for Composition and Style Control</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="2">
+            <span class="lesson-index">2</span>
+            <span class="lesson-name">The Edit Loop</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="3">
+            <span class="lesson-index">3</span>
+            <span class="lesson-name">Character and Style Consistency Across a Set</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 2 &middot; AI Video Generation</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="4">
+            <span class="lesson-index">4</span>
+            <span class="lesson-name">Shot Planning for Text-to-Video</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="5">
+            <span class="lesson-index">5</span>
+            <span class="lesson-name">Image-to-Video: Directing Motion From a Still</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="6">
+            <span class="lesson-index">6</span>
+            <span class="lesson-name">Cutting Together a 3-Shot AI Sequence</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 3 &middot; AI-Assisted Post-Production</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="7">
+            <span class="lesson-index">7</span>
+            <span class="lesson-name">Text-Based Editing</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="8">
+            <span class="lesson-index">8</span>
+            <span class="lesson-name">AI Audio Cleanup</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="9">
+            <span class="lesson-index">9</span>
+            <span class="lesson-name">AI Voiceover</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 4 &middot; AI Writing and Working Practice</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="10">
+            <span class="lesson-index">10</span>
+            <span class="lesson-name">AI Writing as Drafting Partner</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="11">
+            <span class="lesson-index">11</span>
+            <span class="lesson-name">Disclosure, Rights, and Consent as a Working Checklist</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 5 &middot; Pipeline and Capstone</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="12">
+            <span class="lesson-index">12</span>
+            <span class="lesson-name">Building a Repeatable AI Content Pipeline</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="13">
+            <span class="lesson-index">13</span>
+            <span class="lesson-name">Capstone</span>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label"><span>Track progress</span><span class="mono" data-progress-fraction>0/13</span></div>
+      <div class="linear-track"><div class="linear-fill" data-progress-bar style="width:0%"></div></div>
+    </div>
+  </aside>
+  <div class="nav-backdrop" data-nav-close></div>
+
+  <main class="stage">
+
+    <header class="statusbar">
+      <div class="breadcrumb">AI Creator <span class="sep">/</span> <span class="current">Module 1 &middot; Lesson 3 of 13</span></div>
+      <div class="stats-cluster">
+        <div class="stat">
+          <div class="aperture" data-progress-auto style="--ap-size:52px" data-progress="0" data-blades="8" data-label="0/13"></div>
+          <div class="stat-copy"><span class="stat-caption">Track Progress</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+          <div class="stat-copy"><span class="stat-value mono" data-streak>0</span><span class="stat-label">day streak</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <a class="btn-nav" href="lesson-02.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+        <a class="btn-nav" href="lesson-04.html">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </header>
+
+    <div class="content-pad">
+
+    <section class="lesson-head">
+      <p class="lesson-eyebrow">Lesson 3 of 13 &middot; Module 1: Image Generation Craft</p>
+      <h1 class="lesson-title">Character and Style Consistency Across a Set</h1>
+      <p class="lesson-objective">Generate a set of 4 images of the same character or in the same visual style that read as belonging to one series.</p>
+    </section>
+
+    <section class="video-stage">
+      <div class="video-grid two-up">
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/2psBexPkw3I?rel=0" title="Pick A: “This ONE Prompt Creates Flawless Consistent Characters Sheets" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">Pick A: “This ONE Prompt Creates Flawless Consistent Characters Sheets</p>
+            <p class="video-caption-meta">Tao Prompts &middot; 14:24</p>
+            <p class="video-caption-why">Uses Nano Banana 2 to build a multi-angle character reference sheet, essentially the contact-sheet consistency check the lesson asks for. Good tool alignment, just longer than ideal; timestamp to the sheet-generation segment if trimming for class use.</p>
+          </div>
+        </div>
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/qpbVXTLS-Nk?rel=0" title="Pick B: “Character Consistency Using Image References | Magnific Academy" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">Pick B: “Character Consistency Using Image References | Magnific Academy</p>
+            <p class="video-caption-meta">Magnific &middot; 2:17</p>
+            <p class="video-caption-why">Very short, dense, demonstrates reference-image anchoring (the exact method named in the lesson) directly on screen. Tool is Magnific, not Gemini, so flag as a rival-tool demonstration of the same workflow.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content-col">
+
+      <section class="section">
+        <p class="section-eyebrow">Objective</p>
+        <div class="objective-card">
+          <div class="objective-row"><span class="objective-tag">Behavior</span><span class="objective-text">Generate a set of 4 images of the same character or in the same visual style that read as belonging to one series.</span></div>
+          <div class="objective-row"><span class="objective-tag">Condition</span><span class="objective-text">Using reference-image conditioning or a fixed, reused description block carried unchanged across all 4 prompts (not re-described from memory each time), 4 different scenes, poses, or angles.</span></div>
+          <div class="objective-row"><span class="objective-tag">Criterion</span><span class="objective-text">Viewed cold, side by side, all 4 images show the same face structure, costume/color palette, and rendering style with no visible drift between any two, confirmed either by an outside reaction or your own review after at least a few hours away from the work.</span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Why This Matters</p>
+        <div class="prose"><p>A single striking image is easy now, almost anyone can get one. A believable set, the same character or the same look across a thumbnail, a carousel, or a sequence of video shots, is the actual job and it’s much harder. This is the difference between a demo reel of unrelated cool generations and something that reads as a produced series. It’s also the exact skill that makes the video sequencing in Module 2 possible, so treat this lesson as load-bearing, not optional polish.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">The Technique</p>
+        <div class="prose"><p>Consistency fails almost every time for the same reason: you re-describe the character from memory in each new prompt, and memory drifts. The fix is to stop describing from memory and start anchoring.</p>
+<p>Two durable methods, use either or both:</p>
+<p>- <strong>Reference image anchoring.</strong> Generate or choose one canonical image of the character or style. Feed that image into every subsequent generation as a reference input, and write the new prompt only for what’s different (the pose, the scene, the angle), not the character itself. The reference does the identity work so your words don’t have to. - <strong>Locked description block.</strong> Write one fixed paragraph describing the character or style in specific, reusable terms (face structure, hair, costume, palette, rendering style) once. Paste that exact block, unchanged, into every prompt in the set. Only the scene-specific portion of the prompt changes between generations.</p>
+<p>Whatever specific feature your tool calls this (seed locking, style reference, character reference, image conditioning), the underlying method is the same: anchor once, carry forward, never re-improvise the description. That’s the part that survives a tool swap. The button name won’t.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Watch For This</p>
+        <div class="watch-grid">
+      <div class="watch-card good">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Good</p>
+        <ul class="watch-list">
+          <li>Face structure, costume, and color palette hold steady across all 4 images.</li>
+          <li>Rendering style (photographic, illustrated, 3D) is identical across the set.</li>
+          <li>A viewer with no context immediately reads the 4 as one series.</li>
+        </ul>
+      </div>
+      <div class="watch-card fail">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Classic Failure</p>
+        <ul class="watch-list">
+          <li>The character subtly changes generation to generation, different actor playing the same role each time, because the description was rewritten from memory instead of reused verbatim.</li>
+          <li>Style drifts (one image reads as a photo, the next as an illustration) because the style clause wasn’t part of the locked block.</li>
+          <li>The set only looks consistent to you because you already know it’s supposed to be the same character; a cold viewer sees 4 different people.</li>
+        </ul>
+      </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Your Drill</p>
+        <div class="card drill-card">
+          <div class="prose" style="font-size:var(--fs-16);color:var(--text-primary);"><p>Build a 4-image set of one character or one fixed visual style, in 4 different scenes, poses, or angles, using either reference-image anchoring or a locked description block carried unchanged across all 4 prompts. Submit the 4 images as a contact sheet plus the reused reference image or description block.</p></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Pass Checklist</p>
+        <div class="checklist-card">
+          <div class="celebration" data-celebration="3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <p class="celebration-title">Lesson complete</p>
+              <p class="celebration-body">Criterion met: Viewed cold, side by side, all 4 images show the same face structure, costume/color palette, and rendering style with no visible drift between any two, confirmed either by an outside reaction or your own review after at least a few hours away from the work.</p>
+            </div>
+          </div>
+          <div class="checklist-head">
+            <span class="checklist-progress" data-checklist-progress="3">0 / 4</span>
+          </div>
+          <div class="checklist" data-lesson-checklist="3">
+            <label class="check-item"><input type="checkbox" id="check-3-0"><span class="check-text">Used a reference image or a written description block, carried unchanged, across all 4 generations.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-3-1"><span class="check-text">Face/subject structure and costume/palette hold across all 4 images.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-3-2"><span class="check-text">Rendering style is identical across all 4 images.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-3-3"><span class="check-text">A cold viewer (or you, after time away) identifies the set as one series without being told.</span></label>
+          </div>
+          <div class="checklist-footer">
+            <span style="font-size:12px;color:var(--text-tertiary);">Redoing a drill is part of the method, not a failure.</span>
+            <button class="reshoot-btn" data-reshoot="3" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 1 3 6.7" stroke-linecap="round"/><path d="M3 17v-4h4" stroke-linecap="round" stroke-linejoin="round"/></svg>Reshoot this lesson</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Coach Note</p>
+        <div class="coach-card">
+          <div class="coach-note-row">
+            <div class="coach-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8.5" r="3.2"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke-linecap="round"/></svg></div>
+            <p class="coach-text">The tell that you’re drifting is subtle at first, a slightly different nose, a slightly different jacket color, and it’s easy to wave off individually. Line all 4 up in a grid before you submit. Drift that’s invisible one image at a time becomes obvious the second you see all 4 at once.</p>
+          </div>
+        </div>
+      </section>
+
+    <section class="section">
+      <p class="section-eyebrow">Resurfaces In</p>
+      <p class="resurfaces-row"><a href="lesson-05.html">Lesson 5</a> (Image-to-Video), <a href="lesson-06.html">Lesson 6</a> (3-Shot Sequence), <a href="lesson-13.html">Lesson 13</a> (Capstone).</p>
+    </section>
+
+    <nav class="lesson-footer-nav">
+      <a class="footer-nav-card prev" href="index.html"><span class="footer-nav-label"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to</span><span class="footer-nav-title">Track Dashboard</span></a>
+      <a class="footer-nav-card next" href="lesson-04.html"><span class="footer-nav-label">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="footer-nav-title">Lesson 4: Shot Planning for Text-to-Video</span></a>
+    </nav>
+
+    </div>
+    </div>
+  </main>
+</div>
+
+  <nav class="tabbar-mobile">
+    <a class="tab-item" href="lesson-02.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+    <a class="tab-item" href="index.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11.5L12 4l8 7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</a>
+    <button class="tab-item" data-nav-open type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>Lessons</button>
+    <a class="tab-item accent" href="lesson-04.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Next</a>
+  </nav>
+
+<script src="../assets/tracks-data.js"></script>
+<script src="../assets/progress.js"></script>
+<script>
+  window.SF_TRACK = "ai-creator";
+  document.addEventListener('DOMContentLoaded', function(){
+    SF.hydrateChecklist("ai-creator", 3);
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Creator &middot; Lesson 4: Shot Planning for Text-to-Video</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+  <header class="topbar-mobile">
+    <button data-nav-open aria-label="Open lesson menu" style="display:flex;align-items:center;gap:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+      <span class="brand-word">AI Creator</span>
+    </button>
+    <div class="topbar-mobile-stats">
+      <div class="aperture" data-progress-auto style="--ap-size:30px" data-progress="0" data-blades="8" data-label="0/13" data-label-size="26"></div>
+      <div class="stat-compact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+        <span class="mono" data-streak>0</span>
+      </div>
+    </div>
+  </header>
+<div class="breadcrumb-row-mobile">Module 2 <span class="current">&middot; Lesson 4 of 13</span></div>
+
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <a class="brand-group" href="../index.html">
+        <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg>
+        <span class="brand-word">Creator Reps</span>
+      </a>
+      <button class="sidebar-close" data-nav-close aria-label="Close lesson menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg></button>
+    </div>
+
+    <div class="course-info">
+      <p class="course-eyebrow">Track</p>
+      <h2 class="course-title">AI Creator</h2>
+    </div>
+
+    <nav class="skill-tree">
+      <div class="module">
+        <p class="module-label">Module 1 &middot; Image Generation Craft</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="1">
+            <span class="lesson-index">1</span>
+            <span class="lesson-name">Prompt Craft for Composition and Style Control</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="2">
+            <span class="lesson-index">2</span>
+            <span class="lesson-name">The Edit Loop</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="3">
+            <span class="lesson-index">3</span>
+            <span class="lesson-name">Character and Style Consistency Across a Set</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 2 &middot; AI Video Generation</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="4">
+            <span class="lesson-index">4</span>
+            <span class="lesson-name">Shot Planning for Text-to-Video</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="5">
+            <span class="lesson-index">5</span>
+            <span class="lesson-name">Image-to-Video: Directing Motion From a Still</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="6">
+            <span class="lesson-index">6</span>
+            <span class="lesson-name">Cutting Together a 3-Shot AI Sequence</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 3 &middot; AI-Assisted Post-Production</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="7">
+            <span class="lesson-index">7</span>
+            <span class="lesson-name">Text-Based Editing</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="8">
+            <span class="lesson-index">8</span>
+            <span class="lesson-name">AI Audio Cleanup</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="9">
+            <span class="lesson-index">9</span>
+            <span class="lesson-name">AI Voiceover</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 4 &middot; AI Writing and Working Practice</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="10">
+            <span class="lesson-index">10</span>
+            <span class="lesson-name">AI Writing as Drafting Partner</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="11">
+            <span class="lesson-index">11</span>
+            <span class="lesson-name">Disclosure, Rights, and Consent as a Working Checklist</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 5 &middot; Pipeline and Capstone</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="12">
+            <span class="lesson-index">12</span>
+            <span class="lesson-name">Building a Repeatable AI Content Pipeline</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="13">
+            <span class="lesson-index">13</span>
+            <span class="lesson-name">Capstone</span>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label"><span>Track progress</span><span class="mono" data-progress-fraction>0/13</span></div>
+      <div class="linear-track"><div class="linear-fill" data-progress-bar style="width:0%"></div></div>
+    </div>
+  </aside>
+  <div class="nav-backdrop" data-nav-close></div>
+
+  <main class="stage">
+
+    <header class="statusbar">
+      <div class="breadcrumb">AI Creator <span class="sep">/</span> <span class="current">Module 2 &middot; Lesson 4 of 13</span></div>
+      <div class="stats-cluster">
+        <div class="stat">
+          <div class="aperture" data-progress-auto style="--ap-size:52px" data-progress="0" data-blades="8" data-label="0/13"></div>
+          <div class="stat-copy"><span class="stat-caption">Track Progress</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+          <div class="stat-copy"><span class="stat-value mono" data-streak>0</span><span class="stat-label">day streak</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <a class="btn-nav" href="lesson-03.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+        <a class="btn-nav" href="lesson-05.html">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </header>
+
+    <div class="content-pad">
+
+    <section class="lesson-head">
+      <p class="lesson-eyebrow">Lesson 4 of 13 &middot; Module 2: AI Video Generation</p>
+      <h1 class="lesson-title">Shot Planning for Text-to-Video</h1>
+      <p class="lesson-objective">Generate one AI video shot that stays physically coherent for its full duration by planning around the model’s motion and duration limits instead of fighting them.</p>
+    </section>
+
+    <section class="video-stage">
+      <div class="video-grid">
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/3lzMkigMvD8?rel=0" title="Pick: “I Tested Google Veo 3 for 4 days - 26 Failures And 1 Success" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">Pick: “I Tested Google Veo 3 for 4 days - 26 Failures And 1 Success</p>
+            <p class="video-caption-meta">bytecodecrux &middot; 7:56</p>
+            <p class="video-caption-why">Direct Veo 3 tool match. Shows real breakdown failures across many attempts against the one shot that stayed coherent, which is the exact “know where the line is” lesson this course teaches. Not a clean split-screen edit, but the raw material is there.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content-col">
+
+      <section class="section">
+        <p class="section-eyebrow">Objective</p>
+        <div class="objective-card">
+          <div class="objective-row"><span class="objective-tag">Behavior</span><span class="objective-text">Generate one AI video shot that stays physically coherent for its full duration by planning around the model’s motion and duration limits instead of fighting them.</span></div>
+          <div class="objective-row"><span class="objective-tag">Condition</span><span class="objective-text">Using a text-to-video tool (Veo is the default), one prompt describing exactly one subject action and one camera move, at the model’s standard single-generation length.</span></div>
+          <div class="objective-row"><span class="objective-tag">Criterion</span><span class="objective-text">On a single full-speed playback, the clip shows no major physical breakdown (limb warping, object morphing, impossible motion) anywhere in the shot, reached in 3 or fewer attempts, achieved by limiting the shot’s ambition rather than by regenerating the same overloaded prompt repeatedly.</span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Why This Matters</p>
+        <div class="prose"><p>Text-to-video models are genuinely good at short, simple, single-action shots and they fall apart predictably on anything more ambitious. Knowing exactly where that line is, and writing to stay inside it, is a durable skill regardless of which model wins the next model war. The alternative, writing an ambitious multi-action prompt and regenerating it a dozen times hoping for a clean result, wastes far more time than planning the shot down to something the model can actually deliver.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">The Technique</p>
+        <div class="prose"><p>Current-generation text-to-video models share a set of real limits, and they’ll still be roughly true when the specific model names change. Generations are short (a handful of seconds per clip). They handle one clear subject performing one clear action, filmed with one clear camera move, far better than anything with more moving parts. Complex hand and finger work, fast interaction between multiple subjects, and physical contact (grasping an object, sitting down, hugging) are common weak points where models still visibly break down mid-shot.</p>
+<p>Write the shot like a line from a director’s shot list, not a paragraph of scene description: subject, single action, camera move, pace, style. “A woman walks through a doorway, camera holds static, natural light, handheld feel” is a shot the model can execute cleanly. “A woman walks through a doorway, picks up a coffee cup, waves to someone off-camera, while the camera pushes in and pans left” is three actions and a compound camera move, and it will visibly blend or break partway through.</p>
+<p>When a shot idea is too complex for one generation, the fix is not to keep regenerating the same overloaded prompt. The fix is to break it into two or three simpler shots and plan to cut between them, which is exactly the skill Lesson 6 builds on.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Watch For This</p>
+        <div class="watch-grid">
+      <div class="watch-card good">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Good</p>
+        <ul class="watch-list">
+          <li>One clear action, one clear camera move, no visible morphing or warping at any point in the clip.</li>
+          <li>The shot looks intentional and directed, not like a lucky single frame that degrades.</li>
+        </ul>
+      </div>
+      <div class="watch-card fail">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Classic Failure</p>
+        <ul class="watch-list">
+          <li>A “kitchen sink” prompt with multiple actions and a compound camera move, where the model blends the actions into something incoherent by the midpoint of the clip.</li>
+          <li>Hands, fingers, or object-contact moments (picking something up, shaking hands) warp or vanish because that’s a known weak spot, and the fix attempted was “regenerate and hope” rather than removing the interaction from the shot.</li>
+        </ul>
+      </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Your Drill</p>
+        <div class="card drill-card">
+          <div class="prose" style="font-size:var(--fs-16);color:var(--text-primary);"><p>Write one shot-list line naming a single subject, single action, and single camera move. Generate it, watch at full speed, and if it breaks down, simplify the line rather than regenerating it unchanged. Submit the final clip, your shot line, and the number of attempts it took.</p></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Pass Checklist</p>
+        <div class="checklist-card">
+          <div class="celebration" data-celebration="4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <p class="celebration-title">Lesson complete</p>
+              <p class="celebration-body">Criterion met: On a single full-speed playback, the clip shows no major physical breakdown (limb warping, object morphing, impossible motion) anywhere in the shot, reached in 3 or fewer attempts, achieved by limiting the shot’s ambition rather than by regenerating the same overloaded prompt repeatedly.</p>
+            </div>
+          </div>
+          <div class="checklist-head">
+            <span class="checklist-progress" data-checklist-progress="4">0 / 4</span>
+          </div>
+          <div class="checklist" data-lesson-checklist="4">
+            <label class="check-item"><input type="checkbox" id="check-4-0"><span class="check-text">The prompt named exactly one subject action and one camera move.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-4-1"><span class="check-text">No visible physical breakdown anywhere in the clip on full-speed playback.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-4-2"><span class="check-text">Reached in 3 or fewer attempts.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-4-3"><span class="check-text">If an early attempt broke down, the fix was simplifying the shot, not repeating the same prompt.</span></label>
+          </div>
+          <div class="checklist-footer">
+            <span style="font-size:12px;color:var(--text-tertiary);">Redoing a drill is part of the method, not a failure.</span>
+            <button class="reshoot-btn" data-reshoot="4" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 1 3 6.7" stroke-linecap="round"/><path d="M3 17v-4h4" stroke-linecap="round" stroke-linejoin="round"/></svg>Reshoot this lesson</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Coach Note</p>
+        <div class="coach-card">
+          <div class="coach-note-row">
+            <div class="coach-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8.5" r="3.2"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke-linecap="round"/></svg></div>
+            <p class="coach-text">Your instinct will be to describe the scene the way you’d describe it to a person, with everything happening at once because that’s how real scenes work. Video models aren’t there yet. Cut your first draft shot line down to one verb. If you can find two verbs in your prompt, you’ve found your problem before you’ve spent a single generation on it.</p>
+          </div>
+        </div>
+      </section>
+
+    <section class="section">
+      <p class="section-eyebrow">Resurfaces In</p>
+      <p class="resurfaces-row"><a href="lesson-05.html">Lesson 5</a> (Image-to-Video), <a href="lesson-06.html">Lesson 6</a> (3-Shot Sequence), <a href="lesson-13.html">Lesson 13</a> (Capstone).</p>
+    </section>
+
+    <nav class="lesson-footer-nav">
+      <a class="footer-nav-card prev" href="index.html"><span class="footer-nav-label"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to</span><span class="footer-nav-title">Track Dashboard</span></a>
+      <a class="footer-nav-card next" href="lesson-05.html"><span class="footer-nav-label">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="footer-nav-title">Lesson 5: Image-to-Video: Directing Motion From a Still</span></a>
+    </nav>
+
+    </div>
+    </div>
+  </main>
+</div>
+
+  <nav class="tabbar-mobile">
+    <a class="tab-item" href="lesson-03.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+    <a class="tab-item" href="index.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11.5L12 4l8 7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</a>
+    <button class="tab-item" data-nav-open type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>Lessons</button>
+    <a class="tab-item accent" href="lesson-05.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Next</a>
+  </nav>
+
+<script src="../assets/tracks-data.js"></script>
+<script src="../assets/progress.js"></script>
+<script>
+  window.SF_TRACK = "ai-creator";
+  document.addEventListener('DOMContentLoaded', function(){
+    SF.hydrateChecklist("ai-creator", 4);
+  });
+</script>
+
+</body>
+</html>

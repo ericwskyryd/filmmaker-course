@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Creator &middot; Lesson 12: Building a Repeatable AI Content Pipeline</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+
+  <header class="topbar-mobile">
+    <button data-nav-open aria-label="Open lesson menu" style="display:flex;align-items:center;gap:8px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+      <span class="brand-word">AI Creator</span>
+    </button>
+    <div class="topbar-mobile-stats">
+      <div class="aperture" data-progress-auto style="--ap-size:30px" data-progress="0" data-blades="8" data-label="0/13" data-label-size="26"></div>
+      <div class="stat-compact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+        <span class="mono" data-streak>0</span>
+      </div>
+    </div>
+  </header>
+<div class="breadcrumb-row-mobile">Module 5 <span class="current">&middot; Lesson 12 of 13</span></div>
+
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <a class="brand-group" href="../index.html">
+        <svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg>
+        <span class="brand-word">Creator Reps</span>
+      </a>
+      <button class="sidebar-close" data-nav-close aria-label="Close lesson menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg></button>
+    </div>
+
+    <div class="course-info">
+      <p class="course-eyebrow">Track</p>
+      <h2 class="course-title">AI Creator</h2>
+    </div>
+
+    <nav class="skill-tree">
+      <div class="module">
+        <p class="module-label">Module 1 &middot; Image Generation Craft</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="1">
+            <span class="lesson-index">1</span>
+            <span class="lesson-name">Prompt Craft for Composition and Style Control</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="2">
+            <span class="lesson-index">2</span>
+            <span class="lesson-name">The Edit Loop</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="3">
+            <span class="lesson-index">3</span>
+            <span class="lesson-name">Character and Style Consistency Across a Set</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 2 &middot; AI Video Generation</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="4">
+            <span class="lesson-index">4</span>
+            <span class="lesson-name">Shot Planning for Text-to-Video</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="5">
+            <span class="lesson-index">5</span>
+            <span class="lesson-name">Image-to-Video: Directing Motion From a Still</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="6">
+            <span class="lesson-index">6</span>
+            <span class="lesson-name">Cutting Together a 3-Shot AI Sequence</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 3 &middot; AI-Assisted Post-Production</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="7">
+            <span class="lesson-index">7</span>
+            <span class="lesson-name">Text-Based Editing</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="8">
+            <span class="lesson-index">8</span>
+            <span class="lesson-name">AI Audio Cleanup</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="9">
+            <span class="lesson-index">9</span>
+            <span class="lesson-name">AI Voiceover</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 4 &middot; AI Writing and Working Practice</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="10">
+            <span class="lesson-index">10</span>
+            <span class="lesson-name">AI Writing as Drafting Partner</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="11">
+            <span class="lesson-index">11</span>
+            <span class="lesson-name">Disclosure, Rights, and Consent as a Working Checklist</span>
+          </li>
+        </ul>
+      </div>
+      <div class="module">
+        <p class="module-label">Module 5 &middot; Pipeline and Capstone</p>
+        <ul>
+          <li class="lesson upcoming" data-lesson="12">
+            <span class="lesson-index">12</span>
+            <span class="lesson-name">Building a Repeatable AI Content Pipeline</span>
+          </li>
+          <li class="lesson upcoming" data-lesson="13">
+            <span class="lesson-index">13</span>
+            <span class="lesson-name">Capstone</span>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-label"><span>Track progress</span><span class="mono" data-progress-fraction>0/13</span></div>
+      <div class="linear-track"><div class="linear-fill" data-progress-bar style="width:0%"></div></div>
+    </div>
+  </aside>
+  <div class="nav-backdrop" data-nav-close></div>
+
+  <main class="stage">
+
+    <header class="statusbar">
+      <div class="breadcrumb">AI Creator <span class="sep">/</span> <span class="current">Module 5 &middot; Lesson 12 of 13</span></div>
+      <div class="stats-cluster">
+        <div class="stat">
+          <div class="aperture" data-progress-auto style="--ap-size:52px" data-progress="0" data-blades="8" data-label="0/13"></div>
+          <div class="stat-copy"><span class="stat-caption">Track Progress</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <div class="stat">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="1.6"><path d="M12 2.5c1 3-2.5 4.6-2.5 8a4.5 4.5 0 1 0 9 0c0-1.8-.9-2.8-1.6-3.6.2 1.6-.7 2.3-1.4 2.3-1 0-1.5-.9-1.2-2C15 5.7 13.5 3.8 12 2.5z"/></svg>
+          <div class="stat-copy"><span class="stat-value mono" data-streak>0</span><span class="stat-label">day streak</span></div>
+        </div>
+        <div class="divider-v"></div>
+        <a class="btn-nav" href="lesson-11.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+        <a class="btn-nav" href="lesson-13.html">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </header>
+
+    <div class="content-pad">
+
+    <section class="lesson-head">
+      <p class="lesson-eyebrow">Lesson 12 of 13 &middot; Module 5: Pipeline and Capstone</p>
+      <h1 class="lesson-title">Building a Repeatable AI Content Pipeline</h1>
+      <p class="lesson-objective">Document your own end-to-end AI content pipeline as a numbered, reusable checklist covering every stage from Lessons 1 through 11, in the order you’d actually run them.</p>
+    </section>
+
+    <section class="video-stage">
+      <div class="video-grid two-up">
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/xw9YaQpbbag?rel=0" title="Pick: “My Exact AI Content Creation Workflow Revealed" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">Pick: “My Exact AI Content Creation Workflow Revealed</p>
+            <p class="video-caption-meta">Talk 2 Buchi &middot; 2:13</p>
+            <p class="video-caption-why">Strong structural match. Walks a personal pipeline stage by stage (idea, script, visuals, edit, post) in order, short and dense, recent. Not narrated as a formal flowchart with criteria per step, but the stage-by-stage structure is exactly the shape the lesson wants.</p>
+          </div>
+        </div>
+        <div class="video-block">
+          <div class="video-embed">
+            <iframe src="https://www.youtube-nocookie.com/embed/bv4JFUQarV0?rel=0" title="Optional longer alternative: “How I Use AI to Automate Content Creation - Step-by-Step Guide (2026)" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">Optional longer alternative: “How I Use AI to Automate Content Creation - Step-by-Step Guide (2026)</p>
+            <p class="video-caption-meta">AI Master &middot; 25:48</p>
+            <p class="video-caption-why">Same pipeline shape (idea through voiceover, editing, thumbnails, publishing) in much more depth. Use only if the instructor wants a deeper reference beyond the short primary pick.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="content-col">
+
+      <section class="section">
+        <p class="section-eyebrow">Objective</p>
+        <div class="objective-card">
+          <div class="objective-row"><span class="objective-tag">Behavior</span><span class="objective-text">Document your own end-to-end AI content pipeline as a numbered, reusable checklist covering every stage from Lessons 1 through 11, in the order you’d actually run them.</span></div>
+          <div class="objective-row"><span class="objective-tag">Condition</span><span class="objective-text">Based on your own completed drills from this track, written as a numbered document that names the durable skill handling each stage, not the specific tool.</span></div>
+          <div class="objective-row"><span class="objective-tag">Criterion</span><span class="objective-text">The document has a numbered step for each of: concept/script draft, image asset generation with a consistency lock, video generation with shot planning, rough cut via text-based edit, audio cleanup, voiceover decision, and disclosure/rights check, and at least 3 of those steps name a specific, checkable mini-criterion for what “good” looks like at that step, verified by being able to hand the document to yourself in 2 weeks and follow it without re-deriving the logic.</span></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Why This Matters</p>
+        <div class="prose"><p>Twelve separate skills without a written pipeline means you re-solve the sequencing problem from scratch every single time you make something. A written pipeline is what turns “I know how to do several individual things” into “I can reliably ship content.” This is also the actual payoff of the durability rule that’s run through this whole track: a pipeline document written in skills and criteria survives every tool swap, because it was never written in tool names to begin with.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">The Technique</p>
+        <div class="prose"><p>Order the pipeline by dependency, not by the order you learned the lessons in. Script or concept comes before image generation. The consistency lock happens before any video generation, not after. All generation (image and video) happens before editing. Editing happens before audio cleanup, since cleanup should run on the final assembled audio, not on every raw clip individually. The voiceover decision fits before or alongside the edit depending on the piece. Disclosure and rights check always runs last, immediately before publish, as a hard gate rather than an early step that gets forgotten by the time the piece actually ships.</p>
+<p>Write each step as an action plus a mini pass criterion, not as a topic label. “Generate images” is a topic. “Generate the image set, verify consistency by contact-sheet comparison before moving to video” is a step with a built-in check. Tool names can appear as a parenthetical example next to a step, but the instruction itself has to survive with the parenthetical deleted.</p>
+<p>Revisit and edit this document the moment a step stops matching reality, whether that’s because a tool changed or because you found a better sequence through actually using it. That’s the entire reason it’s written down instead of carried in your head: a document gets corrected, a mental model quietly drifts without you noticing.</p></div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Watch For This</p>
+        <div class="watch-grid">
+      <div class="watch-card good">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Good</p>
+        <ul class="watch-list">
+          <li>A stranger, or future you with no memory of writing it, could follow the document and know exactly what “good” looks like at each stage without guessing.</li>
+          <li>The order follows real dependencies between steps, not the order the lessons happened to be taught in.</li>
+        </ul>
+      </div>
+      <div class="watch-card fail">
+        <p class="watch-card-title"><svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Classic Failure</p>
+        <ul class="watch-list">
+          <li>The document is just a list of tool names with no criteria attached, which breaks the moment any one of those tools gets replaced.</li>
+          <li>Steps are ordered by memory of the course sequence rather than by what actually has to happen before what.</li>
+          <li>The disclosure/rights check is buried in the middle of the document instead of sitting as the final gate before publish, which is exactly how it gets skipped under deadline pressure.</li>
+        </ul>
+      </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Your Drill</p>
+        <div class="card drill-card">
+          <div class="prose" style="font-size:var(--fs-16);color:var(--text-primary);"><p>Write your own numbered pipeline document covering every stage from concept through disclosure check, naming the skill and a checkable mini-criterion for at least 3 steps. Submit the document.</p></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Pass Checklist</p>
+        <div class="checklist-card">
+          <div class="celebration" data-celebration="12">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div>
+              <p class="celebration-title">Lesson complete</p>
+              <p class="celebration-body">Criterion met: The document has a numbered step for each of: concept/script draft, image asset generation with a consistency lock, video generation with shot planning, rough cut via text-based edit, audio cleanup, voiceover decision, and disclosure/rights check, and at least 3 of those steps name a specific, checkable mini-criterion for what “good” looks like at that step, verified by being able to hand the document to yourself in 2 weeks and follow it without re-deriving the logic.</p>
+            </div>
+          </div>
+          <div class="checklist-head">
+            <span class="checklist-progress" data-checklist-progress="12">0 / 4</span>
+          </div>
+          <div class="checklist" data-lesson-checklist="12">
+            <label class="check-item"><input type="checkbox" id="check-12-0"><span class="check-text">A numbered step exists for concept, image generation with consistency lock, video generation with shot planning, text-based rough cut, audio cleanup, voiceover decision, and disclosure/rights check.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-12-1"><span class="check-text">At least 3 steps name a specific, checkable mini-criterion, not just a topic label.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-12-2"><span class="check-text">The order follows real dependencies, with disclosure/rights sitting as the final gate.</span></label>
+            <label class="check-item"><input type="checkbox" id="check-12-3"><span class="check-text">Tool names appear only as parentheticals, never as the actual instruction.</span></label>
+          </div>
+          <div class="checklist-footer">
+            <span style="font-size:12px;color:var(--text-tertiary);">Redoing a drill is part of the method, not a failure.</span>
+            <button class="reshoot-btn" data-reshoot="12" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 1 3 6.7" stroke-linecap="round"/><path d="M3 17v-4h4" stroke-linecap="round" stroke-linejoin="round"/></svg>Reshoot this lesson</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="section-eyebrow">Coach Note</p>
+        <div class="coach-card">
+          <div class="coach-note-row">
+            <div class="coach-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8.5" r="3.2"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke-linecap="round"/></svg></div>
+            <p class="coach-text">Read your draft pipeline back and delete every tool name in it temporarily. If any step becomes unfollowable once the tool name is gone, that step wasn’t actually written as a skill yet, it was written as a shortcut to a specific button. Rewrite it before moving to the capstone.</p>
+          </div>
+        </div>
+      </section>
+
+    <section class="section">
+      <p class="section-eyebrow">Resurfaces In</p>
+      <p class="resurfaces-row"><a href="lesson-13.html">Lesson 13</a> (Capstone), and every piece of content you make after this track ends.</p>
+    </section>
+
+    <nav class="lesson-footer-nav">
+      <a class="footer-nav-card prev" href="index.html"><span class="footer-nav-label"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Back to</span><span class="footer-nav-title">Track Dashboard</span></a>
+      <a class="footer-nav-card next" href="lesson-13.html"><span class="footer-nav-label">Next<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="footer-nav-title">Lesson 13: Capstone</span></a>
+    </nav>
+
+    </div>
+    </div>
+  </main>
+</div>
+
+  <nav class="tabbar-mobile">
+    <a class="tab-item" href="lesson-11.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Prev</a>
+    <a class="tab-item" href="index.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 11.5L12 4l8 7.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9a1 1 0 0 0 1 1h3v-6h4v6h3a1 1 0 0 0 1-1v-9" stroke-linecap="round" stroke-linejoin="round"/></svg>Home</a>
+    <button class="tab-item" data-nav-open type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>Lessons</button>
+    <a class="tab-item accent" href="lesson-13.html"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>Next</a>
+  </nav>
+
+<script src="../assets/tracks-data.js"></script>
+<script src="../assets/progress.js"></script>
+<script>
+  window.SF_TRACK = "ai-creator";
+  document.addEventListener('DOMContentLoaded', function(){
+    SF.hydrateChecklist("ai-creator", 12);
+  });
+</script>
+
+</body>
+</html>
