@@ -53,6 +53,36 @@ function authWidgetHtml({ compact = false } = {}) {
     </div>`;
 }
 
+// ---------- content gate (lesson pages + track dashboards) ----------
+// Server-rendered so the body.gated + data-gate-state="checking" state ships
+// in the HTML itself: content is hidden before anything paints, no flash.
+// assets/progress.js resolves one of three end states via window.SFAuth:
+//   signed in -> removes .gated, reveals the page exactly as before this gate.
+//   signed out -> shows the sign-in panel below.
+//   Firebase unreachable -> shows the retry panel below (never the sign-in
+//   panel, so a blocked network never gets mistaken for "you're logged out").
+function contentGateHtml(backHref) {
+  return `<div class="content-gate" data-content-gate>
+    <div class="gate-card" data-gate-panel="checking">
+      <div class="gate-mark gate-mark-quiet">${APERTURE_MARK_SVG}</div>
+      <p class="gate-checking-text">Checking your session&hellip;</p>
+    </div>
+    <div class="gate-card" data-gate-panel="signedout">
+      <div class="gate-mark">${APERTURE_MARK_SVG}</div>
+      <p class="gate-title">Sign in to train</p>
+      <button class="auth-signin-btn gate-signin-btn" data-auth-signin type="button" aria-label="Sign in with Google">${AUTH_GOOGLE_SVG}<span>Sign in with Google</span></button>
+      <p class="gate-privacy">Signing in stores your name, email, and lesson progress. Nothing else.</p>
+      <a class="gate-back-link" href="${backHref}">${ARROW_LEFT}<span>Back to overview</span></a>
+    </div>
+    <div class="gate-card" data-gate-panel="blocked">
+      <div class="gate-mark gate-mark-quiet">${APERTURE_MARK_SVG}</div>
+      <p class="gate-body">Can&rsquo;t verify your session right now. Check your connection and retry.</p>
+      <button class="auth-signin-btn gate-signin-btn" data-gate-retry type="button">${RESHOOT_SVG}<span>Retry</span></button>
+      <a class="gate-back-link" href="${backHref}">${ARROW_LEFT}<span>Back to overview</span></a>
+    </div>
+  </div>`;
+}
+
 function aperture({ size, progress = 0, label, labelSize, auto = true }) {
   const attrs = [
     `class="aperture"`,
@@ -193,7 +223,9 @@ export function renderTrackDashboard(track) {
 ${HEAD_FONTS}
 <link rel="stylesheet" href="${assetPrefix}assets/styles.css">
 </head>
-<body class="dashboard">
+<body class="dashboard gated" data-gate-state="checking">
+
+${contentGateHtml(`${assetPrefix}index.html`)}
 
 ${topbarMobileHtml(track)}
 
@@ -385,7 +417,9 @@ export function renderLessonPage(track, lesson, prevLesson, nextLesson) {
 ${HEAD_FONTS}
 <link rel="stylesheet" href="${assetPrefix}assets/styles.css">
 </head>
-<body>
+<body class="gated" data-gate-state="checking">
+
+${contentGateHtml(`${assetPrefix}index.html`)}
 
 ${topbarMobileHtml(track)}
 <div class="breadcrumb-row-mobile">Module ${lesson.moduleNum} <span class="current">&middot; Lesson ${lesson.n} of ${track.totalLessons}</span></div>
@@ -586,13 +620,21 @@ ${HEAD_FONTS}
     </header>
 
     <section class="hub-greeting">
-      <p class="greeting-eyebrow" style="font-size:var(--fs-14);color:var(--text-secondary);font-weight:500;margin:0 0 8px;">Creator Reps Academy</p>
-      <h1 class="greeting-title" style="font-family:var(--font-display);font-size:var(--fs-39);font-weight:500;color:var(--text-primary);margin:0 0 24px;letter-spacing:-0.005em;">Ready for today&rsquo;s rep, Eric?</h1>
-      <div class="hub-stat-row">
-        ${aperture({ size: 88, label: `0/${totalAcademyLessons}`, labelSize: 22 })}
-        <div class="hub-stat-copy">
-          <div class="big" data-academy-complete>0 of ${totalAcademyLessons} lessons complete</div>
-          <div class="small">Across all 8 tracks. Pick one up where you left off, or start something new.</div>
+      <div class="hub-greeting-signedout" data-hub-signedout>
+        <p class="greeting-eyebrow" style="font-size:var(--fs-14);color:var(--text-secondary);font-weight:500;margin:0 0 8px;">Creator Reps Academy</p>
+        <h1 class="greeting-title" style="font-family:var(--font-display);font-size:var(--fs-39);font-weight:500;color:var(--text-primary);margin:0 0 12px;letter-spacing:-0.005em;">Creator skills, built one rep at a time.</h1>
+        <p class="hub-pitch">Filmmaking, AI content, YouTube, short-form, strategy, and scriptwriting: ${tracks.length} tracks, ${tracks.reduce((n, t) => n + t.totalLessons, 0)} lessons, one rule. Every lesson ends with something real you made. Sign in with Google to save your progress and pick up where you left off.</p>
+        <button class="auth-signin-btn gate-signin-btn" data-auth-signin type="button" aria-label="Sign in with Google">${AUTH_GOOGLE_SVG}<span>Sign in with Google</span></button>
+      </div>
+      <div class="hub-greeting-signedin" data-hub-signedin>
+        <p class="greeting-eyebrow" style="font-size:var(--fs-14);color:var(--text-secondary);font-weight:500;margin:0 0 8px;">Creator Reps Academy</p>
+        <h1 class="greeting-title" style="font-family:var(--font-display);font-size:var(--fs-39);font-weight:500;color:var(--text-primary);margin:0 0 24px;letter-spacing:-0.005em;">Ready for today&rsquo;s rep, Eric?</h1>
+        <div class="hub-stat-row">
+          ${aperture({ size: 88, label: `0/${totalAcademyLessons}`, labelSize: 22 })}
+          <div class="hub-stat-copy">
+            <div class="big" data-academy-complete>0 of ${totalAcademyLessons} lessons complete</div>
+            <div class="small">Across all 8 tracks. Pick one up where you left off, or start something new.</div>
+          </div>
         </div>
       </div>
     </section>

@@ -23,15 +23,23 @@
     var listeners = [];
     var currentUser = null;
     var resolved = false;
+    var blocked = false;
     function notify(){
       listeners.forEach(function(cb){
-        try{ cb(currentUser); }catch(e){ /* one bad listener shouldn't break the rest */ }
+        try{ cb(currentUser, { blocked: blocked }); }catch(e){ /* one bad listener shouldn't break the rest */ }
       });
     }
     return {
-      _setUser: function(u){ currentUser = u; resolved = true; notify(); },
-      onChange: function(cb){ listeners.push(cb); if(resolved) cb(currentUser); },
+      // opts.blocked distinguishes "we couldn't verify" (Firebase/network
+      // unreachable -- assets/firebase.js's own catch block, or the 5s
+      // safety-net below) from a real "signed out" resolution. Gated content
+      // pages use this to show a retry panel instead of a sign-in panel, so a
+      // blocked network is never mistaken for a login problem.
+      _setUser: function(u, opts){ currentUser = u; resolved = true; blocked = !!(opts && opts.blocked); notify(); },
+      onChange: function(cb){ listeners.push(cb); if(resolved) cb(currentUser, { blocked: blocked }); },
       getUser: function(){ return currentUser; },
+      isBlocked: function(){ return blocked; },
+      isResolved: function(){ return resolved; },
       signIn: function(){ console.warn('[Creator Reps] Sign-in is unavailable right now (offline or blocked). Progress keeps saving locally.'); },
       signOut: function(){},
       isAdmin: function(){ return false; },
@@ -41,13 +49,21 @@
   })();
 
   // Defense in depth: assets/firebase.js normally resolves the auth state (to a
-  // real user or explicitly to null) within a second or two. If that script
-  // never even runs at all -- fully blocked request, ad blocker killing the
-  // <script> tag outright, whatever -- nothing would ever call _setUser, and
-  // anything waiting on window.SFAuth.onChange (admin.html in particular) would
-  // hang on a loading state forever. This forces a "signed out" resolution
-  // after 5s so every page always reaches a final, correct-looking state.
-  setTimeout(function(){ window.SFAuth._setUser(window.SFAuth.getUser()); }, 5000);
+  // real user, or explicitly to null/blocked) within a second or two. If that
+  // script never even runs at all -- fully blocked request, ad blocker killing
+  // the <script> tag outright, whatever -- nothing would ever call _setUser,
+  // and anything waiting on window.SFAuth.onChange (admin.html, a gated lesson
+  // page) would hang on a loading state forever. This forces a resolution
+  // after 5s so every page always reaches a final, correct-looking state. If
+  // nothing resolved it by then, that silence itself is the signal something
+  // is blocked, not proof the visitor is signed out -- so it resolves to the
+  // same "blocked" state as a caught Firebase-unreachable error, never a bare
+  // "signed out".
+  setTimeout(function(){
+    if(!window.SFAuth.isResolved()){
+      window.SFAuth._setUser(null, { blocked: true });
+    }
+  }, 5000);
 
   function todayStr(d){
     d = d || new Date();
@@ -299,6 +315,10 @@
     });
 
     window.SFAuth.onChange(function(user){
+      // Also tracked on <body> (not just the header widget) so any page-level
+      // layout, like the hub's signed-out pitch vs. signed-in greeting, can
+      // key off the same signed-in/out signal with plain CSS.
+      document.body.classList.toggle('is-signed-in', !!user);
       document.querySelectorAll('[data-auth-widget]').forEach(function(widget){
         widget.classList.toggle('is-signed-in', !!user);
         if(!user) return;
@@ -318,6 +338,31 @@
           }
         }
       });
+    });
+  }
+
+  /* ===================== Content gate (lesson pages + track dashboards) =====================
+     Server-rendered as body.gated + data-gate-state="checking" (see
+     build/templates.mjs); this is the only place that ever changes that
+     state. Three end states, one code path:
+       - signed in  -> remove .gated entirely; the page reverts to its normal
+         layout with nothing left to undo, and reveals in place (no redirect).
+       - signed out -> data-gate-state="signedout", shows the sign-in panel.
+       - blocked    -> data-gate-state="blocked", shows the retry panel.
+     A page without body.gated (the hub, admin.html) has no [data-content-gate]
+     element and this is a no-op. */
+  function initContentGate(){
+    if(!document.body.classList.contains('gated')) return;
+    var retryBtn = document.querySelector('[data-gate-retry]');
+    if(retryBtn){
+      retryBtn.addEventListener('click', function(){ window.location.reload(); });
+    }
+    window.SFAuth.onChange(function(user, meta){
+      if(user){
+        document.body.classList.remove('gated');
+        return;
+      }
+      document.body.setAttribute('data-gate-state', (meta && meta.blocked) ? 'blocked' : 'signedout');
     });
   }
 
@@ -670,11 +715,13 @@
     initMobileNav: initMobileNav,
     refreshApertures: refreshApertures,
     mergeStates: mergeStates,
-    initAuthUI: initAuthUI
+    initAuthUI: initAuthUI,
+    initContentGate: initContentGate
   };
 
   document.addEventListener('DOMContentLoaded', function(){
     initMobileNav();
     initAuthUI();
+    initContentGate();
   });
 })();

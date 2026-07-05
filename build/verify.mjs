@@ -195,9 +195,26 @@ async function migrationTest(browser) {
 async function persistenceTest(browser) {
   console.log('\n[2] Check-a-box persistence test (scriptwriting, a new track)');
   const page = await browser.newPage();
+  // Lesson pages are gated now, so clicking the checklist needs a resolved
+  // "signed in" gate state first. Block the real Firebase SDK (deterministic,
+  // no dependency on live Google auth in a test) and simulate a signed-in
+  // session via window.SFAuth._setUser -- this is the same reveal path a real
+  // sign-in takes, it just skips the Google popup. Exercising this alongside
+  // a fully-blocked Firebase also proves the underlying localStorage engine
+  // still works when the cloud sync layer is unreachable.
+  await page.setRequestInterception(true);
+  page.on('request', (req) => {
+    if (req.url().includes('gstatic.com/firebasejs')) req.abort();
+    else req.continue();
+  });
+  const fakeUser = { uid: 'verify-test-uid', displayName: 'Verify Test', email: 'verify-test@example.com' };
+  const simulateSignIn = () => page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+
   await page.goto(`http://localhost:${PORT}/scriptwriting/lesson-02.html`, { waitUntil: 'networkidle0' });
+  await simulateSignIn();
   await page.evaluate(() => localStorage.clear());
   await page.reload({ waitUntil: 'networkidle0' });
+  await simulateSignIn();
   await new Promise((r) => setTimeout(r, 200));
 
   await page.click('.checklist[data-lesson-checklist="2"] input[type=checkbox]');
@@ -209,6 +226,7 @@ async function persistenceTest(browser) {
   check('checkbox shows checked immediately after click', checkedBeforeReload);
 
   await page.reload({ waitUntil: 'networkidle0' });
+  await simulateSignIn();
   await new Promise((r) => setTimeout(r, 300));
   const checkedAfterReload = await page.evaluate(() => {
     return document.querySelector('.checklist[data-lesson-checklist="2"] input[type=checkbox]').checked;
@@ -250,10 +268,17 @@ async function consoleErrorTest(browser) {
   }
 }
 
-// ---------- 7: firebase.js blocked/offline -> no white screen, degrades to localStorage ----------
+// ---------- 7: firebase.js blocked/offline -> gate shows retry, no white screen, no content leak ----------
+// The gate changes what "degrades gracefully" means here: pre-gate, a blocked
+// Firebase fell back to showing full content with local-only progress. Now
+// the whole point of the gate is that a blocked network must NOT be treated
+// as an all-clear to show lesson content -- it shows the retry panel instead.
+// The "local progress still works when Firebase is unreachable" invariant
+// this used to check is now covered by persistenceTest (which runs with
+// gstatic blocked + a simulated signed-in session).
 
 async function offlineDegradeTest(browser) {
-  console.log('\n[7] gstatic blocked (offline Firebase) -> site still works, no white screen');
+  console.log('\n[7] gstatic blocked (offline Firebase) -> gate shows retry panel, no white screen, no content leak');
   const page = await browser.newPage();
   await page.setRequestInterception(true);
   page.on('request', (req) => {
@@ -264,31 +289,122 @@ async function offlineDegradeTest(browser) {
   page.on('pageerror', (e) => pageErrors.push(e.message));
 
   await page.goto(`http://localhost:${PORT}/smartphone/lesson-03.html`, { waitUntil: 'networkidle0' });
-  await new Promise((r) => setTimeout(r, 5500)); // let the progress.js safety-net timeout resolve auth to signed-out
+  await new Promise((r) => setTimeout(r, 800)); // firebase.js's own import() rejects fast; blocked state should resolve well under the 5s fallback
 
-  const bodyHasContent = await page.evaluate(() => document.querySelectorAll('.checklist-card, .lesson-title').length > 0);
-  check('lesson page still renders full content with gstatic blocked (no white screen)', bodyHasContent);
+  const gateState = await page.evaluate(() => document.body.getAttribute('data-gate-state'));
+  check('blocked gate state resolves quickly (does not wait for the 5s fallback timer)', gateState === 'blocked', `got ${gateState}`);
+
+  const blockedPanelVisible = await page.evaluate(() => {
+    const el = document.querySelector('[data-gate-panel="blocked"]');
+    return !!el && getComputedStyle(el).display !== 'none';
+  });
+  check('blocked panel is visible (no white screen)', blockedPanelVisible);
+
+  const contentHidden = await page.evaluate(() => {
+    const app = document.querySelector('.app');
+    return !app || getComputedStyle(app).display === 'none';
+  });
+  check('lesson content stays hidden while Firebase is unreachable (no content leak)', contentHidden);
+
   check('no uncaught JS exceptions with gstatic blocked', pageErrors.length === 0, pageErrors.slice(0, 5).join(' | '));
 
-  // Checklist + localStorage persistence must still work with Firebase fully unreachable.
-  await page.click('.checklist[data-lesson-checklist="3"] input[type=checkbox]');
-  await new Promise((r) => setTimeout(r, 200));
-  const checkedNow = await page.evaluate(() => document.querySelector('.checklist[data-lesson-checklist="3"] input[type=checkbox]').checked);
-  check('checkbox still checks with gstatic blocked', checkedNow);
-
-  await page.reload({ waitUntil: 'networkidle0' });
-  await new Promise((r) => setTimeout(r, 300));
-  const checkedAfterReload = await page.evaluate(() => document.querySelector('.checklist[data-lesson-checklist="3"] input[type=checkbox]').checked);
-  check('checkbox survives reload with gstatic blocked (localStorage fallback intact)', checkedAfterReload);
-
-  // Sign-in button must not throw when clicked in the degraded state.
+  // Retry button must not throw when clicked in the degraded state.
   let clickError = null;
   try {
-    await page.click('[data-auth-signin]');
+    await page.click('[data-gate-retry]');
   } catch (e) {
     clickError = e.message;
   }
-  check('clicking "Sign in" with Firebase unreachable does not throw', clickError === null, clickError);
+  check('clicking "Retry" with Firebase unreachable does not throw', clickError === null, clickError);
+
+  await page.close();
+}
+
+// ---------- 8: content gate visibility (hub storefront vs. gated content pages) ----------
+
+async function gateVisibilityTest(browser) {
+  console.log('\n[8] Content gate: hub storefront stays browsable signed out; lesson content stays hidden until sign-in');
+  const page = await browser.newPage();
+
+  await page.goto(`http://localhost:${PORT}/index.html`, { waitUntil: 'networkidle0' });
+  const hubTrackCardsVisible = await page.evaluate(() => {
+    const cards = document.querySelectorAll('.track-card');
+    return cards.length > 0 && Array.prototype.every.call(cards, (c) => getComputedStyle(c).display !== 'none');
+  });
+  check('hub shows all track cards while signed out (storefront stays browsable)', hubTrackCardsVisible);
+
+  const hubShowsSignInPitch = await page.evaluate(() => {
+    const el = document.querySelector('[data-hub-signedout]');
+    return !!el && getComputedStyle(el).display !== 'none' && !!el.querySelector('[data-auth-signin]');
+  });
+  check('hub shows the signed-out pitch + Google sign-in CTA', hubShowsSignInPitch);
+
+  await page.goto(`http://localhost:${PORT}/smartphone/lesson-02.html`, { waitUntil: 'networkidle0' });
+  await new Promise((r) => setTimeout(r, 2500)); // let the real (unblocked) Firebase SDK resolve to "no user"
+
+  const gateState = await page.evaluate(() => document.body.getAttribute('data-gate-state'));
+  check('signed-out lesson page resolves the gate to "signedout" (not stuck checking, not blocked)', gateState === 'signedout', `got ${gateState}`);
+
+  const contentHiddenSignedOut = await page.evaluate(() => {
+    const app = document.querySelector('.app');
+    return !app || getComputedStyle(app).display === 'none';
+  });
+  check('signed-out lesson page keeps lesson content hidden (no content leak)', contentHiddenSignedOut);
+
+  const signinPanelVisible = await page.evaluate(() => {
+    const el = document.querySelector('[data-gate-panel="signedout"]');
+    return !!el && getComputedStyle(el).display !== 'none' && !!el.querySelector('[data-auth-signin]') && !!el.querySelector('.gate-privacy');
+  });
+  check('signed-out lesson page shows the sign-in panel (Google button + privacy note)', signinPanelVisible);
+
+  await page.close();
+}
+
+// ---------- 9: 5s safety-net timer (firebase.js itself never runs at all) ----------
+
+async function safetyNetTimerTest(browser) {
+  console.log('\n[9] 5s safety-net timer resolves the gate even if firebase.js itself never loads');
+  const page = await browser.newPage();
+  await page.setRequestInterception(true);
+  page.on('request', (req) => {
+    if (req.url().endsWith('/assets/firebase.js')) req.abort();
+    else req.continue();
+  });
+
+  await page.goto(`http://localhost:${PORT}/smartphone/lesson-04.html`, { waitUntil: 'networkidle0' });
+  await new Promise((r) => setTimeout(r, 2000));
+  const stateEarly = await page.evaluate(() => document.body.getAttribute('data-gate-state'));
+  check('gate stays on "checking" before the 5s safety net fires', stateEarly === 'checking', `got ${stateEarly}`);
+
+  await new Promise((r) => setTimeout(r, 3500)); // total ~5.5s
+  const stateLate = await page.evaluate(() => document.body.getAttribute('data-gate-state'));
+  check('5s safety-net timer resolves the gate to "blocked" when firebase.js never runs at all', stateLate === 'blocked', `got ${stateLate}`);
+
+  await page.close();
+}
+
+// ---------- 10: gate reveal path (simulated sign-in removes the gate in place) ----------
+// Exercises the code path a real Google sign-in takes once assets/firebase.js
+// calls window.SFAuth._setUser(user) -- live sign-in through the Google popup
+// itself remains a manual check (see the returned 3-step test for Eric).
+
+async function signInRevealTest(browser) {
+  console.log('\n[10] Gate reveal: a resolved sign-in removes the gate and shows content in place (no redirect)');
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${PORT}/smartphone/lesson-05.html`, { waitUntil: 'domcontentloaded' });
+  const urlBefore = page.url();
+
+  await page.evaluate(() => window.SFAuth._setUser({ uid: 'reveal-test', displayName: 'Reveal Test', email: 'reveal-test@example.com' }));
+  await new Promise((r) => setTimeout(r, 200));
+
+  const revealed = await page.evaluate(() => {
+    const app = document.querySelector('.app');
+    return !document.body.classList.contains('gated') && !!app && getComputedStyle(app).display !== 'none';
+  });
+  check('a resolved sign-in removes the gate and reveals lesson content', revealed);
+
+  const urlAfter = page.url();
+  check('reveal happens in place, no redirect/navigation', urlAfter === urlBefore, `before=${urlBefore} after=${urlAfter}`);
 
   await page.close();
 }
@@ -305,6 +421,9 @@ async function main() {
   await persistenceTest(browser);
   await consoleErrorTest(browser);
   await offlineDegradeTest(browser);
+  await gateVisibilityTest(browser);
+  await safetyNetTimerTest(browser);
+  await signInRevealTest(browser);
   await browser.close();
   server.close();
 

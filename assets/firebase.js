@@ -51,10 +51,13 @@ const SDK_VERSION = '12.15.0';
     db = firestoreMod.getFirestore(app);
   } catch (err) {
     console.warn('[Creator Reps] Firebase unavailable, staying in local-only mode.', err && err.message);
-    // Resolve the auth state to "signed out" so any page waiting on it (like
-    // admin.html) doesn't hang on a loading state forever; the rest of
-    // window.SFAuth keeps its localStorage-only stub behavior.
-    window.SFAuth._setUser(null);
+    // Resolve the auth state so any page waiting on it (admin.html, or a
+    // gated lesson/dashboard page) doesn't hang on a loading state forever.
+    // The { blocked: true } flag matters: it tells a gated content page this
+    // is "we couldn't check" (show the retry panel), not "you're signed out"
+    // (which would show the sign-in panel and misrepresent the failure as a
+    // login problem instead of a network one).
+    window.SFAuth._setUser(null, { blocked: true });
     return;
   }
 
