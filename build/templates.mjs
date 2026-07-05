@@ -31,6 +31,27 @@ const COACH_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const CELEBRATION_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const GOOD_SVG = `<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const FAIL_SVG = `<svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+const AUTH_GOOGLE_SVG = `<svg viewBox="0 0 18 18" width="16" height="16" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.85.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.97 10.71a5.4 5.4 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/></svg>`;
+
+// ---------- auth widget (Google sign-in / account menu, present in every header) ----------
+// Two states baked into one markup block; assets/progress.js toggles .is-signed-in
+// and fills in name/email/avatar once assets/firebase.js resolves an auth session.
+// Signed-out visitors see only the "Sign in" button -- zero behavior change otherwise.
+function authWidgetHtml({ compact = false } = {}) {
+  return `<div class="auth-widget${compact ? ' compact' : ''}" data-auth-widget>
+      <button class="auth-signin-btn" data-auth-signin type="button" aria-label="Sign in with Google">${AUTH_GOOGLE_SVG}<span>Sign in</span></button>
+      <div class="auth-account">
+        <button class="auth-avatar-btn" data-auth-menu-toggle type="button" aria-haspopup="true" aria-label="Account menu">
+          <span class="auth-avatar" data-auth-avatar></span>
+          <span class="auth-firstname" data-auth-firstname></span>
+        </button>
+        <div class="auth-menu" data-auth-menu>
+          <p class="auth-menu-email" data-auth-email></p>
+          <button class="auth-menu-item" data-auth-signout type="button">Sign out</button>
+        </div>
+      </div>
+    </div>`;
+}
 
 function aperture({ size, progress = 0, label, labelSize, auto = true }) {
   const attrs = [
@@ -104,6 +125,7 @@ function topbarMobileHtml(track) {
         ${STREAK_SVG}
         <span class="mono" data-streak>0</span>
       </div>
+      ${authWidgetHtml({ compact: true })}
     </div>
   </header>`;
 }
@@ -126,6 +148,7 @@ function tabbarMobileHtml({ track, backHref, prevHref, nextHref, homeHref }) {
 function scriptsHtml({ assetPrefix, trackSlug, itemCounts, call }) {
   return `<script src="${assetPrefix}assets/tracks-data.js"></script>
 <script src="${assetPrefix}assets/progress.js"></script>
+<script type="module" src="${assetPrefix}assets/firebase.js"></script>
 <script>
   window.SF_TRACK = ${JSON.stringify(trackSlug)};
   document.addEventListener('DOMContentLoaded', function(){
@@ -190,6 +213,8 @@ ${sidebarHtml(track, assetPrefix)}
           ${aperture({ size: 52, label: `0/${track.totalLessons}` })}
           <div class="stat-copy"><span class="stat-caption">Track Progress</span></div>
         </div>
+        <div class="divider-v"></div>
+        ${authWidgetHtml()}
       </div>
     </header>
 
@@ -386,6 +411,8 @@ ${sidebarHtml(track, assetPrefix)}
         <div class="divider-v"></div>
         ${prevHref ? `<a class="btn-nav" href="${prevHref}">${ARROW_LEFT}Prev</a>` : `<span class="btn-nav" disabled>${ARROW_LEFT}Prev</span>`}
         ${nextHref ? `<a class="btn-nav" href="${nextHref}">Next${ARROW_RIGHT}</a>` : `<span class="btn-nav" disabled>Next${ARROW_RIGHT}</span>`}
+        <div class="divider-v"></div>
+        ${authWidgetHtml()}
       </div>
     </header>
 
@@ -537,6 +564,7 @@ ${HEAD_FONTS}
         ${STREAK_SVG}
         <span class="mono" data-streak>0</span>
       </div>
+      ${authWidgetHtml({ compact: true })}
     </div>
   </header>
 
@@ -552,6 +580,8 @@ ${HEAD_FONTS}
           ${STREAK_SVG}
           <div class="stat-copy"><span class="stat-value mono" data-streak>0</span><span class="stat-label">day streak</span></div>
         </div>
+        <div class="divider-v"></div>
+        ${authWidgetHtml()}
       </div>
     </header>
 
@@ -581,6 +611,7 @@ ${trackCards}
 
 <script src="assets/tracks-data.js"></script>
 <script src="assets/progress.js"></script>
+<script type="module" src="assets/firebase.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function(){
     SF.hydrateHub();

@@ -7,10 +7,47 @@
   var STORAGE_KEY_V2 = 'sf_progress_v2';
   var LEGACY_KEY_V1 = 'sf_progress_v1';   // old single-course (Smartphone Filmmaker) key
   var LEGACY_TRACK = 'smartphone';
+  var LAST_ACTIVE_PUSH_KEY = 'sf_last_active_push_at';
 
   var CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function tracksData(){ return window.SF_TRACKS || {}; }
+
+  /* ===================== Auth interface (stub until assets/firebase.js loads) =====================
+     Defined here, not in firebase.js, because progress.js is a plain synchronous
+     script that always runs before firebase.js (a deferred module). Every page
+     can therefore call window.SFAuth immediately without an existence check, and
+     if firebase.js never loads (offline, blocked, ad blocker), these no-ops keep
+     the site behaving exactly as it always has: localStorage only, no crashes. */
+  window.SFAuth = (function(){
+    var listeners = [];
+    var currentUser = null;
+    var resolved = false;
+    function notify(){
+      listeners.forEach(function(cb){
+        try{ cb(currentUser); }catch(e){ /* one bad listener shouldn't break the rest */ }
+      });
+    }
+    return {
+      _setUser: function(u){ currentUser = u; resolved = true; notify(); },
+      onChange: function(cb){ listeners.push(cb); if(resolved) cb(currentUser); },
+      getUser: function(){ return currentUser; },
+      signIn: function(){ console.warn('[Creator Reps] Sign-in is unavailable right now (offline or blocked). Progress keeps saving locally.'); },
+      signOut: function(){},
+      isAdmin: function(){ return false; },
+      pullProgress: function(){ return Promise.resolve(null); },
+      pushProgress: function(){}
+    };
+  })();
+
+  // Defense in depth: assets/firebase.js normally resolves the auth state (to a
+  // real user or explicitly to null) within a second or two. If that script
+  // never even runs at all -- fully blocked request, ad blocker killing the
+  // <script> tag outright, whatever -- nothing would ever call _setUser, and
+  // anything waiting on window.SFAuth.onChange (admin.html in particular) would
+  // hang on a loading state forever. This forces a "signed out" resolution
+  // after 5s so every page always reaches a final, correct-looking state.
+  setTimeout(function(){ window.SFAuth._setUser(window.SFAuth.getUser()); }, 5000);
 
   function todayStr(d){
     d = d || new Date();
@@ -36,8 +73,30 @@
     }
   }
 
-  function saveState(state){
+  function shouldTouchActive(){
+    try{
+      var last = parseInt(localStorage.getItem(LAST_ACTIVE_PUSH_KEY) || '0', 10);
+      if(Date.now() - last > 60 * 60 * 1000){
+        localStorage.setItem(LAST_ACTIVE_PUSH_KEY, String(Date.now()));
+        return true;
+      }
+    }catch(e){ /* ignore, just skip the lastActiveAt touch this time */ }
+    return false;
+  }
+
+  /* Single write path for both storage backends (the "thin storage adapter"):
+     every save always writes localStorage first (instant, offline-safe), then
+     -- only if a user is signed in -- also schedules a debounced Firestore
+     write of the same object. Callers never need to know which backend(s) are
+     live; localStorage stays the write-through cache either way. */
+  function saveState(state, opts){
     localStorage.setItem(STORAGE_KEY_V2, JSON.stringify(state));
+    var user = window.SFAuth.getUser();
+    if(user){
+      var pushOpts = { touchActive: shouldTouchActive() };
+      if(opts && opts.immediate) pushOpts.immediate = true;
+      window.SFAuth.pushProgress(state, pushOpts);
+    }
   }
 
   /* Migrate legacy single-course progress (sf_progress_v1, un-namespaced,
@@ -154,6 +213,117 @@
     }
     return streak;
   }
+
+  /* ===================== Cloud sync coordination ===================== */
+  // Runs once per sign-in (fresh popup OR a session Firebase silently restores
+  // on page load): pull the cloud doc, union-merge it with whatever is in
+  // localStorage right now so neither side ever loses a checked box or an
+  // activity date, write the merged result back to both places, then refresh
+  // whichever page is currently on screen.
+  var _rehydrate = null;
+  function setRehydrate(fn){ _rehydrate = fn; }
+
+  function unionChecks(a, b){
+    var len = Math.max(a.length, b.length), out = [];
+    for(var i=0;i<len;i++){ out.push(!!a[i] || !!b[i]); }
+    return out;
+  }
+
+  function mergeStates(a, b){
+    a = a || blankState();
+    b = b || blankState();
+    var slugs = {};
+    Object.keys(a.tracks || {}).forEach(function(s){ slugs[s] = true; });
+    Object.keys(b.tracks || {}).forEach(function(s){ slugs[s] = true; });
+    var tracks = {};
+    Object.keys(slugs).forEach(function(slug){
+      var aLessons = (a.tracks[slug] && a.tracks[slug].lessons) || {};
+      var bLessons = (b.tracks[slug] && b.tracks[slug].lessons) || {};
+      var keys = {};
+      Object.keys(aLessons).forEach(function(k){ keys[k] = true; });
+      Object.keys(bLessons).forEach(function(k){ keys[k] = true; });
+      var lessons = {};
+      Object.keys(keys).forEach(function(k){
+        var ac = (aLessons[k] && aLessons[k].checks) || [];
+        var bc = (bLessons[k] && bLessons[k].checks) || [];
+        lessons[k] = { checks: unionChecks(ac, bc) };
+      });
+      tracks[slug] = { lessons: lessons };
+    });
+    var dateSet = {};
+    (a.activityDates || []).forEach(function(d){ dateSet[d] = true; });
+    (b.activityDates || []).forEach(function(d){ dateSet[d] = true; });
+    return {
+      tracks: tracks,
+      activityDates: Object.keys(dateSet).sort(),
+      migratedFromV1: !!(a.migratedFromV1 || b.migratedFromV1)
+    };
+  }
+
+  function statesEqual(a, b){
+    try{ return JSON.stringify(a) === JSON.stringify(b); }catch(e){ return false; }
+  }
+
+  function onAuthChange(user){
+    if(!user) return; // signed out: keep whatever is already in localStorage, unchanged
+    var local = loadState();
+    window.SFAuth.pullProgress().then(function(cloud){
+      var merged = mergeStates(local, cloud);
+      // Always re-save even if identical: cheap locally, and it's the one code
+      // path that also pushes to Firestore when a user is signed in, so a
+      // brand-new cloud doc gets created on first sign-in even if local === merged.
+      if(!statesEqual(merged, local) || !cloud){
+        saveState(merged, { immediate: true });
+      }
+      if(typeof _rehydrate === 'function') _rehydrate();
+    }).catch(function(){ /* local state is already the safe fallback, nothing to do */ });
+  }
+
+  /* ===================== Auth widget UI wiring (header sign-in / account menu) ===================== */
+  function initAuthUI(){
+    document.querySelectorAll('[data-auth-signin]').forEach(function(btn){
+      btn.addEventListener('click', function(){ window.SFAuth.signIn(); });
+    });
+    document.querySelectorAll('[data-auth-signout]').forEach(function(btn){
+      btn.addEventListener('click', function(){ window.SFAuth.signOut(); });
+    });
+    document.querySelectorAll('[data-auth-menu-toggle]').forEach(function(btn){
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        var widget = btn.closest('[data-auth-widget]');
+        if(widget) widget.classList.toggle('menu-open');
+      });
+    });
+    document.addEventListener('click', function(){
+      document.querySelectorAll('[data-auth-widget].menu-open').forEach(function(w){ w.classList.remove('menu-open'); });
+    });
+
+    window.SFAuth.onChange(function(user){
+      document.querySelectorAll('[data-auth-widget]').forEach(function(widget){
+        widget.classList.toggle('is-signed-in', !!user);
+        if(!user) return;
+        var firstName = ((user.displayName || user.email || 'Account').trim().split(/\s+/)[0]) || 'Account';
+        var nameEl = widget.querySelector('[data-auth-firstname]');
+        var emailEl = widget.querySelector('[data-auth-email]');
+        var avatarEl = widget.querySelector('[data-auth-avatar]');
+        if(nameEl) nameEl.textContent = firstName;
+        if(emailEl) emailEl.textContent = user.email || '';
+        if(avatarEl){
+          if(user.photoURL){
+            avatarEl.style.backgroundImage = 'url(' + user.photoURL + ')';
+            avatarEl.textContent = '';
+          } else {
+            avatarEl.style.backgroundImage = 'none';
+            avatarEl.textContent = firstName.charAt(0).toUpperCase();
+          }
+        }
+      });
+    });
+  }
+
+  // Registered once, immediately: reacts to every sign-in (fresh or restored)
+  // for the lifetime of the page, independent of which hydrate* fn is active.
+  window.SFAuth.onChange(onAuthChange);
 
   /* ===================== Per-track + academy-wide rollups ===================== */
 
@@ -360,6 +530,7 @@
       });
     }
 
+    setRehydrate(render);
     render();
   }
 
@@ -391,6 +562,7 @@
   }
 
   function hydrateDashboard(slug){
+    setRehydrate(function(){ hydrateDashboard(slug); });
     var td = tracksData()[slug];
     if(!td) return;
     var nav = hydrateNav(slug, null);
@@ -427,6 +599,7 @@
 
   /* ===================== Hub hydration (academy-wide) ===================== */
   function hydrateHub(){
+    setRehydrate(hydrateHub);
     var state = loadState(); // runs migrateLegacy()
     var streak = getStreak(state);
     document.querySelectorAll('[data-streak]').forEach(function(el){ el.textContent = streak; });
@@ -495,10 +668,13 @@
     hydrateDashboard: hydrateDashboard,
     hydrateHub: hydrateHub,
     initMobileNav: initMobileNav,
-    refreshApertures: refreshApertures
+    refreshApertures: refreshApertures,
+    mergeStates: mergeStates,
+    initAuthUI: initAuthUI
   };
 
   document.addEventListener('DOMContentLoaded', function(){
     initMobileNav();
+    initAuthUI();
   });
 })();

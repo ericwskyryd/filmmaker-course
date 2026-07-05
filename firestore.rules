@@ -1,0 +1,31 @@
+rules_version = '2';
+
+// ===================== Creator Reps: Firestore security rules =====================
+// One collection: users/{uid}, holding each signed-in tester's profile fields
+// and their progress object (same shape as the localStorage v2 scheme).
+//
+// Access model:
+//   - A signed-in user may read and write ONLY their own document (users/{their uid}).
+//   - The admin (eric@skyryd.com) may additionally READ every user's document,
+//     to power the testers table at admin.html. The admin does not get write
+//     access to other people's documents -- nothing here ever needs it.
+//   - Everyone else, everything else: denied by default.
+//
+// Paste-into-console steps live in FIREBASE-SETUP.md.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      allow read: if request.auth != null
+        && (request.auth.uid == userId || request.auth.token.email == "eric@skyryd.com");
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Deny everything else outright (no other collections exist today; this is
+    // a deliberate default-closed fallback so a future typo can't open the db).
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

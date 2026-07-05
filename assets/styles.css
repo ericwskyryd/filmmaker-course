@@ -124,6 +124,32 @@ p{ margin:0; }
 .divider-v{ width:1px; height:28px; background: var(--border-hairline-strong); }
 .icon{ width:18px; height:18px; flex:0 0 auto; }
 
+/* ===================== AUTH WIDGET (Google sign-in / account menu) ===================== */
+/* Quiet by design: a plain outlined button, not a filled/accent CTA. Two states
+   are baked into the same markup; assets/progress.js toggles .is-signed-in once
+   assets/firebase.js resolves an auth session. Signed-out visitors (the default,
+   and everyone until they choose to sign in) see only the "Sign in" button. */
+.auth-widget{ position:relative; display:flex; align-items:center; }
+.auth-signin-btn{ display:flex; align-items:center; gap:8px; padding: 8px 14px; border-radius:8px; border:1px solid var(--border-hairline-strong); background:transparent; color: var(--text-secondary); font-size: var(--fs-14); font-weight:600; transition: color 120ms ease-out, border-color 120ms ease-out, background 120ms ease-out; }
+.auth-signin-btn:hover{ color: var(--text-primary); background: rgba(255,255,255,0.04); }
+.auth-widget.is-signed-in .auth-signin-btn{ display:none; }
+.auth-account{ display:none; align-items:center; }
+.auth-widget.is-signed-in .auth-account{ display:flex; }
+.auth-avatar-btn{ display:flex; align-items:center; gap:8px; padding: 4px 10px 4px 4px; border-radius:20px; border:1px solid transparent; }
+.auth-avatar-btn:hover{ background: rgba(255,255,255,0.04); border-color: var(--border-hairline); }
+.auth-avatar{ width:26px; height:26px; border-radius:50%; background: var(--accent-soft); color: var(--accent); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; background-size:cover; background-position:center; flex:0 0 auto; }
+.auth-firstname{ font-size: var(--fs-14); font-weight:600; color: var(--text-primary); }
+.auth-menu{ display:none; position:absolute; top: calc(100% + 8px); right:0; min-width:190px; background: var(--surface-2); border:1px solid var(--border-hairline-strong); border-radius:10px; padding: var(--sp-2); box-shadow: 0 12px 32px rgba(0,0,0,0.45); z-index:70; }
+.auth-widget.menu-open .auth-menu{ display:block; }
+.auth-menu-email{ font-size:12px; color: var(--text-tertiary); padding: var(--sp-2) var(--sp-3) var(--sp-1); word-break:break-all; margin:0; }
+.auth-menu-item{ display:block; width:100%; text-align:left; padding: var(--sp-2) var(--sp-3); border-radius:6px; font-size: var(--fs-14); font-weight:600; color: var(--text-primary); }
+.auth-menu-item:hover{ background: rgba(255,255,255,0.06); }
+
+.auth-widget.compact .auth-signin-btn span{ display:none; }
+.auth-widget.compact .auth-signin-btn{ padding:8px; border-radius:50%; border-color: var(--border-hairline); }
+.auth-widget.compact .auth-firstname{ display:none; }
+.auth-widget.compact .auth-avatar-btn{ padding:0; }
+
 .btn-nav{ display:flex; align-items:center; gap: 6px; padding: var(--sp-2) var(--sp-3); border-radius: 8px; border: 1px solid var(--border-hairline-strong); background: transparent; color: var(--text-primary); font-size: var(--fs-14); font-weight: 600; }
 .btn-nav .icon{ width:14px; height:14px; color: var(--text-secondary); }
 .btn-nav[disabled]{ opacity:0.35; pointer-events:none; }
@@ -399,4 +425,37 @@ body.hub{ min-height:100vh; }
   .hub-header{ display:none; }
   .hub-stat-row{ max-width:100%; flex-wrap:wrap; }
   .track-grid{ grid-template-columns: 1fr; }
+}
+
+/* ===================== ADMIN (testers dashboard, admin.html only) ===================== */
+.admin-badge{ font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color: var(--accent); background: var(--accent-soft); border:1px solid rgba(232,163,61,0.3); border-radius:999px; padding: 5px 12px; }
+.admin-state{ display:none; }
+.admin-state.active{ display:block; }
+.admin-empty-card{ max-width:520px; margin: var(--sp-16) auto; background: var(--surface); border:1px solid var(--border-hairline); border-radius:14px; padding: var(--sp-8) var(--sp-8); text-align:center; }
+.admin-empty-title{ font-family: var(--font-display); font-size: var(--fs-25); font-weight:500; color: var(--text-primary); margin:0 0 var(--sp-3); }
+.admin-empty-body{ font-size: var(--fs-14); line-height:1.6; color: var(--text-secondary); margin:0; }
+.admin-subhead{ font-size: var(--fs-14); color: var(--text-secondary); margin:0; }
+
+.admin-table-card{ margin-top: var(--sp-6); padding: var(--sp-4); }
+.admin-table-scroll{ overflow-x:auto; }
+.admin-table{ width:100%; border-collapse: collapse; font-size: 13px; min-width: 880px; }
+.admin-table thead th{ text-align:left; font-size:11px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color: var(--text-tertiary); padding: var(--sp-3); border-bottom: 1px solid var(--border-hairline-strong); white-space:nowrap; }
+.admin-table th.admin-track-col{ text-align:center; cursor:help; }
+.admin-table td{ padding: var(--sp-3); border-bottom: 1px solid var(--border-hairline); color: var(--text-primary); vertical-align:middle; }
+.admin-table tbody tr:hover{ background: rgba(255,255,255,0.025); }
+.admin-name-cell{ font-weight:600; white-space:nowrap; }
+.admin-email-cell{ color: var(--text-secondary); white-space:nowrap; }
+.admin-total-cell{ font-weight:600; }
+.admin-track-col{ text-align:center; color: var(--text-tertiary); }
+.admin-track-col.partial{ color: var(--text-secondary); }
+.admin-track-col.full{ color: var(--success); font-weight:600; }
+.admin-last-active-cell{ color: var(--text-secondary); white-space:nowrap; }
+.admin-table-empty{ text-align:center; color: var(--text-secondary); padding: var(--sp-8) !important; }
+
+@media (max-width: 900px){
+  .admin-empty-card{ margin: var(--sp-8) 0; padding: var(--sp-6); }
+  /* admin.html is a small internal tool with no mobile topbar of its own, so
+     unlike the public hub, its header (holding the only sign-in control) must
+     stay visible at every width instead of the hub's default mobile hide. */
+  .admin-shell .hub-header{ display:flex !important; flex-wrap:wrap; gap: var(--sp-3); }
 }

@@ -83,7 +83,7 @@ function linkCheck() {
     });
   });
 
-  check(`${htmlFiles.length} HTML pages found (expect 97 lessons + 8 dashboards + 1 hub + 14 redirects = 120)`, htmlFiles.length === 120, `found ${htmlFiles.length}`);
+  check(`${htmlFiles.length} HTML pages found (expect 97 lessons + 8 dashboards + 1 hub + 14 redirects + 1 admin = 121)`, htmlFiles.length === 121, `found ${htmlFiles.length}`);
   check(`all ${totalLinks} internal links/asset refs resolve`, brokenLinks === 0, broken.slice(0, 10).join('; '));
 
   // Redirect stub content check
@@ -122,10 +122,10 @@ function emDashGrep() {
   const hits = [];
   htmlFiles.forEach((file) => {
     const html = fs.readFileSync(file, 'utf8');
-    if (html.includes('—')) {
+    if (html.includes('—') || /&mdash;/i.test(html)) {
       const lines = html.split('\n');
       lines.forEach((line, i) => {
-        if (line.includes('—')) hits.push(`${path.relative(SITE_ROOT, file)}:${i + 1}`);
+        if (line.includes('—') || /&mdash;/i.test(line)) hits.push(`${path.relative(SITE_ROOT, file)}:${i + 1}`);
       });
     }
   });
@@ -233,6 +233,66 @@ async function persistenceTest(browser) {
   await page.close();
 }
 
+// ---------- 6: no JS console errors on load (hub, a lesson page, admin.html) ----------
+
+async function consoleErrorTest(browser) {
+  console.log('\n[6] No JS console errors on load (hub, lesson, admin)');
+  const pages = ['index.html', 'smartphone/lesson-01.html', 'admin.html'];
+  for (const rel of pages) {
+    const page = await browser.newPage();
+    const errors = [];
+    page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
+    page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+    await page.goto(`http://localhost:${PORT}/${rel}`, { waitUntil: 'networkidle0' });
+    await new Promise((r) => setTimeout(r, 800)); // let the firebase.js module + auth state settle
+    check(`${rel}: no console errors on load`, errors.length === 0, errors.slice(0, 5).join(' | '));
+    await page.close();
+  }
+}
+
+// ---------- 7: firebase.js blocked/offline -> no white screen, degrades to localStorage ----------
+
+async function offlineDegradeTest(browser) {
+  console.log('\n[7] gstatic blocked (offline Firebase) -> site still works, no white screen');
+  const page = await browser.newPage();
+  await page.setRequestInterception(true);
+  page.on('request', (req) => {
+    if (req.url().includes('gstatic.com/firebasejs')) req.abort();
+    else req.continue();
+  });
+  const pageErrors = [];
+  page.on('pageerror', (e) => pageErrors.push(e.message));
+
+  await page.goto(`http://localhost:${PORT}/smartphone/lesson-03.html`, { waitUntil: 'networkidle0' });
+  await new Promise((r) => setTimeout(r, 5500)); // let the progress.js safety-net timeout resolve auth to signed-out
+
+  const bodyHasContent = await page.evaluate(() => document.querySelectorAll('.checklist-card, .lesson-title').length > 0);
+  check('lesson page still renders full content with gstatic blocked (no white screen)', bodyHasContent);
+  check('no uncaught JS exceptions with gstatic blocked', pageErrors.length === 0, pageErrors.slice(0, 5).join(' | '));
+
+  // Checklist + localStorage persistence must still work with Firebase fully unreachable.
+  await page.click('.checklist[data-lesson-checklist="3"] input[type=checkbox]');
+  await new Promise((r) => setTimeout(r, 200));
+  const checkedNow = await page.evaluate(() => document.querySelector('.checklist[data-lesson-checklist="3"] input[type=checkbox]').checked);
+  check('checkbox still checks with gstatic blocked', checkedNow);
+
+  await page.reload({ waitUntil: 'networkidle0' });
+  await new Promise((r) => setTimeout(r, 300));
+  const checkedAfterReload = await page.evaluate(() => document.querySelector('.checklist[data-lesson-checklist="3"] input[type=checkbox]').checked);
+  check('checkbox survives reload with gstatic blocked (localStorage fallback intact)', checkedAfterReload);
+
+  // Sign-in button must not throw when clicked in the degraded state.
+  let clickError = null;
+  try {
+    await page.click('[data-auth-signin]');
+  } catch (e) {
+    clickError = e.message;
+  }
+  check('clicking "Sign in" with Firebase unreachable does not throw', clickError === null, clickError);
+
+  await page.close();
+}
+
 async function main() {
   const server = await startServer();
   console.log(`Local server on http://localhost:${PORT}`);
@@ -243,6 +303,8 @@ async function main() {
   const browser = await puppeteer.launch({ executablePath: CHROME_PATH, headless: 'new' });
   await migrationTest(browser);
   await persistenceTest(browser);
+  await consoleErrorTest(browser);
+  await offlineDegradeTest(browser);
   await browser.close();
   server.close();
 
