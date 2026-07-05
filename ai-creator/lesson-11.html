@@ -241,26 +241,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid two-up">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/cjDaYkMYo2Q?rel=0" title="Pick (partial fit, flagged): “YouTube AI Disclosure Policy Explained 2026 | AI Use Setting &amp; GenAI Content Rules" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">Pick (partial fit, flagged): “YouTube AI Disclosure Policy Explained 2026 | AI Use Setting &amp; GenAI Content Rules</p>
-            <p class="video-caption-meta">Digital Seller Academy &middot; 7:43</p>
-            <p class="video-caption-why">Current and directly on the platform-disclosure item of the checklist (item 1 of 5). Small, low-view channel, so treat as a serviceable explainer rather than an authoritative source. Covers only 1 of the lesson’s 5 checklist items (platform disclosure), not likeness/consent, copyright, licensing, or fact-check completion.</p>
-          </div>
-        </div>
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/HAu2C-oCODM?rel=0" title="Secondary (covers the likeness/consent angle): “Brand Deal Rule Most Creators Don’t Know About (Kicks In June 9th)" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">Secondary (covers the likeness/consent angle): “Brand Deal Rule Most Creators Don’t Know About (Kicks In June 9th)</p>
-            <p class="video-caption-meta">Girl Code of Law &middot; 11:50</p>
-            <p class="video-caption-why">Covers the New York AI Transparency in Advertising Act and synthetic-performer disclosure, which maps to checklist item 2 (real person likeness/voice consent). Legal-explainer channel, credible for this narrow angle, but still commentary rather than a live checklist walkthrough.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Five Items, Real Evidence</p>
+        <div data-demo-pattern="compare">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"toggle-list","type":"toggle-list","rows":[{"label":"Platform disclosure","evidence":"Checked YouTube's current AI-disclosure policy on the upload date. This video used AI-generated visuals and AI voiceover, both trigger the 'Altered or Synthetic Content' label. Applied it during upload, screenshot attached.","rubber":"Pass, it's obviously fine."},{"label":"Real person likeness or voice","evidence":"No real, identifiable person's face or voice appears anywhere in the generated footage or the AI voiceover. Confirmed by reviewing all three shots frame by frame.","rubber":"Pass, doesn't look like anyone I know."},{"label":"Copyrighted or trademarked material","evidence":"Reviewed all three generated shots for lifted logos, characters, or trademarked designs. None found. Workshop set and tools are generic, not brand-specific.","rubber":"Pass, looks generic enough."},{"label":"Music and audio licensing","evidence":"Background music pulled from YouTube's own royalty-free audio library, track ID logged. AI voiceover is originally generated, not a licensing concern.","rubber":"Pass, found it online somewhere."},{"label":"Fact-check completion","evidence":"The voiceover script's one factual claim was checked against the original source cited in Lesson 10's fact-check pass. Source link saved.","rubber":"Pass, sounded about right."}]}</script>
         </div>
       </div>
     </section>
@@ -383,6 +369,8 @@
     SF.hydrateChecklist("ai-creator", 11);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

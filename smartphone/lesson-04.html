@@ -250,16 +250,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/4RqR_OgjXc4?rel=0" title="How to Use AE/AF Lock on iPhone: Lock Focus and Exposure for Better Photos" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">How to Use AE/AF Lock on iPhone: Lock Focus and Exposure for Better Photos</p>
-            <p class="video-caption-meta">GuideWise &middot; 1:35</p>
-            <p class="video-caption-why">Clean, current (2025) screen-recorded demo of tap-and-hold AE/AF lock plus the brightness slider, on the modern iPhone camera app.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Lock Before the Light Changes</p>
+        <div data-demo-pattern="compare">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"toggle","type":"toggle","visual":"exposure-walk","states":[{"key":"locked","label":"Locked","caption":"Tap-and-hold locked exposure on the face before the walk started. Background swings from bright sidewalk to shaded doorway. Face brightness never moves."},{"key":"auto","label":"Auto","caption":"0-5s: Exposure locked to background, face reads fine in full sun. 6-10s: Background darkens, camera brightens the whole frame to compensate. Your subject's face is now blown out or buried in shadow, whichever direction the auto-exposure guesses wrong."}],"bottomLine":"This is the same subject, the same 10 seconds, the same light boundary. The only difference is one tap before you rolled."}</script>
         </div>
       </div>
     </section>
@@ -384,6 +380,8 @@
     SF.hydrateChecklist("smartphone", 4);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

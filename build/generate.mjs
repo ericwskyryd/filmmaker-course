@@ -14,6 +14,27 @@ import { fileURLToPath } from 'url';
 import { parseTrackOverview, parseLesson, parseVideoPicks } from './lib.mjs';
 import { renderTrackDashboard, renderLessonPage, renderRedirectStub, renderHub } from './templates.mjs';
 
+// Interactive demo content: one data module per track in build/demos-data/.
+// Missing folder or files are fine; lessons without a demo entry keep their
+// video pick or honest gap note.
+async function loadDemosData() {
+  const dir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'demos-data');
+  const byTrack = new Map();
+  if (!fs.existsSync(dir)) return byTrack;
+  for (const f of fs.readdirSync(dir).filter((f) => f.endsWith('.mjs'))) {
+    try {
+      const mod = await import(`./demos-data/${f}`);
+      const data = mod.default;
+      if (data && data.track && data.demos) byTrack.set(data.track, data.demos);
+    } catch (e) {
+      console.error(`demos-data/${f} failed to load: ${e.message}`);
+      process.exitCode = 1;
+    }
+  }
+  return byTrack;
+}
+const DEMOS_BY_TRACK = await loadDemosData();
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SITE_ROOT = path.resolve(__dirname, '..');
 const CONTENT_ROOT = path.resolve(__dirname, '../../content');
@@ -117,11 +138,13 @@ function writeTrack(track) {
 
   fs.writeFileSync(path.join(trackDir, 'index.html'), renderTrackDashboard(track), 'utf8');
 
+  const trackDemos = DEMOS_BY_TRACK.get(track.slug) || {};
   track.lessons.forEach((lesson, i) => {
     const prev = track.lessons[i - 1] || null;
     const next = track.lessons[i + 1] || null;
     const nn = String(lesson.n).padStart(2, '0');
-    fs.writeFileSync(path.join(trackDir, `lesson-${nn}.html`), renderLessonPage(track, lesson, prev, next), 'utf8');
+    const demo = trackDemos[`lesson-${nn}`] || null;
+    fs.writeFileSync(path.join(trackDir, `lesson-${nn}.html`), renderLessonPage(track, lesson, prev, next, demo), 'utf8');
   });
 }
 

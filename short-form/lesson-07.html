@@ -238,16 +238,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/y1x4we1T52s?rel=0" title="How to Hit Beats in CapCut PC | Perfect Beat Sync Tutorial" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">How to Hit Beats in CapCut PC | Perfect Beat Sync Tutorial</p>
-            <p class="video-caption-meta">Xpertise Logs &middot; 2:08</p>
-            <p class="video-caption-why">Shows the real beat-marker and waveform workflow in CapCut for landing cuts on a beat. Current and dense.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Generic Placement vs. The Exact Beat</p>
+        <div data-demo-pattern="compare">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"toggle","type":"toggle","visual":"waveform","states":[{"label":"Generic Placement","synced":false,"dropIndex":28,"markerIndex":0,"caption":"Sound starts under the clip with no relationship to anything happening on screen. The drop just plays in the background, ignored."},{"label":"Precise Sync","synced":true,"dropIndex":28,"markerIndex":28,"caption":"The visual punchline lands within 2 frames of the drop. This is the moment everyone already associates with a payoff, borrowed on purpose."}],"bottomLine":"You can point to the exact timestamp when asked. That's the test."}</script>
         </div>
       </div>
     </section>
@@ -371,6 +367,8 @@
     SF.hydrateChecklist("short-form", 7);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

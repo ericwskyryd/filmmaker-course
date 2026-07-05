@@ -238,16 +238,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/oSjCahkH5Nc?rel=0" title="I posted the same video to Reels, TikTok and Shorts. Here’s what happened." loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">I posted the same video to Reels, TikTok and Shorts. Here’s what happened.</p>
-            <p class="video-caption-meta">Katie Steckly &middot; 29:53</p>
-            <p class="video-caption-why">The only verified video found that actually tests the same footage across all three platforms and reports back real, platform-specific results. It leans toward data analysis rather than showing the re-edit itself on screen, so it’s a partial match on format even though it’s a strong match on substance.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Same Clip, Two Platforms</p>
+        <div data-demo-pattern="panels">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"callout-dots","sourceCaption":"A 45-second raw clip of you reviewing a piece of gear.","frames":[{"label":"Reels Cut","callouts":[{"label":"Polished framing, tripod-steady, clean background","reveal":"Reels tends to reward save- and share-worthy polish, since Explore surfaces you to people who don't already follow you."},{"label":"Trend audio laid under from the start","reveal":"Trend-audio use tends to help discovery here."}]},{"label":"TikTok Cut","callouts":[{"label":"Rougher handheld framing, same room, less staged","reveal":"TikTok completion tends to favor content that feels native to the app over content that feels produced."},{"label":"Text-overlay hook instead of a voiceover open","reveal":"A text hook reads faster than waiting for a voiceover to start, and rewards the scroll-stopping habit of the platform."}]}],"bottomLine":"Same message, same footage, two different packaging decisions, each tied to a specific platform tendency, not a whim."}</script>
         </div>
       </div>
     </section>
@@ -371,6 +367,8 @@
     SF.hydrateChecklist("short-form", 6);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

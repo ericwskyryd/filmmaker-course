@@ -246,26 +246,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid two-up">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/t0jZFoYs_TI?rel=0" title="This PROVEN structure works BEST for YouTube videos" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">This PROVEN structure works BEST for YouTube videos</p>
-            <p class="video-caption-meta">Dexxter Clark 2 &middot; 6:06</p>
-            <p class="video-caption-why">Short, recent, structure-focused. No confirmed literal annotated-timeline graphic, closest verified match on the underlying skill (beat structure, avoiding dead stretches).</p>
-          </div>
-        </div>
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/c6X-Ywy3yVU?rel=0" title="I Found 3 Retention Techniques that Make Videos BLOW UP" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">I Found 3 Retention Techniques that Make Videos BLOW UP</p>
-            <p class="video-caption-meta">Nate Black &middot; 11:15</p>
-            <p class="video-caption-why">Retention-technique breakdown, useful second angle on why beats and loops matter.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; The Beat-by-Beat Outline, Annotated</p>
+        <div data-demo-pattern="compare">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"toggle","type":"toggle","visual":"annotated-list","states":[{"label":"The Good Outline","beats":[{"time":"0:00-0:15","text":"Hook: Open on the payoff, a bike braking silently after a fix that took 4 minutes."},{"time":"0:15-0:35","text":"Beat 1: Show the problem: the squeal, close mic on the brake."},{"time":"0:35-0:55","text":"Beat 2: Name the actual cause, glazed brake pads, not what most people assume (loose cable)."},{"time":"0:55-1:20","text":"Beat 3: First fix step, sanding the pad surface, close-up hands."},{"time":"1:20-1:40","text":"Beat 4: Second fix step, realigning the caliper, a new camera angle to keep it fresh."},{"time":"1:40-2:00","text":"Payoff delivered, the bike brakes silently, matches the hook's opening promise exactly.","loop":true},{"time":"2:00-2:15","text":"CTA beat: One-line wrap and subscribe ask."}]},{"label":"Show a Bad Outline Instead","beats":[{"time":"0:00-0:15","text":"Hook: Open on the payoff, a bike braking silently after a fix that took 4 minutes."},{"time":"0:15-1:45","text":"Talk about my process.","flag":"No stated change for 90 seconds. This is where 500 viewers quietly leave."},{"time":"1:45-2:00","text":"Show the fix.","flag":"The loop from the hook never gets a marked resolution, it just sort of happens."}]}]}</script>
         </div>
       </div>
     </section>
@@ -391,6 +377,8 @@
     SF.hydrateChecklist("weekend-youtuber", 6);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

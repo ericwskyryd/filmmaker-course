@@ -246,16 +246,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/iOanz0zS5jQ?rel=0" title="How YouTubers Edit So Fast (My Premiere Pro Workflow)" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">How YouTubers Edit So Fast (My Premiere Pro Workflow)</p>
-            <p class="video-caption-meta">After Framing &middot; 12:43</p>
-            <p class="video-caption-why">Recent, real editing-speed workflow with screen capture. No confirmed timer overlay or export-progress-bar ending, so it teaches the underlying discipline (fast, decisive editing) rather than staging the literal demo.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Rough Assembly, Trim, Export, in That Order</p>
+        <div data-demo-pattern="mockui">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"timeline-export","beats":["Establishing","Close-up","Hands","Reaction","Before/After","Wrap"],"plannedLabel":"Play as Planned","overrunLabel":"Play the Overrun Failure","plannedResult":"Export bar fills fully, with time to spare.","overrunCaption":"Endless fine-tuning on the first few beats","overrunResult":"Export didn't finish before the time box closed."}</script>
         </div>
       </div>
     </section>
@@ -379,6 +375,8 @@
     SF.hydrateChecklist("weekend-youtuber", 9);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

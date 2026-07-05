@@ -237,26 +237,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid two-up">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/aM147OLDBBs?rel=0" title="How to Use Focus Peaking on a Mirrorless Camera" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">How to Use Focus Peaking on a Mirrorless Camera</p>
-            <p class="video-caption-meta">Digital Camera World &middot; 1:55</p>
-            <p class="video-caption-why">real mirrorless body, peaking overlay visible on screen as the ring turns, colors and intensity settings explained live.</p>
-          </div>
-        </div>
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/ammUfAZ5gWo?rel=0" title="NEVER MISS FOCUS AGAIN With a Manual Focus Lens! How to Use Peaking Display" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">NEVER MISS FOCUS AGAIN With a Manual Focus Lens! How to Use Peaking Display</p>
-            <p class="video-caption-meta">Vini Velasquez &middot; 1:09</p>
-            <p class="video-caption-why">short, dense, shows the peaking color highlighting in-focus edges in real time as focus shifts, matches the “confirm on screen” instruction in the lesson.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; One Smooth Turn Beats Three Corrections</p>
+        <div data-demo-pattern="compare">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"toggle","type":"toggle","visual":"focus-pull","states":[{"label":"Smooth Pull","key":"smooth","caption":"One continuous turn. Peaking shifts cleanly from Near to Far and holds. Landed in about 2 seconds, no correction."},{"label":"Hunting Pull","key":"hunting","caption":"Three short bursts instead of one motion. Peaking flickers, drops off both subjects for a moment, and finally settles late. This reads as three tiny corrections, not one intentional move."}],"bottomLine":"Practice the distance blind a few times with the lens cap on, feel how far your fingers need to travel, then do it once for real."}</script>
         </div>
       </div>
     </section>
@@ -382,6 +368,8 @@
     SF.hydrateChecklist("pro-camera", 7);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

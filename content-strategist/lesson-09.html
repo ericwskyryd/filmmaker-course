@@ -238,16 +238,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/3plG0wtznsk?rel=0" title="How to Conduct a Social Media Audit: Step-by-Step" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">How to Conduct a Social Media Audit: Step-by-Step</p>
-            <p class="video-caption-meta">Metricool &middot; 9:04</p>
-            <p class="video-caption-why">Closest verified match. Real, timestamped walkthrough of an audit template (data section, competitor section, then the template itself). It’s a general social audit, not a pillar-by-pillar review scored against a stated promise the way this lesson wants, but it’s the strongest available “real document, real numbers, real review cadence” video found after several search passes.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Pillar by Pillar, Out Loud</p>
+        <div data-demo-pattern="reveal">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"stagger","variant":"review-rows","buttonLabel":"Narrate the Review","rows":[{"cells":["Pillar","Audience Fit","Leading-Metric Trend"]},{"cells":["Pillar 1, BD Tactical Frameworks","Strong","Up"]},{"cells":["Pillar 2, Personal Career Stories","Drifting (attracting job-seekers, not the target BD-leader audience)","Flat"]},{"cells":["Pillar 3, Pipeline and Revenue Ops","Strong","Up"]},{"cells":["Pillar 4, Hustle/Motivation Posts","Weak (matches the excluded \"hustle-culture\" group from Lesson 1)","Down"],"worst":true}],"calloutText":"Pillar 4: Leading-metric trend down for 6 straight pieces, and the comments are increasingly from the audience Lesson 1 explicitly excluded. This pillar is drifting away from the promise, not just underperforming.","footerText":"Cadence adherence: 11 of 12 planned pieces published this quarter, 92%. Promise re-test: Promise from Lesson 2 still holds for 3 of 4 pillars. Pillar 4 no longer serves it."}</script>
         </div>
       </div>
     </section>
@@ -374,6 +370,8 @@
     SF.hydrateChecklist("content-strategist", 9);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

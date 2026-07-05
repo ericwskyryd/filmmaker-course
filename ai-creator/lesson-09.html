@@ -241,26 +241,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid two-up">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/h9n1FWEOVYw?rel=0" title="Pick A: “I Tested ElevenLabs AI Voice Tools so You Don’t Have to..." loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">Pick A: “I Tested ElevenLabs AI Voice Tools so You Don’t Have to...</p>
-            <p class="video-caption-meta">Joseph Martin &middot; 10:09</p>
-            <p class="video-caption-why">Direct ElevenLabs match, recent, tests multiple voice features head to head. Does not use the exact 4-criteria scoring format from the lesson; the instructor will need to layer that framework on top.</p>
-          </div>
-        </div>
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/uE-gjaU5N4c?rel=0" title="Pick B: “Best ElevenLabs Voice Settings Tutorial For Beginners (FULL GUIDE)" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">Pick B: “Best ElevenLabs Voice Settings Tutorial For Beginners (FULL GUIDE)</p>
-            <p class="video-caption-meta">How to Digital &middot; 8:10</p>
-            <p class="video-caption-why">Shows side-by-side setting comparisons (stability, similarity, style) that map reasonably well onto the pacing/emphasis/tone criteria, though again not the exact scorecard format.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Same Line, Two Takes, Four Criteria</p>
+        <div data-demo-pattern="reveal">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"word","tracks":[{"label":"Take A","panelLabel":"Take A (fast, even spacing, no pauses)","buttonLabel":"Play Take A","text":"In twenty seconds, I'll show you the framing mistake that's killing your close rate.","durationMs":3600,"stopwatch":false,"endTone":"bad","trailing":{"scorecardRows":[{"label":"Pacing and pauses","badge":"FAIL","reason":"No pause before the number or after the key word, it reads flat and rushed."},{"label":"Emphasis","badge":"FAIL","reason":"Every word gets equal weight, 'framing mistake' and 'close rate' don't land any harder than 'the' or 'show.'"},{"label":"Pronunciation","badge":"PASS","reason":"Every word is clean and correctly stressed."},{"label":"Tone","badge":"FAIL","reason":"Reads instructional-neutral, not the confident, slightly urgent tone the line is written for."}],"verdict":"Verdict: Reject. Route to a human read or try a different voice setting."}},{"label":"Take B","panelLabel":"Take B (natural pauses, key words held longer)","buttonLabel":"Play Take B","text":"In twenty seconds, I'll show you the framing mistake that's killing your close rate.","durationMs":6400,"stopwatch":false,"endTone":"good","trailing":{"scorecardRows":[{"label":"Pacing and pauses","badge":"PASS","reason":"A natural half-beat lands before the number and before the payoff, exactly where a person would breathe."},{"label":"Emphasis","badge":"PASS","reason":"'Framing mistake' and 'close rate' get audible weight, the two words that actually matter in the sentence."},{"label":"Pronunciation","badge":"PASS","reason":"Clean throughout."},{"label":"Tone","badge":"PASS","reason":"Confident, slightly urgent, matches the script's intent."}],"verdict":"Verdict: Accept as-is."}}]}</script>
         </div>
       </div>
     </section>
@@ -383,6 +369,8 @@
     SF.hydrateChecklist("ai-creator", 9);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

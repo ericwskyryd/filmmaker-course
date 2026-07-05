@@ -238,7 +238,14 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-gap-note" style="margin-top:0;"><span class="warn-dot"></span><p><b>No video for this one:</b> <strong>Gap flag:</strong> No verified single video was found doing the literal “same 20 seconds, one continuous shot vs.  10+ cut version, side by side” comparison.</p></div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; One Shot vs. Ten Cuts</p>
+        <div data-demo-pattern="zones">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"timeline-compare","durationMs":8000,"buttonLabel":"Play Both 20-Second Timelines","tracks":[{"label":"One Continuous Shot","segments":["One unbroken 20-second take"],"caption":"Nothing changes on screen for 20 straight seconds. To a scrolling thumb, this reads as dead."},{"label":"Hard-Cut Version","segments":["Wide shot","Insert: hands","Cutaway: object","Reaction","New angle","Insert: hands","Jump cut forward","Wide shot","Reaction","Final action beat"],"caption":"Something changes every 1 to 3 seconds. Angle, subject, or framing shifts, every time. 10 shots, none longer than 3 seconds, still one clear idea."}]}</script>
+        </div>
+      </div>
     </section>
 
     <div class="content-col">
@@ -360,6 +367,8 @@
     SF.hydrateChecklist("short-form", 4);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

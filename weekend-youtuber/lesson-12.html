@@ -246,26 +246,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid two-up">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/QklN7lKFvuY?rel=0" title="3 Secrets for Viral Vertical Shorts" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">3 Secrets for Viral Vertical Shorts</p>
-            <p class="video-caption-meta">Restream &middot; 0:30</p>
-            <p class="video-caption-why">Extremely short and dense, current, on-topic for Shorts hook discipline. No confirmed literal side-by-side comparison with a 2-second marker overlay.</p>
-          </div>
-        </div>
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/Y3pAmxXNOU4?rel=0" title="How To Make YouTube Shorts Hooks That Go Viral Every Time" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">How To Make YouTube Shorts Hooks That Go Viral Every Time</p>
-            <p class="video-caption-meta">moneyboymax &middot; 22:01</p>
-            <p class="video-caption-why">Much longer than ideal, flagging that explicitly, but it’s a real, current, dedicated breakdown of Shorts hook construction if you want the deeper version.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Title Card vs. Payoff, First 2 Seconds</p>
+        <div data-demo-pattern="compare">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"dual","type":"dual","visual":"phone-pair","playLabel":"Play Both","states":[{"label":"Title Card","kind":"titlecard","titleText":"MY BIKE BRAKE FIX","caption":"2 seconds spent on a title card. On Shorts, that's most of your hook window, gone."},{"label":"Payoff Open","kind":"payoff","caption":"Payoff visible from frame one. No setup burned."}],"bottomLine":"The Short needs its own hook. It isn't a trailer for your long-form video."}</script>
         </div>
       </div>
     </section>
@@ -392,6 +378,8 @@
     SF.hydrateChecklist("weekend-youtuber", 12);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

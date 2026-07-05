@@ -229,7 +229,14 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-gap-note" style="margin-top:0;"><span class="warn-dot"></span><p><b>No video for this one:</b> <strong>No verified strong pick. </strong> This is the most specific ask in the whole set (script and shot list literally overlaid on a real, previously-produced commercial, played twice) and nothing like it exists on YouTube.</p></div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Script, Shot List, Timeline: Same Beat, Three Forms</p>
+        <div data-demo-pattern="panels">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"beat-sync","panelLabels":["Script","Shot List","Timeline"],"beats":[{"label":"Problem","values":["Every hour a plane sits on the ground waiting for a quote is a deal at risk.","Shot 1: Wide, grounded aircraft on tarmac, empty cockpit. Shot 2: Close-up, broker checking a phone, no response.","0:00-0:07"]},{"label":"Turn","values":["SkyRyd puts every available aircraft and operator in one real-time marketplace.","Shot 3: Screen capture, SkyRyd's live map view populating with aircraft icons.","0:07-0:13"]},{"label":"Payoff","values":["Quotes that used to take half a day now take under ten minutes.","Shot 4: Broker's phone lighting up with a quote notification. Shot 5: Handshake or signed confirmation screen.","0:13-0:20"]},{"label":"CTA","values":["See your first live quote at skyryd.com.","Shot 6: Logo card with URL, clean end frame.","0:20-0:23"]}]}</script>
+        </div>
+      </div>
     </section>
 
     <div class="content-col">
@@ -352,6 +359,8 @@
     SF.hydrateChecklist("scriptwriting", 10);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

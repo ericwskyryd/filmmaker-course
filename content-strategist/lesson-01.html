@@ -238,7 +238,14 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-gap-note" style="margin-top:0;"><span class="warn-dot"></span><p><b>No video for this one:</b> <strong>No verified strong pick. </strong> The video slot asks for a specific before/after: a vague audience statement tested against 5 sample topics (fails to sort), then the same statement tightened with 3 named exclusions (sorts cleanly).</p></div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Sort Test: Vague vs. Tightened</p>
+        <div data-demo-pattern="reveal">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"stagger","variant":"sort-columns","buttonLabel":"Run the Sort","columns":[{"label":"Vague Statement: \"Business leaders interested in growth.\"","counterText":"1 of 5 sorted cleanly, 4 unclear.","rows":[{"text":"How I structure a $27M pipeline review","tally":"UNCLEAR"},{"text":"5 cold-call scripts that book more meetings","tally":"UNCLEAR"},{"text":"How to build a BD team from 2 people to 8","tally":"UNCLEAR"},{"text":"Morning routines of successful founders","tally":"IN"},{"text":"What I look for when hiring my first VP of BD","tally":"UNCLEAR"}]},{"label":"Tightened Statement: \"Revenue and BD leaders at mid-size companies who are past the individual-contributor stage and are now building a function, not just hitting a number themselves. Not for: junior sales reps looking for scripts, general hustle-culture consumers, recruiters mining the feed for candidates, direct competitors doing competitive intelligence.\"","counterText":"5 of 5 sorted cleanly, under a minute.","rows":[{"text":"How I structure a $27M pipeline review","tally":"IN"},{"text":"5 cold-call scripts that book more meetings (junior rep script-seeking, named exclusion)","tally":"OUT"},{"text":"How to build a BD team from 2 people to 8","tally":"IN"},{"text":"Morning routines of successful founders (hustle-culture, named exclusion)","tally":"OUT"},{"text":"What I look for when hiring my first VP of BD","tally":"IN"}]}]}</script>
+        </div>
+      </div>
     </section>
 
     <div class="content-col">
@@ -361,6 +368,8 @@
     SF.hydrateChecklist("content-strategist", 1);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

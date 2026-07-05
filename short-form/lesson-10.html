@@ -238,16 +238,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/b79Dhim2ilY?rel=0" title="The Digital Creator Guide | How TikTok Analytics Can Improve Your Content" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">The Digital Creator Guide | How TikTok Analytics Can Improve Your Content</p>
-            <p class="video-caption-meta">Viral Nation &middot; 6:51</p>
-            <p class="video-caption-why">Covers watch time as the key TikTok metric and walks through the native analytics/creator tool on screen. It’s a general analytics walkthrough rather than a video that specifically circles a steepest-drop-off point, so it’s a partial match.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Find the Steepest Drop</p>
+        <div data-demo-pattern="mockui">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"retention-chart","swapLabel":"Load Example B","swapBackLabel":"Back to Example A","curves":[{"points":[{"t":0,"v":100},{"t":3,"v":70},{"t":30,"v":40},{"t":55,"v":38},{"t":58,"v":39},{"t":60,"v":42}],"tooltips":[{"from":0,"to":3,"text":"Moderate drop, not the failure case."},{"from":3,"to":55,"text":"Gradual bleed, worth watching but not urgent."},{"from":55,"to":60,"text":"Flat into the ending with a small bump: loop is working."}]},{"points":[{"t":0,"v":100},{"t":3,"v":35},{"t":60,"v":20}],"tooltips":[{"from":0,"to":3,"text":"This is the failure case. Nearly two-thirds of viewers gone before second 3. Fix the hook, not the middle."}]}]}</script>
         </div>
       </div>
     </section>
@@ -372,6 +368,8 @@
     SF.hydrateChecklist("short-form", 10);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

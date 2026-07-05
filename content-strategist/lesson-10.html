@@ -238,26 +238,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid two-up">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/Jxllys9JrCQ?rel=0&start=71&end=489" title="Content Pruning: How to Revamp Your Site by Removing Low-Value Content" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">Content Pruning: How to Revamp Your Site by Removing Low-Value Content</p>
-            <p class="video-caption-meta">SMA Marketing &middot; 20:59 &middot; 1:11–8:09</p>
-            <p class="video-caption-why">Real data-driven keep/improve/remove decision-making shown in a spreadsheet, with named metrics driving each call. It’s website-page pruning (SEO), not social content pillars, but the discipline (cite the data, make the call, don’t keep things out of sentiment) is exactly this lesson’s point.</p>
-          </div>
-        </div>
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/YCE5OQdGozM?rel=0" title="Secondary (closer title match, longer format):" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">Secondary (closer title match, longer format):</p>
-            <p class="video-caption-meta">hosting com &middot; 64:44</p>
-            <p class="video-caption-why">Title and framing match the lesson almost word for word, and it’s a real spreadsheet-based decision process, but it’s built for agency website migrations, not content pillar strategy, and it’s far outside the length target.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Sort the Pillars: Kill, Keep, Double-Down</p>
+        <div data-demo-pattern="panels">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"sort-buckets","buckets":["Kill","Keep","Double-Down"],"pillars":[{"name":"BD Tactical Frameworks","bucket":"Keep","evidence":"Strong audience fit, leading metric trending up, no change needed.","action":"Maintain current weekly cadence."},{"name":"Personal Career Stories","bucket":"Keep","evidence":"Keep, with a caveat. Flat trend, but audience fit is drifting, not yet bad enough to kill.","action":"Tighten topic selection back toward BD-leader relevance next quarter, re-score at the next review."},{"name":"Pipeline and Revenue Ops","bucket":"Double-Down","evidence":"Strong audience fit and the single fastest-growing leading metric of all 4 pillars.","action":"Increase from weekly to twice-weekly, add one long-form piece per month."},{"name":"Hustle/Motivation Posts","bucket":"Kill","evidence":"Leading metric down for 6 straight pieces, audience fit drifting into an explicitly excluded group.","action":"Frequency drops to zero. Remove from the Lesson 5 calendar entirely."}],"resultText":"Real distribution achieved: 1 kill, 1 double-down, 2 keep. Not a uniform 'keep' across the board."}</script>
         </div>
       </div>
     </section>
@@ -383,6 +369,8 @@
     SF.hydrateChecklist("content-strategist", 10);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

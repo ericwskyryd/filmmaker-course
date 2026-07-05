@@ -237,26 +237,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid two-up">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/H1l7mV2y-zI?rel=0" title="How to use metering the RIGHT WAY." loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">How to use metering the RIGHT WAY.</p>
-            <p class="video-caption-meta">Simon d’Entremont &middot; 12:22</p>
-            <p class="video-caption-why">real camera in hand, spot metering to zero, exposure compensation, and why full-manual still needs the meter. No literal side-by-side eyeball-vs-meter cut, but it’s the clearest hands-on demonstration of “trust the number, not the screen” available.</p>
-          </div>
-        </div>
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/rPyOZvaTUzQ?rel=0&start=37&end=204" title="ULTIMATE Exposure Guide: Histogram, Waveforms, Zebra, False Colors" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">ULTIMATE Exposure Guide: Histogram, Waveforms, Zebra, False Colors</p>
-            <p class="video-caption-meta">Nick Simpson Hawaii &middot; 7:16 &middot; 0:37–3:24</p>
-            <p class="video-caption-why">shows the histogram tool itself on a monitor, explains why the in-camera meter alone can mislead you, and reads highlight/shadow clipping off the graph, which is the exact playback check the lesson asks for.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Trust the Meter, Not the Screen</p>
+        <div data-demo-pattern="compare">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"toggle","type":"toggle","visual":"meter-histogram","states":[{"label":"Eyeball the LCD","meterOff":true,"meterValue":2,"caption":"Bright sun is washing out your LCD. It looks too dark, so you add exposure to compensate. The meter says +2. You just overexposed to fix a lie the screen told you.","histogram":[6,5,4,5,6,7,8,9,10,12,14,18,24,40,62,80,95,100],"histCaption":"Spike jammed against the right wall. Blown highlights. No edit recovers this."},{"label":"Center the Meter","meterOff":false,"meterValue":0,"caption":"Same bright sun, same LCD glare. You ignore the screen and watch the meter scale instead, dialing shutter, aperture, or ISO until the marker sits within a third of a stop of 0.","histogram":[3,5,9,16,28,46,64,80,90,88,74,56,38,22,12,7,4,3],"histCaption":"Clean cluster in the middle, nothing stacked against either wall. This is a correctly exposed frame."}],"bottomLine":"Your drill: three lighting situations, meter to 0 every time, confirm on the histogram after. Not the glow on the screen."}</script>
         </div>
       </div>
     </section>
@@ -382,6 +368,8 @@
     SF.hydrateChecklist("pro-camera", 1);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

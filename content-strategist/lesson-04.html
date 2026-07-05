@@ -238,16 +238,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/OAfe02UWUZA?rel=0" title="What format works on Instagram in 2026?" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">What format works on Instagram in 2026?</p>
-            <p class="video-caption-meta">Metricool &middot; 5:31</p>
-            <p class="video-caption-why">Partial match, flagged. Shows real reasoning (with platform data) for matching Reels, Carousels, and Stories to different content purposes. It’s single-channel (formats within Instagram), not the cross-channel comparison the lesson describes (dense pillar crammed into short-form video vs. the same content fitted to a carousel or newsletter). Closest verified candidate after searching short-form-vs-long-form, carousel-vs-reel, and repurposing-across-channels angles; most other results were ad clips or generic “shorts vs long” opinion videos with no real comparison shown.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Squeezed vs. Fitted</p>
+        <div data-demo-pattern="compare">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"slider","type":"slider","beforeLabel":"Squeezed into a 15-Second Short","afterLabel":"Fitted to a Carousel","beforeHtml":"\u003cdiv style='padding:14px 12px 8px;text-align:center;'>\u003cp class='demo-panel-label' style='margin:0 0 8px;'>Source pillar: &quot;A framework for calculating pipeline coverage ratio,&quot; 7 points\u003c/p>\u003cdiv style='position:relative;width:118px;height:168px;margin:0 auto;border:2px solid currentColor;border-radius:16px;overflow:hidden;text-align:left;padding:10px 8px;'>\u003cp style='margin:0;font-size:10px;font-weight:700;line-height:1.15;'>1. Define your revenue target.\u003c/p>\u003cp style='margin:-4px 0 0;font-size:10px;font-weight:700;line-height:1.15;transform:rotate(-3deg);'>4. Calculate weighted forecast.\u003c/p>\u003cp style='margin:-3px 0 0 6px;font-size:10px;font-weight:700;line-height:1.15;transform:rotate(2deg);'>7. Prioritize which deals close the gap.\u003c/p>\u003cp style='position:absolute;left:-52px;top:92px;font-size:9px;opacity:.35;margin:0;white-space:nowrap;'>2. Pull total pipeline value.\u003c/p>\u003cp style='position:absolute;right:-58px;top:112px;font-size:9px;opacity:.35;margin:0;white-space:nowrap;'>3. Apply your close-rate history.\u003c/p>\u003cp style='position:absolute;left:-64px;top:132px;font-size:9px;opacity:.35;margin:0;white-space:nowrap;'>5. Compare weighted forecast to target.\u003c/p>\u003cp style='position:absolute;right:-44px;top:150px;font-size:9px;opacity:.35;margin:0;white-space:nowrap;'>6. Flag the coverage gap.\u003c/p>\u003c/div>\u003cp class='demo-caption' style='margin-top:8px;'>Nuance lost, the middle logic (how you got the number) disappeared.\u003c/p>\u003c/div>","afterHtml":"\u003cdiv style='padding:14px 12px 8px;text-align:center;'>\u003cp class='demo-panel-label' style='margin:0 0 8px;'>Source pillar: &quot;A framework for calculating pipeline coverage ratio,&quot; 7 points\u003c/p>\u003cdiv style='display:flex;gap:6px;justify-content:center;flex-wrap:wrap;max-width:560px;margin:0 auto;'>\u003cdiv style='flex:0 0 72px;border:1px solid currentColor;border-radius:8px;padding:6px 5px;font-size:9px;line-height:1.25;text-align:left;'>\u003cb>Card 1\u003c/b>\u003cbr>Define your revenue target.\u003c/div>\u003cdiv style='flex:0 0 72px;border:1px solid currentColor;border-radius:8px;padding:6px 5px;font-size:9px;line-height:1.25;text-align:left;'>\u003cb>Card 2\u003c/b>\u003cbr>Pull total pipeline value.\u003c/div>\u003cdiv style='flex:0 0 72px;border:1px solid currentColor;border-radius:8px;padding:6px 5px;font-size:9px;line-height:1.25;text-align:left;'>\u003cb>Card 3\u003c/b>\u003cbr>Apply your close-rate history.\u003c/div>\u003cdiv style='flex:0 0 72px;border:1px solid currentColor;border-radius:8px;padding:6px 5px;font-size:9px;line-height:1.25;text-align:left;'>\u003cb>Card 4\u003c/b>\u003cbr>Calculate weighted forecast.\u003c/div>\u003cdiv style='flex:0 0 72px;border:1px solid currentColor;border-radius:8px;padding:6px 5px;font-size:9px;line-height:1.25;text-align:left;'>\u003cb>Card 5\u003c/b>\u003cbr>Compare weighted forecast to target.\u003c/div>\u003cdiv style='flex:0 0 72px;border:1px solid currentColor;border-radius:8px;padding:6px 5px;font-size:9px;line-height:1.25;text-align:left;'>\u003cb>Card 6\u003c/b>\u003cbr>Flag the coverage gap.\u003c/div>\u003cdiv style='flex:0 0 72px;border:1px solid currentColor;border-radius:8px;padding:6px 5px;font-size:9px;line-height:1.25;text-align:left;'>\u003cb>Card 7\u003c/b>\u003cbr>Prioritize which deals close the gap.\u003c/div>\u003c/div>\u003cp class='demo-caption' style='margin-top:8px;'>Depth intact, still scannable.\u003c/p>\u003c/div>"}</script>
         </div>
       </div>
     </section>
@@ -371,6 +367,8 @@
     SF.hydrateChecklist("content-strategist", 4);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

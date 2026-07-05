@@ -246,7 +246,14 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-gap-note" style="margin-top:0;"><span class="warn-dot"></span><p><b>No video for this one:</b> <strong>GAP &middot; no strong verified pick. </strong> Searched multiple angles (vague-to-specific rewrite, elevator pitch live rewrite, learner persona rewrite, copywriting before/after).</p></div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; From Category to Transformation, Live</p>
+        <div data-demo-pattern="panels">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"sequential-strike","startText":"You'll understand the fundamentals of course creation.","rewriteLabel":"Rewrite Live","testLabel":"Test It","steps":[{"display":"You'll ~~understand the fundamentals of~~ **run a validated pre-sale and ship** course creation."},{"display":"You'll ~~understand the fundamentals of~~ **run a validated pre-sale and ship** ~~course creation~~ **one paid pilot lesson**."}],"finalText":"Learner starts as: someone who's closed six-figure enterprise deals but has never validated a training product. Learner ends as: someone who can run a validated pre-sale and ship one paid pilot lesson.","readerRestatement":"So right now you haven't tried selling a course before it exists, and by the end you'll have actually gotten one paid pilot lesson out the door. Got it."}</script>
+        </div>
+      </div>
     </section>
 
     <div class="content-col">
@@ -369,6 +376,8 @@
     SF.hydrateChecklist("course-creator", 2);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

@@ -237,26 +237,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid two-up">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/pAvn034VcCg?rel=0" title="7 TRIPOD Tricks I Actually Use for Filmmaking" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">7 TRIPOD Tricks I Actually Use for Filmmaking</p>
-            <p class="video-caption-meta">Camber Film School &middot; 5:10</p>
-            <p class="video-caption-why">real tripod and fluid head on camera, hands-on demonstration of drag/tension and the smooth-start-and-stop technique the lesson drills. Uploaded 2020.</p>
-          </div>
-        </div>
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/UMSljTF3mPk?rel=0" title="I Tried a $100 and a $1000 Tripod Fluid Head... Here’s the Difference" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">I Tried a $100 and a $1000 Tripod Fluid Head... Here’s the Difference</p>
-            <p class="video-caption-meta">Peter Sarellas &middot; 16:47</p>
-            <p class="video-caption-why">real side-by-side of a jittery vs. properly dragged pan/tilt on two different fluid heads, directly illustrates what “too little drag” looks like on screen.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Drag, Speed, and the Plate That Wasn’t Seated</p>
+        <div data-demo-pattern="compare">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"toggle","type":"toggle","visual":"pan-tripod","states":[{"label":"Jerky Pan","key":"jerky","caption":"Whip, not a pan. 60 degrees covered in under 2 seconds."},{"label":"Smooth Pan","key":"smooth","caption":"Smooth start, constant speed, smooth stop. Properly dragged."},{"label":"Unbalanced Drift","key":"drift","caption":"Half-locked plate or a head with no counterbalance. Nobody touched it. It's still moving."}],"bottomLine":"Give the plate a tug-test before you ever step away. Listen for the click."}</script>
         </div>
       </div>
     </section>
@@ -381,6 +367,8 @@
     SF.hydrateChecklist("pro-camera", 11);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

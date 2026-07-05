@@ -372,7 +372,24 @@ ${items}
         </div>`;
 }
 
-function videoStageHtml(videoPick) {
+function demoStageHtml(demo) {
+  // JSON config embedded inline; escape "<" so a stray "</script" inside
+  // content can never terminate the config block early.
+  const cfgJson = JSON.stringify(demo.config).replace(/</g, '\\u003c');
+  return `    <section class="video-stage">
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; ${renderInline(demo.title)}</p>
+        <div data-demo-pattern="${demo.pattern}">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>${cfgJson}</script>
+        </div>
+      </div>
+    </section>`;
+}
+
+function videoStageHtml(videoPick, demo) {
+  if (demo) return demoStageHtml(demo);
   if (!videoPick || videoPick.gap) {
     const note = videoPick ? videoPick.gapText : 'No demo video meets the bar for this one; the technique section carries it.';
     return `    <section class="video-stage">
@@ -401,7 +418,7 @@ ${blocks}
     </section>`;
 }
 
-export function renderLessonPage(track, lesson, prevLesson, nextLesson) {
+export function renderLessonPage(track, lesson, prevLesson, nextLesson, demo = null) {
   const assetPrefix = '../';
   const nn = pad2(lesson.n);
   const prevHref = prevLesson ? `lesson-${pad2(prevLesson.n)}.html` : null;
@@ -458,7 +475,7 @@ ${sidebarHtml(track, assetPrefix)}
       <p class="lesson-objective">${renderInline(lesson.objective.behavior)}</p>
     </section>
 
-${videoStageHtml(videoPick)}
+${videoStageHtml(videoPick, demo)}
 
     <div class="content-col">
 
@@ -526,6 +543,8 @@ ${scriptsHtml({
   trackSlug: track.slug,
   call: `SF.hydrateChecklist(${JSON.stringify(track.slug)}, ${lesson.n});`,
 })}
+${demo ? `<link rel="stylesheet" href="${assetPrefix}assets/demos.css">
+<script src="${assetPrefix}assets/demos.js"></script>` : ''}
 
 </body>
 </html>
@@ -560,6 +579,16 @@ a{color:#E8A33D;}</style>
 export function renderHub(tracks) {
   const totalAcademyLessons = tracks.reduce((sum, t) => sum + t.totalLessons, 0);
 
+  const TRACK_BLURBS = {
+    'smartphone': 'The foundation track. Grip, framing, exposure, and sound on the phone already in your pocket, ending in a 90-second short film.',
+    'pro-camera': 'Manual exposure, lenses, log, and rigging on a real camera, leveling up every instinct the smartphone track built.',
+    'ai-creator': 'Image gen, AI video, and an honest production pipeline. Durable workflows that outlive whichever tool is hot this month.',
+    'weekend-youtuber': 'A channel built in the hours you actually have. Packaging before filming, retention by design, one finished video per weekend.',
+    'short-form': 'Hooks in two seconds, cuts every three, endings that loop. Short-form as its own craft, not shrunken YouTube.',
+    'course-creator': 'Validate, design, record, and ship a real mini-course to a real learner, using the same method this academy is built on.',
+    'content-strategist': 'Audience, pillars, calendar, distribution, and the kill/double-down review. Content as an operating system, not vibes.',
+    'scriptwriting': 'Thirty seconds, one message, written for the ear. From hook line to shot list, ending in a complete commercial package.',
+  };
   const trackCards = tracks.map((t) => {
     return `        <a class="track-card" href="${t.slug}/index.html" data-track-card="${t.slug}">
           <div class="track-card-top">
@@ -569,7 +598,7 @@ export function renderHub(tracks) {
               <h3 class="track-card-title">${renderInline(t.title)}</h3>
             </div>
           </div>
-          <p class="track-card-desc">${renderInline(t.tagline)}</p>
+          <p class="track-card-desc">${renderInline(TRACK_BLURBS[t.slug] || t.tagline)}</p>
           <div class="track-card-foot">
             <span class="track-card-modules">${t.modules.length} modules &middot; ${t.totalLessons} lessons</span>
             <span class="track-card-cta" data-track-cta>Start<span class="cta-arrow">${ARROW_RIGHT}</span></span>

@@ -246,26 +246,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid two-up">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/E8x5U-2W-ok?rel=0" title="How I shoot my videos (behind the scenes vlog)" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">How I shoot my videos (behind the scenes vlog)</p>
-            <p class="video-caption-meta">Terry Shiu &middot; 10:39</p>
-            <p class="video-caption-why">Real solo shoot-day behind-the-scenes, recent. No timer overlay, no explicit time-box framing.</p>
-          </div>
-        </div>
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/GUCLKGCAQCU?rel=0" title="5 Solo Filming Hacks Every Creator Needs (POV + BTS Rigs)" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">5 Solo Filming Hacks Every Creator Needs (POV + BTS Rigs)</p>
-            <p class="video-caption-meta">Gaku Lange &middot; 11:30</p>
-            <p class="video-caption-why">Solo filming technique and setup, useful as a technique supplement rather than the “beat the clock” demo.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Beat the Clock, Not the Perfect Take</p>
+        <div data-demo-pattern="mockui">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"checklist-timer","budgetLabel":"Shoot window: 90 minutes","shots":["1. Establishing shot of garage.","2. Close-up of the tool.","3. Hands demonstrating the fix.","4. Reaction shot.","5. Before/after comparison shot.","6. To-camera wrap line."],"plannedLabel":"Play as Planned","overrunLabel":"Play the Chasing-Perfect Failure","plannedResult":"All 6 beats shot, 4 minutes to spare.","overrunResult":"Time's up. Two beats never got shot because beat 1 ate their time."}</script>
         </div>
       </div>
     </section>
@@ -390,6 +376,8 @@
     SF.hydrateChecklist("weekend-youtuber", 8);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

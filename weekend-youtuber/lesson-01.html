@@ -246,7 +246,14 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-gap-note" style="margin-top:0;"><span class="warn-dot"></span><p><b>No video for this one:</b> <strong>GAP: no verified strong pick. </strong> I could not find a real, existing free YouTube video that performs this specific vague-vs-specific comparison and listener test.</p></div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Category vs. Promise, Tested Cold</p>
+        <div data-demo-pattern="reveal">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"stagger","variant":"click-cards","cards":[{"label":"Vague","statement":"A channel about cars.","responses":["Uh... cars? Like, reviews? Racing? I don't really know what I'd get out of watching.","Cars in general? Not sure who that's for.","Some kind of car channel, I guess."],"counterText":"0 of 3 correctly identified audience and outcome."},{"label":"Specific","statement":"I help guys restoring their first project car with no shop and no mechanic background avoid the exact mistakes that cost me $2,000 on my first engine rebuild, in 10-minute weekend garage sessions.","responses":["Oh, so it's for someone doing their first car restoration in their driveway, and you show them the expensive mistakes to skip. That's specific.","Sounds like it's for a beginner rebuilding an engine at home without a shop, quick weekend videos.","For someone new to car restoration, no garage or mechanic background, learning what not to do."],"counterText":"3 of 3 correctly identified audience and outcome."}]}</script>
+        </div>
+      </div>
     </section>
 
     <div class="content-col">
@@ -370,6 +377,8 @@
     SF.hydrateChecklist("weekend-youtuber", 1);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

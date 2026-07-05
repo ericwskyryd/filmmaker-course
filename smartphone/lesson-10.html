@@ -250,16 +250,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/knRQ7uFhWSg?rel=0" title="White Balance Is Why You Look Orange (Or Blue)" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">White Balance Is Why You Look Orange (Or Blue)</p>
-            <p class="video-caption-meta">Activater &middot; 2:04</p>
-            <p class="video-caption-why">Recent (2025), fast, visual before/after demonstration of locking a white balance preset to fix skin tone under mixed lighting.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; One Light Source Only</p>
+        <div data-demo-pattern="compare">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"toggle","type":"toggle","visual":"lightmix","states":[{"key":"mixed","label":"Mixed Light","caption":"Lamp and window are both on. Watch the face color drift orange, then blue, then orange again as auto white balance keeps guessing. This is the sick, shifting skin tone the lesson warns about."},{"key":"single","label":"Single Source","caption":"Blinds closed, lamp on. Skin reads warm and natural, and it never moves for the full 8 seconds."}],"lampCaption":"Blinds closed, lamp on. Skin reads warm and natural, and it never moves for the full 8 seconds.","windowCaption":"Lamp off, window light only. Skin reads cool and natural, and it never moves for the full 8 seconds.","bottomLine":"Your drill: kill one source completely before you roll. Don't let the phone referee between two lights."}</script>
         </div>
       </div>
     </section>
@@ -382,6 +378,8 @@
     SF.hydrateChecklist("smartphone", 10);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

@@ -229,7 +229,14 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-gap-note" style="margin-top:0;"><span class="warn-dot"></span><p><b>No video for this one:</b> <strong>No verified strong pick. </strong> Searched extensively for a real commercial with Problem/Turn/Payoff/CTA (or PAS-style) labels overlaid on the actual footage.</p></div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Four Beats, Timestamped</p>
+        <div data-demo-pattern="zones">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"beat-timer","totalSec":30,"buttonLabel":"Play the Read","zones":[{"label":"Problem","start":0,"end":8,"text":"Every hour a plane sits on the ground waiting for a quote is an hour that charter broker could have closed the deal."},{"label":"Turn","start":8,"end":16,"text":"SkyRyd puts every available aircraft and operator in one real-time marketplace."},{"label":"Payoff","start":16,"end":25,"text":"Quotes that used to take half a day now take under ten minutes, and brokers close while the client's still on the phone."},{"label":"CTA","start":25,"end":30,"text":"See your first live quote at skyryd.com."}]}</script>
+        </div>
+      </div>
     </section>
 
     <div class="content-col">
@@ -354,6 +361,8 @@
     SF.hydrateChecklist("scriptwriting", 4);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

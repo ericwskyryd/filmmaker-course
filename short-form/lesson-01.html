@@ -238,26 +238,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid two-up">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/hY4pybwOUq0?rel=0" title="4 Editing Secrets Small Channels Learn Too Late" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">4 Editing Secrets Small Channels Learn Too Late</p>
-            <p class="video-caption-meta">vidIQ &middot; 6:51</p>
-            <p class="video-caption-why">vidIQ does a real makeover of an actual creator’s boring tutorial, adding visual hooks, strategic cuts, and b-roll to turn it into a high-retention video. Shows real before/after footage, not just talk. Not an exact 2-second-clip A/B test, so treat as the closest verified real-footage demonstration rather than a literal match.</p>
-          </div>
-        </div>
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/g99k86QzyDk?rel=0&start=73&end=114" title="How to HOOK Your Viewer in 5 Seconds - Video Hook Strategy" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">How to HOOK Your Viewer in 5 Seconds - Video Hook Strategy</p>
-            <p class="video-caption-meta">Kapwing &middot; 6:14 &middot; 1:13–1:54</p>
-            <p class="video-caption-why">Walks through visual vs. audio hook stimulation with real clip examples on screen. Slightly older (3 years), platform UI details may have shifted, but the craft point (motion in frame 1) still holds.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Two Seconds, Cold</p>
+        <div data-demo-pattern="compare">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"dual","type":"dual","visual":"loop-pair","playLabel":"Play Both (2s Loop)","states":[{"label":"Static Open","motion":"static","reactionBadge":"...","caption":"Phone barely raised, about to start talking. This is a pause button, not a hook."},{"label":"Mid-Action Open","motion":"action","reactionBadge":"Wait, what?","caption":"Already doing the thing. No wind-up. The eye has to catch up."}],"bottomLine":"If your opening frame looks the same paused for three seconds, it isn't doing its job yet."}</script>
         </div>
       </div>
     </section>
@@ -382,6 +368,8 @@
     SF.hydrateChecklist("short-form", 1);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

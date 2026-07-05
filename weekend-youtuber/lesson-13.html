@@ -246,16 +246,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/zeOa5_qIjIY?rel=0" title="How to Make a YouTube Video for Beginners (Start to Finish, Fast Workflow)" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">How to Make a YouTube Video for Beginners (Start to Finish, Fast Workflow)</p>
-            <p class="video-caption-meta">Julian Eisenkirchner &middot; 18:56</p>
-            <p class="video-caption-why">Closest verified real match, a full start-to-finish solo workflow. No confirmed running clock overlay or weekend-specific time budget framing, so it demonstrates the full cycle without the course’s specific accountability visual.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; The Weekend Budget Tracker</p>
+        <div data-demo-pattern="zones">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"stage-tracker","segments":[{"label":"Promise-Fit","budget":"5 min"},{"label":"Title/Thumbnail","budget":"30 min"},{"label":"Hook/Outline","budget":"45 min"},{"label":"Batch Plan","budget":"60 min"},{"label":"Shoot","budget":"90 min"},{"label":"Edit","budget":"120 min","overrun":true},{"label":"Publish","budget":"15 min"}],"onBudgetLabel":"Run On-Budget","overrunLabel":"Run the Overrun","onBudgetResult":"Published, with time to spare.","overrunResult":"Edit ran long, exactly like Lesson 9's failure mode. Finished on time, barely, because only one stage broke, not the whole system."}</script>
         </div>
       </div>
     </section>
@@ -384,6 +380,8 @@
     SF.hydrateChecklist("weekend-youtuber", 13);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

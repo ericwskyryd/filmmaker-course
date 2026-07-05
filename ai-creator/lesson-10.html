@@ -241,26 +241,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid two-up">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/3rp9HWyu9LM?rel=0" title="Pick A (flagged for length): “AI Scriptwriting Is Broken (Do This Instead)" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">Pick A (flagged for length): “AI Scriptwriting Is Broken (Do This Instead)</p>
-            <p class="video-caption-meta">Aaron Figueroa &middot; 26:23</p>
-            <p class="video-caption-why">Directly addresses the exact problem the lesson is teaching against, generic AI drafts that get published unedited, and walks through a real fix system. Long for class use; timestamp to the editing-system segment if using it.</p>
-          </div>
-        </div>
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/SDHlbdPgyIY?rel=0" title="Pick B (flagged as more talking-head): “Why Your Claude YouTube Scripts Sound Like AI Slop" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">Pick B (flagged as more talking-head): “Why Your Claude YouTube Scripts Sound Like AI Slop</p>
-            <p class="video-caption-meta">Luke Scripted &middot; 8:36</p>
-            <p class="video-caption-why">Short and on-topic (which part of an AI draft to keep vs. hand off), but leans toward commentary rather than an on-screen side-by-side edit demo, and it’s a small channel (under 200 views at time of check).</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; The Tracked-Edit Pass</p>
+        <div data-demo-pattern="panels">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"tracked-edit","rawText":"In today's fast-paced world, content creators are unlocking their potential by using AI tools to grow their channels faster than ever, with some creators reporting 10x growth in just weeks.","editedText":"Most 'AI grew my channel 10x' claims fall apart the second you ask what the baseline was. Here's what actually changed when I added AI tools to my workflow, and what didn't.","cosmeticText":"In today's fast-paced world, content creators are unlocking their potential using AI tools, growing their channels faster than ever, with some reporting rapid growth in weeks.","toggleLabel":"Show Cosmetic-Only Version","edits":[{"span":"unlocking their potential","type":"Generic-Phrasing Cut","explanation":"'In today's fast-paced world' and 'unlocking their potential' cut entirely, replaced with a direct claim. Nobody talks like that, and it reads like every other AI draft."},{"span":"some creators reporting 10x growth in just weeks","type":"Fact Correction","explanation":"'Some creators reporting 10x growth in just weeks' was an unverified, unsourced claim. Cut. Replaced with 'here's what actually changed,' which only promises what can actually be backed up."},{"span":"In today's fast-paced world","type":"Hook Sharpening","explanation":"Rewrote the opening into a specific, slightly contrarian claim that a viewer would actually stop for."}]}</script>
         </div>
       </div>
     </section>
@@ -384,6 +370,8 @@
     SF.hydrateChecklist("ai-creator", 10);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>

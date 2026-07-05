@@ -238,16 +238,12 @@
     </section>
 
     <section class="video-stage">
-      <div class="video-grid">
-        <div class="video-block">
-          <div class="video-embed">
-            <iframe src="https://www.youtube-nocookie.com/embed/2vkX1X1K3WM?rel=0" title="How To Start YouTube Videos For Better Results" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-          </div>
-          <div class="video-caption">
-            <p class="video-caption-title">How To Start YouTube Videos For Better Results</p>
-            <p class="video-caption-meta">Nick Nimmin &middot; 4:38</p>
-            <p class="video-caption-why">Directly names and demonstrates the exact filler-opener problem with a spoken real example, then contrasts it with a stronger opener. Delivered to-camera rather than as a muted-audio A/B test.</p>
-          </div>
+      <div class="demo-wrap" style="background:var(--surface);border:1px solid var(--border-hairline);border-radius:12px;padding:20px;">
+        <p style="font-size:12px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--accent);margin:0 0 14px;">Interactive demo &middot; Nine Seconds of Nothing</p>
+        <div data-demo-pattern="reveal">
+          <div data-demo-toolbar></div>
+          <div data-demo-stage></div>
+          <script type="application/json" data-demo-config>{"kind":"word","tracks":[{"label":"Preamble","panelLabel":"Preamble Open","buttonLabel":"Play Preamble (Audio Only)","text":"Hey... guys... welcome... back... to... my... channel... today... we're... gonna... talk... about...","durationMs":4000,"endTone":"bad","endLabel":"still no information."},{"label":"Cold Open","panelLabel":"Cold Open","buttonLabel":"Play Cold Open (Audio Only)","text":"Your... first... cold... email... is... costing... you... the... meeting... before... they... even... open... it.","durationMs":4200,"endTone":"good","endLabel":"0:02, listener already knows what's being promised."}]}</script>
         </div>
       </div>
     </section>
@@ -371,6 +367,8 @@
     SF.hydrateChecklist("short-form", 2);
   });
 </script>
+<link rel="stylesheet" href="../assets/demos.css">
+<script src="../assets/demos.js"></script>
 
 </body>
 </html>
