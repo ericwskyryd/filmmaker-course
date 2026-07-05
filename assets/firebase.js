@@ -33,6 +33,7 @@ const SDK_VERSION = '12.15.0';
       isAdmin() { return false; },
       pullProgress() { return Promise.resolve(null); },
       pushProgress() {},
+      getIdToken() { return Promise.resolve(null); },
     };
   }
 
@@ -150,6 +151,21 @@ const SDK_VERSION = '12.15.0';
   window.SFAuth.isAdmin = function () {
     const u = auth.currentUser;
     return !!(u && u.email && u.email.toLowerCase() === ADMIN_EMAIL);
+  };
+
+  // Used by the AI Coach chat panel (assets/coach-chat.js) to authenticate its
+  // POST to the coach backend. Returns null (never throws) if signed out or if
+  // the token fetch fails, so a coach send always degrades to "no auth header"
+  // instead of throwing on the page.
+  window.SFAuth.getIdToken = async function () {
+    const u = auth.currentUser;
+    if (!u) return null;
+    try {
+      return await u.getIdToken();
+    } catch (err) {
+      console.warn('[Creator Reps] Could not get ID token for coach request.', err && err.message);
+      return null;
+    }
   };
 
   // Admin-only: used by admin.html. Firestore rules are the real gate here --

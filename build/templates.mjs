@@ -31,6 +31,8 @@ const COACH_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const CELEBRATION_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const GOOD_SVG = `<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const FAIL_SVG = `<svg viewBox="0 0 16 16" fill="none"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+const PAPERCLIP_SVG = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10.5 3.2l-5.3 5.3a2.6 2.6 0 0 0 3.7 3.7l5.3-5.3a1.7 1.7 0 0 0-2.4-2.4L6.5 9.1" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const SEND_SVG = `<svg viewBox="0 0 16 16" fill="none"><path d="M2 8.4L13.5 3l-4.8 11-1.9-4.7L2 8.4z" fill="currentColor"/></svg>`;
 const AUTH_GOOGLE_SVG = `<svg viewBox="0 0 18 18" width="16" height="16" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.81.54-1.85.86-3.04.86-2.34 0-4.32-1.58-5.03-3.71H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.97 10.71a5.4 5.4 0 0 1 0-3.42V4.96H.96a9 9 0 0 0 0 8.08l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.45 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.96l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/></svg>`;
 
 // ---------- auth widget (Google sign-in / account menu, present in every header) ----------
@@ -418,6 +420,70 @@ ${blocks}
     </section>`;
 }
 
+// ---------- AI Coach chat panel ----------
+// Tracks whose drill produces a video clip (smartphone/pro-camera/short-form/
+// weekend-youtuber) get the optional "Attach your clip" file input on top of
+// the text thread. Text-artifact tracks (scriptwriting, content-strategist,
+// course-creator, ai-creator) stay text-only. assets/coach-chat.js reads the
+// embedded JSON config below to know which mode a page supports and what
+// lesson context (objective/checklist/track/lesson number) to send with every
+// message -- same embedded-JSON technique demoStageHtml uses for demo config.
+const COACH_FILMMAKING_TRACKS = new Set(['smartphone', 'pro-camera', 'short-form', 'weekend-youtuber']);
+
+function coachPanelHtml(track, lesson) {
+  const allowVideo = COACH_FILMMAKING_TRACKS.has(track.slug);
+  const lessonCtx = {
+    track: track.slug,
+    lessonN: lesson.n,
+    lessonTitle: lesson.title,
+    objective: {
+      behavior: lesson.objective.behavior,
+      condition: lesson.objective.condition,
+      criterion: lesson.objective.criterion,
+    },
+    checklist: lesson.checklist,
+    allowVideo,
+  };
+  // Escape "<" the same way demoStageHtml does, so a stray "</script" inside
+  // any lesson copy can never terminate this config block early.
+  const cfgJson = JSON.stringify(lessonCtx).replace(/</g, '\\u003c');
+
+  const fileRow = allowVideo ? `
+            <label class="coach-file-row is-disabled" data-coach-file-row>
+              <input type="file" accept="video/*" data-coach-file-input disabled>
+              ${PAPERCLIP_SVG}<span data-coach-file-label>Attach your clip</span>
+            </label>
+            <p class="coach-file-error" data-coach-file-error></p>` : '';
+
+  return `      <section class="section coach-section">
+        <p class="section-eyebrow">AI Coach</p>
+        <div class="coach-panel" data-coach-panel data-coach-state="offline">
+          <script type="application/json" data-coach-lesson>${cfgJson}</script>
+          <div class="coach-thread" data-coach-thread aria-live="polite">
+            <div class="coach-thread-empty" data-coach-empty>
+              <div class="coach-avatar-sm">${APERTURE_MARK_SVG}</div>
+              <p>Ask about this lesson, or paste what your drill produced above and get it checked against the list.</p>
+            </div>
+          </div>
+          <div class="coach-typing" data-coach-typing hidden>
+            <div class="coach-avatar-sm">${APERTURE_MARK_SVG}</div>
+            <div class="coach-typing-dots"><span></span><span></span><span></span></div>
+          </div>
+          <p class="coach-error-note" data-coach-error-note></p>
+          <p class="coach-offline-note" data-coach-offline-note>The coach comes online shortly.</p>
+          <form class="coach-input-row" data-coach-form>${fileRow}
+            <div class="coach-input-main">
+              <textarea class="coach-textarea" data-coach-textarea rows="2" placeholder="Paste your drill output or ask about this lesson..." disabled></textarea>
+              <button class="coach-send-btn" type="submit" data-coach-send disabled>${SEND_SVG}<span>Send</span></button>
+            </div>
+          </form>
+          <div class="coach-meta-row">
+            <span class="coach-remaining" data-coach-remaining></span>
+          </div>
+        </div>
+      </section>`;
+}
+
 export function renderLessonPage(track, lesson, prevLesson, nextLesson, demo = null) {
   const assetPrefix = '../';
   const nn = pad2(lesson.n);
@@ -521,6 +587,8 @@ ${checklistHtml(lesson)}
         </div>
       </section>
 
+${coachPanelHtml(track, lesson)}
+
     <section class="section">
       <p class="section-eyebrow">Resurfaces In</p>
       <p class="resurfaces-row">${renderResurfaces(lesson.resurfacesRaw, track.totalLessons)}</p>
@@ -545,6 +613,8 @@ ${scriptsHtml({
 })}
 ${demo ? `<link rel="stylesheet" href="${assetPrefix}assets/demos.css">
 <script src="${assetPrefix}assets/demos.js"></script>` : ''}
+<script src="${assetPrefix}assets/coach-config.js"></script>
+<script src="${assetPrefix}assets/coach-chat.js"></script>
 
 </body>
 </html>

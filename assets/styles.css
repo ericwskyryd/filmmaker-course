@@ -287,6 +287,66 @@ body[data-gate-state="blocked"] .gate-card[data-gate-panel="blocked"]{ display:f
 .coach-avatar svg{ width:18px; height:18px; color: var(--accent); }
 .coach-text{ font-size: var(--fs-16); line-height:1.6; color: var(--text-primary); }
 
+/* ===================== AI Coach chat panel ===================== */
+/* Sits below the drill/checklist area on every lesson page. Ships baked into
+   the "offline" state (inputs disabled, quiet note visible) because
+   assets/coach-config.js ships SF_COACH_URL empty until the backend exists --
+   assets/coach-chat.js flips it to "ready" the moment that one value is set,
+   with no site regeneration needed. */
+.coach-section{ margin-bottom: var(--sp-8); }
+.coach-panel{ background: var(--surface-2); border: 1px solid var(--border-hairline); border-radius: 12px; padding: var(--sp-6); display:flex; flex-direction:column; gap: var(--sp-4); }
+
+.coach-thread{ display:flex; flex-direction:column; gap: var(--sp-3); max-height: 420px; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-right:2px; }
+.coach-thread-empty{ display:flex; gap: var(--sp-3); align-items:flex-start; }
+.coach-thread-empty p{ font-size: var(--fs-14); color: var(--text-secondary); line-height:1.55; margin:0; max-width: 52ch; }
+
+.coach-avatar-sm{ flex:0 0 auto; width:24px; height:24px; margin-top:2px; }
+.coach-avatar-sm svg{ width:100%; height:100%; }
+
+.coach-msg{ display:flex; gap: var(--sp-2); max-width:88%; }
+.coach-msg-user{ margin-left:auto; }
+.coach-msg-bubble{ font-size: var(--fs-14); line-height:1.55; padding: var(--sp-3) var(--sp-4); border-radius:12px; white-space:normal; word-break:break-word; }
+.coach-msg-coach .coach-msg-bubble{ background: var(--surface); border: 1px solid var(--border-hairline); color: var(--text-primary); border-top-left-radius:4px; }
+.coach-msg-user .coach-msg-bubble{ background: rgba(255,255,255,0.03); border: 1px solid var(--border-hairline); color: var(--text-secondary); border-top-right-radius:4px; }
+
+.coach-typing{ display:flex; gap: var(--sp-2); align-items:center; }
+.coach-typing[hidden]{ display:none; }
+.coach-typing-dots{ display:flex; align-items:center; gap:4px; padding: var(--sp-3) var(--sp-4); background: var(--surface); border: 1px solid var(--border-hairline); border-radius:12px; border-top-left-radius:4px; }
+.coach-typing-dots span{ width:6px; height:6px; border-radius:50%; background: var(--text-tertiary); opacity:0.5; animation: coach-typing-bounce 1.1s infinite ease-in-out; }
+.coach-typing-dots span:nth-child(2){ animation-delay:0.15s; }
+.coach-typing-dots span:nth-child(3){ animation-delay:0.3s; }
+@keyframes coach-typing-bounce{ 0%,60%,100%{ transform: translateY(0); opacity:0.4; } 30%{ transform: translateY(-4px); opacity:0.9; } }
+
+.coach-offline-note{ display:none; font-size:13px; color: var(--text-secondary); margin:0; padding: var(--sp-2) var(--sp-3); background: rgba(255,255,255,0.03); border: 1px solid var(--border-hairline); border-radius:8px; }
+.coach-panel[data-coach-state="offline"] .coach-offline-note{ display:block; }
+
+.coach-error-note{ display:none; font-size:13px; line-height:1.5; color: var(--text-primary); margin:0; padding: var(--sp-2) var(--sp-3); background: var(--warning-soft); border: 1px solid rgba(217,114,74,0.3); border-radius:8px; }
+.coach-error-note.is-visible{ display:block; }
+
+.coach-input-row{ display:flex; flex-direction:column; gap: var(--sp-3); }
+.coach-file-row{ position:relative; display:inline-flex; align-items:center; gap: var(--sp-2); align-self:flex-start; font-size:13px; font-weight:600; color: var(--text-secondary); padding: var(--sp-2) var(--sp-3); border: 1px solid var(--border-hairline-strong); border-radius:8px; cursor:pointer; transition: color 120ms ease-out, border-color 120ms ease-out; }
+.coach-file-row:hover{ color: var(--text-primary); }
+.coach-file-row svg{ width:14px; height:14px; flex:0 0 auto; }
+.coach-file-row input[type="file"]{ position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
+.coach-file-row input[type="file"]:disabled{ cursor:not-allowed; }
+.coach-file-row.is-disabled{ opacity:0.5; cursor:not-allowed; pointer-events:none; }
+.coach-file-error{ display:none; font-size:12px; color: var(--warning); margin: -4px 0 0; }
+.coach-file-error.is-visible{ display:block; }
+
+.coach-input-main{ display:flex; gap: var(--sp-3); align-items:flex-end; }
+.coach-textarea{ flex:1 1 auto; resize:vertical; min-height:60px; max-height:220px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-hairline-strong); border-radius:10px; padding: var(--sp-3); font-family: var(--font-ui); font-size: var(--fs-14); line-height:1.5; color: var(--text-primary); }
+.coach-textarea::placeholder{ color: var(--text-secondary); }
+.coach-textarea:focus{ outline:none; border-color: var(--accent); }
+.coach-textarea:disabled{ opacity:0.55; cursor:not-allowed; }
+.coach-send-btn{ flex:0 0 auto; display:flex; align-items:center; justify-content:center; gap:6px; min-height:44px; background: var(--accent); color: var(--accent-ink); font-size: var(--fs-14); font-weight:700; padding: var(--sp-3) var(--sp-5, 20px); border-radius:10px; transition: background 120ms ease-out; }
+.coach-send-btn svg{ width:14px; height:14px; }
+.coach-send-btn:hover:not(:disabled){ background: var(--accent-hover); }
+.coach-send-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+
+.coach-meta-row{ display:flex; align-items:center; justify-content:flex-end; }
+.coach-remaining{ font-size:12px; color: var(--text-secondary); }
+.coach-remaining:empty{ display:none; }
+
 /* Resurfaces */
 .resurfaces-row{ display:flex; align-items:center; gap: var(--sp-2); flex-wrap:wrap; font-size: var(--fs-14); color: var(--text-secondary); }
 .resurfaces-row a{ font-weight:600; color: var(--accent); border-bottom: 1px solid rgba(232,163,61,0.3); }
@@ -401,6 +461,10 @@ body[data-gate-state="blocked"] .gate-card[data-gate-panel="blocked"]{ display:f
   .objective-row{ flex-direction:column; gap: var(--sp-1); }
   .objective-tag{ flex:0 0 auto; }
   .lesson-footer-nav{ display:none; }
+  .coach-panel{ padding: var(--sp-4); }
+  .coach-thread{ max-height: 300px; }
+  .coach-input-main{ flex-direction:column; align-items:stretch; }
+  .coach-send-btn{ width:100%; }
   .hero-grid{ grid-template-columns: 1fr; }
   .continue-card{ flex-direction:column; }
   .continue-art{ display:none; }

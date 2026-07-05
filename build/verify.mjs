@@ -133,6 +133,71 @@ function emDashGrep() {
   return hits;
 }
 
+// ---------- 11: AI Coach panel static checks (presence + file-input track split) ----------
+
+function coachStaticChecks() {
+  console.log('\n[11] AI Coach panel static checks (presence + file-input track split)');
+  const FILM_TRACKS = ['smartphone', 'pro-camera', 'short-form', 'weekend-youtuber'];
+  const TEXT_TRACKS = ['ai-creator', 'course-creator', 'content-strategist', 'scriptwriting'];
+
+  const lessonPages = [];
+  [...FILM_TRACKS, ...TEXT_TRACKS].forEach((slug) => {
+    const dir = path.join(SITE_ROOT, slug);
+    fs.readdirSync(dir).filter((f) => /^lesson-\d+\.html$/.test(f)).forEach((f) => {
+      lessonPages.push({ slug, file: path.join(dir, f) });
+    });
+  });
+
+  check('found lesson pages across all 8 tracks (expect 97)', lessonPages.length === 97, `found ${lessonPages.length}`);
+
+  const missingPanel = [];
+  const filmMissingFile = [];
+  const textHasFile = [];
+  lessonPages.forEach(({ slug, file }) => {
+    const html = fs.readFileSync(file, 'utf8');
+    if (!html.includes('data-coach-panel')) missingPanel.push(path.relative(SITE_ROOT, file));
+    const hasFileInput = html.includes('data-coach-file-input');
+    if (FILM_TRACKS.includes(slug) && !hasFileInput) filmMissingFile.push(path.relative(SITE_ROOT, file));
+    if (TEXT_TRACKS.includes(slug) && hasFileInput) textHasFile.push(path.relative(SITE_ROOT, file));
+  });
+
+  check('AI Coach panel present on every lesson page', missingPanel.length === 0, missingPanel.slice(0, 5).join('; '));
+  check('clip attach file input present on all filmmaking-track lesson pages (smartphone/pro-camera/short-form/weekend-youtuber)', filmMissingFile.length === 0, filmMissingFile.slice(0, 5).join('; '));
+  check('clip attach file input absent on all text-artifact-track lesson pages (ai-creator/course-creator/content-strategist/scriptwriting)', textHasFile.length === 0, textHasFile.slice(0, 5).join('; '));
+}
+
+// ---------- 12: AI Coach offline default state (SF_COACH_URL empty) ----------
+
+async function coachOfflineStateTest(browser) {
+  console.log('\n[12] AI Coach panel renders disabled "coming online" state when SF_COACH_URL is empty');
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${PORT}/smartphone/lesson-01.html`, { waitUntil: 'networkidle0' });
+  await page.evaluate(() => window.SFAuth._setUser({ uid: 'coach-test', displayName: 'Coach Test', email: 'coach-test@example.com' }));
+  await new Promise((r) => setTimeout(r, 300));
+
+  const state = await page.evaluate(() => {
+    const panel = document.querySelector('[data-coach-panel]');
+    const textarea = document.querySelector('[data-coach-textarea]');
+    const send = document.querySelector('[data-coach-send]');
+    const fileInput = document.querySelector('[data-coach-file-input]');
+    const offlineNote = document.querySelector('[data-coach-offline-note]');
+    return {
+      coachState: panel && panel.getAttribute('data-coach-state'),
+      textareaDisabled: !!textarea && textarea.disabled,
+      sendDisabled: !!send && send.disabled,
+      fileInputDisabled: !fileInput || fileInput.disabled,
+      offlineNoteVisible: !!offlineNote && getComputedStyle(offlineNote).display !== 'none',
+    };
+  });
+  check('coach panel state is "offline" when SF_COACH_URL is empty', state.coachState === 'offline', `got ${state.coachState}`);
+  check('coach textarea is disabled in offline state', state.textareaDisabled === true);
+  check('coach send button is disabled in offline state', state.sendDisabled === true);
+  check('coach clip file input (where present) is disabled in offline state', state.fileInputDisabled === true);
+  check('offline note ("The coach comes online shortly.") is visible', state.offlineNoteVisible);
+
+  await page.close();
+}
+
 // ---------- 1: legacy migration test ----------
 
 async function migrationTest(browser) {
@@ -255,7 +320,7 @@ async function persistenceTest(browser) {
 
 async function consoleErrorTest(browser) {
   console.log('\n[6] No JS console errors on load (hub, lesson, admin)');
-  const pages = ['index.html', 'smartphone/lesson-01.html', 'admin.html'];
+  const pages = ['index.html', 'smartphone/lesson-01.html', 'scriptwriting/lesson-01.html', 'admin.html'];
   for (const rel of pages) {
     const page = await browser.newPage();
     const errors = [];
@@ -415,6 +480,7 @@ async function main() {
 
   linkCheck();
   emDashGrep();
+  coachStaticChecks();
 
   const browser = await puppeteer.launch({ executablePath: CHROME_PATH, headless: 'new' });
   await migrationTest(browser);
@@ -424,6 +490,7 @@ async function main() {
   await gateVisibilityTest(browser);
   await safetyNetTimerTest(browser);
   await signInRevealTest(browser);
+  await coachOfflineStateTest(browser);
   await browser.close();
   server.close();
 

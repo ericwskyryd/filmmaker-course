@@ -44,7 +44,8 @@
       signOut: function(){},
       isAdmin: function(){ return false; },
       pullProgress: function(){ return Promise.resolve(null); },
-      pushProgress: function(){}
+      pushProgress: function(){},
+      getIdToken: function(){ return Promise.resolve(null); }
     };
   })();
 

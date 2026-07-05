@@ -351,6 +351,57 @@
         </div>
       </section>
 
+      <section class="section coach-section">
+        <p class="section-eyebrow">AI Coach</p>
+        <div class="coach-panel" data-coach-panel data-coach-state="offline">
+          <script type="application/json" data-coach-lesson>{"track":"short-form","lessonN":5,"lessonTitle":"Captions as a Retention Layer","objective":{"behavior":"Add burned-in captions to a clip so the video is fully understandable with the sound completely off, plus one manual emphasis text callout that isn't a direct transcript of the spoken words.","condition":"Using an auto-caption tool for the base transcript, then hand-editing wording, breaks, and timing, keeping each caption line to 5 words or fewer and placed inside the safe zones from Lesson 3.","criterion":"Watching the clip fully muted, a viewer who hasn't seen it can follow the point of the video start to finish. No caption line sits inside a UI dead zone, and no caption line stays on screen longer than 2 seconds without a matching change in speech."},"checklist":["Auto-captions were run, then manually corrected for accuracy.","Every caption line is 5 words or fewer.","No caption line sits inside the bottom or right-edge dead zones from Lesson 3.","Clip makes full sense watched muted, start to finish.","One manual emphasis text callout is present and isn't a direct repeat of spoken words."],"allowVideo":true}</script>
+          <div class="coach-thread" data-coach-thread aria-live="polite">
+            <div class="coach-thread-empty" data-coach-empty>
+              <div class="coach-avatar-sm"><svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg></div>
+              <p>Ask about this lesson, or paste what your drill produced above and get it checked against the list.</p>
+            </div>
+          </div>
+          <div class="coach-typing" data-coach-typing hidden>
+            <div class="coach-avatar-sm"><svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg></div>
+            <div class="coach-typing-dots"><span></span><span></span><span></span></div>
+          </div>
+          <p class="coach-error-note" data-coach-error-note></p>
+          <p class="coach-offline-note" data-coach-offline-note>The coach comes online shortly.</p>
+          <form class="coach-input-row" data-coach-form>
+            <label class="coach-file-row is-disabled" data-coach-file-row>
+              <input type="file" accept="video/*" data-coach-file-input disabled>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10.5 3.2l-5.3 5.3a2.6 2.6 0 0 0 3.7 3.7l5.3-5.3a1.7 1.7 0 0 0-2.4-2.4L6.5 9.1" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-coach-file-label>Attach your clip</span>
+            </label>
+            <p class="coach-file-error" data-coach-file-error></p>
+            <div class="coach-input-main">
+              <textarea class="coach-textarea" data-coach-textarea rows="2" placeholder="Paste your drill output or ask about this lesson..." disabled></textarea>
+              <button class="coach-send-btn" type="submit" data-coach-send disabled><svg viewBox="0 0 16 16" fill="none"><path d="M2 8.4L13.5 3l-4.8 11-1.9-4.7L2 8.4z" fill="currentColor"/></svg><span>Send</span></button>
+            </div>
+          </form>
+          <div class="coach-meta-row">
+            <span class="coach-remaining" data-coach-remaining></span>
+          </div>
+        </div>
+      </section>
+
     <section class="section">
       <p class="section-eyebrow">Resurfaces In</p>
       <p class="resurfaces-row"><a href="lesson-06.html">Lesson 6</a> (Native Formats, Same Footage, caption style itself shifts by platform), <a href="lesson-11.html">Lesson 11</a> (Capstone).</p>
@@ -383,6 +434,8 @@
   });
 </script>
 
+<script src="../assets/coach-config.js"></script>
+<script src="../assets/coach-chat.js"></script>
 
 </body>
 </html>

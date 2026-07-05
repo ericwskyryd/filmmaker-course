@@ -331,6 +331,52 @@
         </div>
       </section>
 
+      <section class="section coach-section">
+        <p class="section-eyebrow">AI Coach</p>
+        <div class="coach-panel" data-coach-panel data-coach-state="offline">
+          <script type="application/json" data-coach-lesson>{"track":"scriptwriting","lessonN":9,"lessonTitle":"Script-to-Shot-List Translation","objective":{"behavior":"Take your finished two-column AV script and produce a numbered shot list (shot number, shot type, description, estimated duration) that a filmmaker could shoot from without ever seeing the underlying script.","condition":"Every video row in the AV script must map to at least one shot list line, shot types specified using standard terms (wide, medium, close-up, insert or detail), durations must sum to the script's total runtime.","criterion":"The shot list is complete, with no AV script video beat missing a corresponding shot, shot types correctly categorize the visual content described, and total shot durations land within 2 seconds of the script's timed length."},"checklist":["Every AV script video beat has a corresponding shot list line.","Shot types use standard terms (wide, medium, close-up, insert or detail).","Durations sum within 2 seconds of the script's runtime.","The list is usable by someone who has not read the underlying script."],"allowVideo":false}</script>
+          <div class="coach-thread" data-coach-thread aria-live="polite">
+            <div class="coach-thread-empty" data-coach-empty>
+              <div class="coach-avatar-sm"><svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg></div>
+              <p>Ask about this lesson, or paste what your drill produced above and get it checked against the list.</p>
+            </div>
+          </div>
+          <div class="coach-typing" data-coach-typing hidden>
+            <div class="coach-avatar-sm"><svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg></div>
+            <div class="coach-typing-dots"><span></span><span></span><span></span></div>
+          </div>
+          <p class="coach-error-note" data-coach-error-note></p>
+          <p class="coach-offline-note" data-coach-offline-note>The coach comes online shortly.</p>
+          <form class="coach-input-row" data-coach-form>
+            <div class="coach-input-main">
+              <textarea class="coach-textarea" data-coach-textarea rows="2" placeholder="Paste your drill output or ask about this lesson..." disabled></textarea>
+              <button class="coach-send-btn" type="submit" data-coach-send disabled><svg viewBox="0 0 16 16" fill="none"><path d="M2 8.4L13.5 3l-4.8 11-1.9-4.7L2 8.4z" fill="currentColor"/></svg><span>Send</span></button>
+            </div>
+          </form>
+          <div class="coach-meta-row">
+            <span class="coach-remaining" data-coach-remaining></span>
+          </div>
+        </div>
+      </section>
+
     <section class="section">
       <p class="section-eyebrow">Resurfaces In</p>
       <p class="resurfaces-row"><a href="lesson-10.html">Lesson 10</a> (Capstone).</p>
@@ -363,6 +409,8 @@
   });
 </script>
 
+<script src="../assets/coach-config.js"></script>
+<script src="../assets/coach-chat.js"></script>
 
 </body>
 </html>

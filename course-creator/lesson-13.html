@@ -337,6 +337,52 @@
         </div>
       </section>
 
+      <section class="section coach-section">
+        <p class="section-eyebrow">AI Coach</p>
+        <div class="coach-panel" data-coach-panel data-coach-state="offline">
+          <script type="application/json" data-coach-lesson>{"track":"course-creator","lessonN":13,"lessonTitle":"Capstone, Ship a Mini-Course to a Real Learner","objective":{"behavior":"Produce and ship a complete mini-course of at least 3 lessons, following the 9-section format demonstrated throughout this track, to at least one real learner outside your team, and collect feedback against it.","condition":"Every earlier lesson's artifact feeds this directly: the validated topic (Lesson 1), transformation statement (Lesson 2), action map (Lesson 3), Mager objectives (Lesson 4), real drills (Lesson 5), scripts (Lesson 6), talking-head and screen-capture footage (Lessons 7 to 8), live platform (Lesson 9), price and position (Lesson 10), committed learner (Lesson 11), and feedback loop (Lesson 12).","criterion":"3 or more lessons are live and completable end to end, at least one real learner (not a friend or direct report) has started the course, and at least one round of specific, checklist-tied feedback (not general sentiment) has been collected and logged with a written note on what you'd change next."},"checklist":["3 or more complete lessons are live and completable end to end.","At least one real learner outside your team or friends has started the course.","At least one round of specific, checklist-tied feedback has been collected and logged.","A written note names at least one specific change you'd make next, based directly on that feedback."],"allowVideo":false}</script>
+          <div class="coach-thread" data-coach-thread aria-live="polite">
+            <div class="coach-thread-empty" data-coach-empty>
+              <div class="coach-avatar-sm"><svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg></div>
+              <p>Ask about this lesson, or paste what your drill produced above and get it checked against the list.</p>
+            </div>
+          </div>
+          <div class="coach-typing" data-coach-typing hidden>
+            <div class="coach-avatar-sm"><svg class="brand-mark" viewBox="0 0 32 32" fill="none">
+  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
+  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
+    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
+    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
+    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
+    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
+  </g>
+  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
+</svg></div>
+            <div class="coach-typing-dots"><span></span><span></span><span></span></div>
+          </div>
+          <p class="coach-error-note" data-coach-error-note></p>
+          <p class="coach-offline-note" data-coach-offline-note>The coach comes online shortly.</p>
+          <form class="coach-input-row" data-coach-form>
+            <div class="coach-input-main">
+              <textarea class="coach-textarea" data-coach-textarea rows="2" placeholder="Paste your drill output or ask about this lesson..." disabled></textarea>
+              <button class="coach-send-btn" type="submit" data-coach-send disabled><svg viewBox="0 0 16 16" fill="none"><path d="M2 8.4L13.5 3l-4.8 11-1.9-4.7L2 8.4z" fill="currentColor"/></svg><span>Send</span></button>
+            </div>
+          </form>
+          <div class="coach-meta-row">
+            <span class="coach-remaining" data-coach-remaining></span>
+          </div>
+        </div>
+      </section>
+
     <section class="section">
       <p class="section-eyebrow">Resurfaces In</p>
       <p class="resurfaces-row">Nothing forward, this is the terminal lesson. It runs Lessons 1 through 12 at once. If a gap shows up here, go back and redo the specific lesson that produced the weak link, not the whole capstone.</p>
@@ -369,6 +415,8 @@
   });
 </script>
 
+<script src="../assets/coach-config.js"></script>
+<script src="../assets/coach-chat.js"></script>
 
 </body>
 </html>
