@@ -171,6 +171,17 @@ function coachStaticChecks() {
 async function coachOfflineStateTest(browser) {
   console.log('\n[12] AI Coach panel renders disabled "coming online" state when SF_COACH_URL is empty');
   const page = await browser.newPage();
+  // The live config now carries the real worker URL; simulate the pre-activation
+  // empty-config state by intercepting coach-config.js, so the offline code path
+  // stays covered regardless of what the shipped config contains.
+  await page.setRequestInterception(true);
+  page.on('request', (req) => {
+    if (req.url().includes('assets/coach-config.js')) {
+      req.respond({ status: 200, contentType: 'application/javascript', body: 'window.SF_COACH_URL = \"\";' });
+    } else {
+      req.continue();
+    }
+  });
   await page.goto(`http://localhost:${PORT}/smartphone/lesson-01.html`, { waitUntil: 'networkidle0' });
   await page.evaluate(() => window.SFAuth._setUser({ uid: 'coach-test', displayName: 'Coach Test', email: 'coach-test@example.com' }));
   await new Promise((r) => setTimeout(r, 300));

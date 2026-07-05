@@ -105,8 +105,10 @@ function skillTreeHtml(track) {
     const items = mod.lessons.map((n) => {
       const lesson = track.lessons.find((l) => l.n === n);
       return `          <li class="lesson upcoming" data-lesson="${n}">
-            <span class="lesson-index">${n}</span>
-            <span class="lesson-name">${renderInline(lesson.title)}</span>
+            <a class="lesson-link" href="lesson-${pad2(n)}.html">
+              <span class="lesson-index">${n}</span>
+              <span class="lesson-name">${renderInline(lesson.title)}</span>
+            </a>
           </li>`;
     }).join('\n');
     return `      <div class="module">
