@@ -8,7 +8,7 @@ rules_version = '2';
 //   - A signed-in user may read and write ONLY their own document (users/{their uid}).
 //   - The admin (eric@skyryd.com) may additionally READ every user's document,
 //     to power the testers table at admin.html. The admin does not get write
-//     access to other people's documents -- nothing here ever needs it.
+//     access to other people's documents. Nothing here ever needs it.
 //   - Everyone else, everything else: denied by default.
 //
 // Paste-into-console steps live in FIREBASE-SETUP.md.
