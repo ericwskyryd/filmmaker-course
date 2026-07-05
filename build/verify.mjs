@@ -6,6 +6,12 @@
 //   3. Programmatic link check across every generated page (prev/next/nav/hub/redirects)
 //   4. Redirect stub check (old root lesson-NN.html -> smartphone/lesson-NN.html)
 //   5. Em dash grep across all generated HTML (middot separators are fine)
+//   13. Data-bound greeting (no hardcoded "Eric") on hub + dashboard
+//   14. Streak only records activity on check (false->true), never on uncheck
+//   15. Per-lesson timestamped sync merge (reshoot survives a stale-device sync)
+//   16. Celebration block's "Next" CTA (mid-track and last-lesson variants)
+//   17. Track-completion dead ends: active footer card + 14/14 dashboard state
+//   18. Vocabulary unification ("Reshoot" everywhere, gate back-link wording)
 //
 // Usage: node verify.mjs
 
@@ -17,8 +23,18 @@ import puppeteer from 'puppeteer-core';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SITE_ROOT = path.resolve(__dirname, '..');
+const RENDERS_DIR = path.join(SITE_ROOT, 'renders');
+fs.mkdirSync(RENDERS_DIR, { recursive: true });
 const CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const PORT = 8792;
+
+async function renderShot(page, outName) {
+  await page.setViewport({ width: 1440, height: 1000, deviceScaleFactor: 2 });
+  await new Promise((r) => setTimeout(r, 200)); // let aperture SVGs redraw at the new viewport
+  const outPath = path.join(RENDERS_DIR, `${outName}-desktop.png`);
+  await page.screenshot({ path: outPath, fullPage: true });
+  console.log(`  render saved: renders/${outName}-desktop.png`);
+}
 
 const MIME = {
   '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css',
@@ -485,6 +501,322 @@ async function signInRevealTest(browser) {
   await page.close();
 }
 
+// ---------- 13: data-bound greeting (no hardcoded "Eric") ----------
+
+async function greetingTest(browser) {
+  console.log('\n[13] Data-bound greeting: no hardcoded "Eric", shows the signed-in user\'s first name');
+  const auditUser = { uid: 'audit-tester-uid', displayName: 'Audit Tester', email: 'audit-tester@example.com' };
+
+  // Hub: sign in as "Audit Tester" and confirm the headline greeting shows
+  // "Audit", never "Eric" -- this is the render Eric asked to see.
+  const hubPage = await browser.newPage();
+  await hubPage.goto(`http://localhost:${PORT}/index.html`, { waitUntil: 'networkidle0' });
+  await hubPage.evaluate((u) => window.SFAuth._setUser(u), auditUser);
+  await new Promise((r) => setTimeout(r, 300));
+  const hubGreeting = await hubPage.evaluate(() => {
+    const el = document.querySelector('[data-hub-greeting-title]');
+    return el ? el.textContent.trim() : null;
+  });
+  check('hub greeting shows "Audit" for a signed-in user named Audit Tester', !!hubGreeting && hubGreeting.includes('Audit'), `got "${hubGreeting}"`);
+  check('hub greeting never hardcodes "Eric"', !!hubGreeting && !hubGreeting.includes('Eric'), `got "${hubGreeting}"`);
+  await renderShot(hubPage, 'hub-greeting-nonEric');
+  await hubPage.close();
+
+  // Track dashboard: same data-bound span, same assertion.
+  const dashPage = await browser.newPage();
+  await dashPage.goto(`http://localhost:${PORT}/smartphone/index.html`, { waitUntil: 'networkidle0' });
+  await dashPage.evaluate((u) => window.SFAuth._setUser(u), auditUser);
+  await new Promise((r) => setTimeout(r, 300));
+  const dashGreeting = await dashPage.evaluate(() => {
+    const el = document.querySelector('.greeting-title');
+    return el ? el.textContent.trim() : null;
+  });
+  check('dashboard greeting shows "Audit" for a signed-in user named Audit Tester', !!dashGreeting && dashGreeting.includes('Audit'), `got "${dashGreeting}"`);
+  check('dashboard greeting never hardcodes "Eric"', !!dashGreeting && !dashGreeting.includes('Eric'), `got "${dashGreeting}"`);
+
+  // No-displayName fallback: signed in, but no name to bind -- copy falls
+  // back to the exact server-rendered default, never a blank/broken string.
+  await dashPage.evaluate(() => window.SFAuth._setUser({ uid: 'no-name-uid', email: 'no-name@example.com' }));
+  await new Promise((r) => setTimeout(r, 300));
+  const fallbackGreeting = await dashPage.evaluate(() => {
+    const el = document.querySelector('.greeting-title');
+    return el ? el.textContent.trim() : null;
+  });
+  check('greeting falls back to "Ready for today\'s rep?" when no displayName is present', fallbackGreeting === 'Ready for today’s rep?', `got "${fallbackGreeting}"`);
+  await dashPage.close();
+}
+
+// ---------- 14: streak only records activity on check, never on uncheck ----------
+
+async function streakCheckOnlyTest(browser) {
+  console.log('\n[14] Streak activity records only on check (false->true), never on uncheck');
+  const page = await browser.newPage();
+  await page.setRequestInterception(true);
+  page.on('request', (req) => {
+    if (req.url().includes('gstatic.com/firebasejs')) req.abort();
+    else req.continue();
+  });
+  const fakeUser = { uid: 'streak-test-uid', displayName: 'Streak Test', email: 'streak-test@example.com' };
+  const simulateSignIn = () => page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+
+  await page.goto(`http://localhost:${PORT}/content-strategist/lesson-03.html`, { waitUntil: 'networkidle0' });
+  await simulateSignIn();
+  await page.evaluate(() => localStorage.clear());
+  // Seed item 0 already checked (as if from a prior day), with NO activity
+  // dates recorded yet -- reproduces "a lesson is already checked, today
+  // hasn't been touched" without ever calling setCheck (which would itself
+  // record activity and defeat the test).
+  await page.evaluate(() => {
+    const state = { tracks: { 'content-strategist': { lessons: { '3': { checks: [true, false, false], updatedAt: Date.now() - 86400000 } } } }, activityDates: [], migratedFromV1: false, schemaVersion: 3 };
+    localStorage.setItem('sf_progress_v2', JSON.stringify(state));
+  });
+  await page.reload({ waitUntil: 'networkidle0' });
+  await simulateSignIn();
+  await new Promise((r) => setTimeout(r, 300));
+
+  const beforeAny = await page.evaluate(() => (JSON.parse(localStorage.getItem('sf_progress_v2') || 'null') || {}).activityDates || []);
+  check('seeded state starts with zero activity dates', beforeAny.length === 0, `got ${JSON.stringify(beforeAny)}`);
+
+  // Uncheck the already-checked item 0 (true -> false): must NOT record activity.
+  await page.click('.checklist[data-lesson-checklist="3"] input[type=checkbox]:nth-of-type(1)');
+  await new Promise((r) => setTimeout(r, 150));
+  const afterUncheck = await page.evaluate(() => JSON.parse(localStorage.getItem('sf_progress_v2') || 'null').activityDates);
+  check('unchecking a box records no streak activity', afterUncheck.length === 0, `got ${JSON.stringify(afterUncheck)}`);
+
+  // Check a different item (false -> true): MUST record today's activity.
+  const inputs = await page.$$('.checklist[data-lesson-checklist="3"] input[type=checkbox]');
+  await inputs[1].click();
+  await new Promise((r) => setTimeout(r, 150));
+  const todayKey = (() => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })();
+  const afterCheck = await page.evaluate(() => JSON.parse(localStorage.getItem('sf_progress_v2') || 'null').activityDates);
+  check('checking a box (false->true) records today\'s streak activity', afterCheck.includes(todayKey), `got ${JSON.stringify(afterCheck)}`);
+
+  await page.close();
+}
+
+// ---------- 15: per-lesson timestamped sync merge (reshoot survives a stale sync) ----------
+
+async function syncMergeTest(browser) {
+  console.log('\n[15] Sync merge: per-lesson updatedAt, not union-only (reshoots survive a stale-device sync)');
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${PORT}/index.html`, { waitUntil: 'networkidle0' });
+
+  const results = await page.evaluate(() => {
+    const out = {};
+
+    // Case 1: reshoot-on-A-then-sync-B keeps the lesson cleared. A reshoots
+    // (clears) lesson 5 AFTER B's last known state (all checked, older
+    // timestamp). Newer wins per-lesson, so the clear must survive the merge.
+    const tA1 = 2000, tB1 = 1000;
+    const a1 = { tracks: { smartphone: { lessons: { '5': { checks: [false, false, false, false], updatedAt: tA1 } } } }, activityDates: [] };
+    const b1 = { tracks: { smartphone: { lessons: { '5': { checks: [true, true, true, true], updatedAt: tB1 } } } }, activityDates: [] };
+    const merged1 = window.SF.mergeStates(a1, b1);
+    out.reshootSurvives = merged1.tracks.smartphone.lessons['5'].checks;
+
+    // Case 2: legacy no-timestamp merge still unions (today's behavior for
+    // untouched pre-v3 data must not change).
+    const a2 = { tracks: { smartphone: { lessons: { '7': { checks: [true, false] } } } }, activityDates: [] };
+    const b2 = { tracks: { smartphone: { lessons: { '7': { checks: [false, true] } } } }, activityDates: [] };
+    const merged2 = window.SF.mergeStates(a2, b2);
+    out.legacyUnions = merged2.tracks.smartphone.lessons['7'].checks;
+
+    // Case 3: fresh check on stale device B after A's reshoot wins if B's
+    // check is newer. A reshoots at t=1000; B (unaware of the reshoot) checks
+    // a box at t=2000, strictly after A's reshoot -- B's newer state wins.
+    const tA3 = 1000, tB3 = 2000;
+    const a3 = { tracks: { smartphone: { lessons: { '9': { checks: [false, false], updatedAt: tA3 } } } }, activityDates: [] };
+    const b3 = { tracks: { smartphone: { lessons: { '9': { checks: [true, false], updatedAt: tB3 } } } }, activityDates: [] };
+    const merged3 = window.SF.mergeStates(a3, b3);
+    out.newerCheckWinsOverOlderReshoot = merged3.tracks.smartphone.lessons['9'].checks;
+
+    return out;
+  });
+
+  check('reshoot-on-A-then-sync-B keeps the lesson cleared (newer clear beats older stale checks)', JSON.stringify(results.reshootSurvives) === JSON.stringify([false, false, false, false]), `got ${JSON.stringify(results.reshootSurvives)}`);
+  check('legacy no-timestamp merge still unions (untouched pre-v3 data behaves exactly as before)', JSON.stringify(results.legacyUnions) === JSON.stringify([true, true]), `got ${JSON.stringify(results.legacyUnions)}`);
+  check('a fresh, newer check on a stale device wins over an older reshoot', JSON.stringify(results.newerCheckWinsOverOlderReshoot) === JSON.stringify([true, false]), `got ${JSON.stringify(results.newerCheckWinsOverOlderReshoot)}`);
+
+  await page.close();
+}
+
+// ---------- 16: celebration block's "Next" CTA ----------
+
+async function celebrationNextCtaTest(browser) {
+  console.log('\n[16] Celebration block has an interactive "Next" CTA (mid-track + last-lesson variants)');
+  const fakeUser = { uid: 'celebration-test-uid', displayName: 'Celebration Test', email: 'celebration-test@example.com' };
+  const simulateSignIn = (page) => page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+
+  // Mid-track lesson: completing it should surface "Next: Lesson N: {title}".
+  const midPage = await browser.newPage();
+  await midPage.goto(`http://localhost:${PORT}/smartphone/lesson-02.html`, { waitUntil: 'networkidle0' });
+  await simulateSignIn(midPage);
+  await midPage.evaluate(() => localStorage.clear());
+  await midPage.reload({ waitUntil: 'networkidle0' });
+  await simulateSignIn(midPage);
+  await new Promise((r) => setTimeout(r, 200));
+  // Dispatch real "change" events (the same event hydrateChecklist listens
+  // for) rather than puppeteer mouse clicks: with 11+ checklist items,
+  // checking the last one reflows the celebration block above the list
+  // in-place, and a loop of real mouse clicks can lose track of a checkbox's
+  // moving on-screen position mid-loop. Dispatching is deterministic either way.
+  await midPage.evaluate(() => {
+    document.querySelectorAll('.checklist[data-lesson-checklist="2"] input[type=checkbox]').forEach((input) => {
+      if (!input.checked) { input.checked = true; input.dispatchEvent(new Event('change', { bubbles: true })); }
+    });
+  });
+  await new Promise((r) => setTimeout(r, 200));
+
+  const midState = await midPage.evaluate(() => {
+    const celebration = document.querySelector('[data-celebration="2"]');
+    const cta = document.querySelector('[data-celebration-next]');
+    return {
+      celebrationVisible: !!celebration && getComputedStyle(celebration).display !== 'none',
+      ctaText: cta ? cta.textContent.trim() : null,
+      ctaHref: cta ? cta.getAttribute('href') : null,
+    };
+  });
+  check('completing a mid-track lesson shows the celebration block', midState.celebrationVisible);
+  check('celebration "Next" CTA reads "Next: Lesson 3: ..."', !!midState.ctaText && midState.ctaText.startsWith('Next: Lesson 3:'), `got "${midState.ctaText}"`);
+  check('celebration "Next" CTA links to lesson-03.html', midState.ctaHref === 'lesson-03.html', `got "${midState.ctaHref}"`);
+
+  await midPage.evaluate(() => document.querySelector('[data-celebration="2"]').scrollIntoView({ block: 'center' }));
+  await renderShot(midPage, 'celebration-next-cta');
+  await midPage.close();
+
+  // Last lesson of a track: CTA should point back to the track dashboard, labeled accordingly.
+  const lastPage = await browser.newPage();
+  await lastPage.goto(`http://localhost:${PORT}/smartphone/lesson-14.html`, { waitUntil: 'networkidle0' });
+  await simulateSignIn(lastPage);
+  await lastPage.evaluate(() => localStorage.clear());
+  await lastPage.reload({ waitUntil: 'networkidle0' });
+  await simulateSignIn(lastPage);
+  await new Promise((r) => setTimeout(r, 200));
+  await lastPage.evaluate(() => {
+    document.querySelectorAll('.checklist[data-lesson-checklist="14"] input[type=checkbox]').forEach((input) => {
+      if (!input.checked) { input.checked = true; input.dispatchEvent(new Event('change', { bubbles: true })); }
+    });
+  });
+  await new Promise((r) => setTimeout(r, 200));
+
+  const lastState = await lastPage.evaluate(() => {
+    const cta = document.querySelector('[data-celebration-next]');
+    return { ctaText: cta ? cta.textContent.trim() : null, ctaHref: cta ? cta.getAttribute('href') : null };
+  });
+  check('celebration "Next" CTA on the last lesson reads "Back to {track} dashboard"', !!lastState.ctaText && lastState.ctaText.startsWith('Back to Smartphone Filmmaker dashboard'), `got "${lastState.ctaText}"`);
+  check('celebration "Next" CTA on the last lesson links to the track dashboard', lastState.ctaHref === 'index.html', `got "${lastState.ctaHref}"`);
+
+  await lastPage.close();
+}
+
+// ---------- 17: track-completion dead ends (active footer card + 14/14 dashboard state) ----------
+
+async function trackCompletionTest(browser) {
+  console.log('\n[17] Track completion no longer dead-ends (active footer card + 14/14 dashboard state)');
+  const fakeUser = { uid: 'track-complete-uid', displayName: 'Track Complete Test', email: 'track-complete@example.com' };
+  const simulateSignIn = (page) => page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+
+  // Last lesson's footer "Track Complete" card must be an active link, not a disabled dead end.
+  const lastPage = await browser.newPage();
+  await lastPage.goto(`http://localhost:${PORT}/smartphone/lesson-14.html`, { waitUntil: 'networkidle0' });
+  await simulateSignIn(lastPage);
+  await new Promise((r) => setTimeout(r, 200));
+  const footerState = await lastPage.evaluate(() => {
+    const card = document.querySelector('.footer-nav-card.next');
+    return {
+      isDisabledClass: !!card && card.classList.contains('disabled'),
+      pointerEvents: card ? getComputedStyle(card).pointerEvents : null,
+      href: card ? card.getAttribute('href') : null,
+      title: card ? card.querySelector('.footer-nav-title').textContent.trim() : null,
+    };
+  });
+  check('last-lesson footer "Track Complete" card has no disabled class', footerState.isDisabledClass === false);
+  check('last-lesson footer "Track Complete" card is clickable (pointer-events not none)', footerState.pointerEvents !== 'none', `got ${footerState.pointerEvents}`);
+  check('last-lesson footer "Track Complete" card reads "Back to Track Dashboard"', footerState.title === 'Back to Track Dashboard', `got "${footerState.title}"`);
+  check('last-lesson footer "Track Complete" card links to the track dashboard', footerState.href === 'index.html', `got "${footerState.href}"`);
+  await lastPage.close();
+
+  // 14/14: the dashboard continue card celebrates the criterion and suggests
+  // the natural next track (progression order) instead of a dead end.
+  const dashPage = await browser.newPage();
+  await dashPage.goto(`http://localhost:${PORT}/smartphone/index.html`, { waitUntil: 'networkidle0' });
+  await simulateSignIn(dashPage);
+  await dashPage.evaluate(() => localStorage.clear());
+  await dashPage.evaluate(() => {
+    const itemCounts = window.SF_TRACKS.smartphone.itemCounts;
+    const lessons = {};
+    Object.keys(itemCounts).forEach((n) => { lessons[n] = { checks: Array(itemCounts[n]).fill(true), updatedAt: Date.now() }; });
+    const state = { tracks: { smartphone: { lessons } }, activityDates: [], migratedFromV1: false, schemaVersion: 3 };
+    localStorage.setItem('sf_progress_v2', JSON.stringify(state));
+  });
+  await dashPage.reload({ waitUntil: 'networkidle0' });
+  await simulateSignIn(dashPage);
+  await new Promise((r) => setTimeout(r, 300));
+
+  const dashState = await dashPage.evaluate(() => {
+    const expectedNextName = window.SF_TRACKS['pro-camera'].name;
+    return {
+      title: document.querySelector('[data-continue-title]').textContent.trim(),
+      eyebrow: document.querySelector('[data-continue-eyebrow]').textContent.trim(),
+      cardComplete: document.querySelector('.continue-card').classList.contains('complete'),
+      ctaText: document.querySelector('[data-continue-cta]').textContent.trim(),
+      ctaHref: document.querySelector('[data-continue-cta]').getAttribute('href'),
+      expectedNextName,
+    };
+  });
+  check('14/14 dashboard celebrates the criterion ("Every lesson passed")', dashState.title === 'Every lesson passed', `got "${dashState.title}"`);
+  check('14/14 dashboard eyebrow reads "Track Complete"', dashState.eyebrow === 'Track Complete', `got "${dashState.eyebrow}"`);
+  check('14/14 dashboard continue card carries a .complete state class', dashState.cardComplete === true);
+  check('14/14 dashboard suggests the natural next track in progression order (Pro Camera)', dashState.ctaText.includes(dashState.expectedNextName), `got "${dashState.ctaText}"`);
+  check('14/14 dashboard CTA links to the suggested next track\'s dashboard', dashState.ctaHref === '../pro-camera/index.html', `got "${dashState.ctaHref}"`);
+
+  await renderShot(dashPage, 'dashboard-track-complete');
+  await dashPage.close();
+}
+
+// ---------- 18: vocabulary unification ----------
+
+async function vocabularyTest(browser) {
+  console.log('\n[18] Vocabulary unification: "Reshoot" everywhere for redo actions, gate back-link wording');
+
+  // Static: "Back to overview" must be gone from every generated page; the
+  // gate back-link now reads "Back to Creator Reps" (same href, new label).
+  const htmlFiles = [];
+  (function walk(dir) {
+    fs.readdirSync(dir, { withFileTypes: true }).forEach((entry) => {
+      const p = path.join(dir, entry.name);
+      if (entry.isDirectory() && entry.name !== 'build' && entry.name !== 'renders' && entry.name !== '.git') walk(p);
+      else if (entry.isFile() && entry.name.endsWith('.html')) htmlFiles.push(p);
+    });
+  })(SITE_ROOT);
+  const staleBackLink = htmlFiles.filter((f) => fs.readFileSync(f, 'utf8').includes('Back to overview'));
+  check('no page still says "Back to overview"', staleBackLink.length === 0, staleBackLink.slice(0, 5).map((f) => path.relative(SITE_ROOT, f)).join('; '));
+  const hasNewBackLink = htmlFiles.some((f) => fs.readFileSync(f, 'utf8').includes('Back to Creator Reps'));
+  check('gate back-link reads "Back to Creator Reps"', hasNewBackLink);
+
+  // Live: hub track card CTA says "Reshoot" (not "Review") once a track is fully complete.
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${PORT}/index.html`, { waitUntil: 'networkidle0' });
+  await page.evaluate(() => window.SFAuth._setUser({ uid: 'vocab-test-uid', displayName: 'Vocab Test', email: 'vocab-test@example.com' }));
+  await page.evaluate(() => localStorage.clear());
+  await page.evaluate(() => {
+    const itemCounts = window.SF_TRACKS.scriptwriting.itemCounts;
+    const lessons = {};
+    Object.keys(itemCounts).forEach((n) => { lessons[n] = { checks: Array(itemCounts[n]).fill(true), updatedAt: Date.now() }; });
+    const state = { tracks: { scriptwriting: { lessons } }, activityDates: [], migratedFromV1: false, schemaVersion: 3 };
+    localStorage.setItem('sf_progress_v2', JSON.stringify(state));
+  });
+  await page.reload({ waitUntil: 'networkidle0' });
+  await page.evaluate(() => window.SFAuth._setUser({ uid: 'vocab-test-uid', displayName: 'Vocab Test', email: 'vocab-test@example.com' }));
+  await new Promise((r) => setTimeout(r, 300));
+  const ctaLabel = await page.evaluate(() => {
+    const cta = document.querySelector('[data-track-card="scriptwriting"] [data-track-cta]');
+    return cta ? cta.textContent.trim() : null;
+  });
+  check('hub card CTA for a fully complete track says "Reshoot" (not "Review")', ctaLabel === 'Reshoot', `got "${ctaLabel}"`);
+
+  await page.close();
+}
+
 async function main() {
   const server = await startServer();
   console.log(`Local server on http://localhost:${PORT}`);
@@ -502,6 +834,12 @@ async function main() {
   await safetyNetTimerTest(browser);
   await signInRevealTest(browser);
   await coachOfflineStateTest(browser);
+  await greetingTest(browser);
+  await streakCheckOnlyTest(browser);
+  await syncMergeTest(browser);
+  await celebrationNextCtaTest(browser);
+  await trackCompletionTest(browser);
+  await vocabularyTest(browser);
   await browser.close();
   server.close();
 

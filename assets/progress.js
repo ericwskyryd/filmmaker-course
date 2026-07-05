@@ -9,6 +9,23 @@
   var LEGACY_TRACK = 'smartphone';
   var LAST_ACTIVE_PUSH_KEY = 'sf_last_active_push_at';
 
+  // Schema v3: every lesson entry can carry an updatedAt (epoch ms), stamped by
+  // setCheck/resetLesson, so a cross-device sync can merge PER LESSON on
+  // "newest wins" instead of a blind union of every checked box (v2's bug: a
+  // reshoot -- clearing a lesson to redo it -- got silently undone the moment
+  // any stale device with the old checks synced back in). Same storage key,
+  // same shape otherwise, so old (schemaVersion-less) data keeps loading with
+  // no migration step: a lesson entry with no updatedAt is just treated as
+  // older than any timestamped entry but on par with another untimestamped
+  // one, which reproduces the old union-only behavior for untouched legacy
+  // data. See mergeStates()/pickLesson() below.
+  var SCHEMA_VERSION = 3;
+
+  // Fixed track order used to suggest "what's next" once a track hits 14/14:
+  // smartphone (foundation) -> pro-camera -> short-form -> weekend-youtuber ->
+  // ai-creator -> scriptwriting -> content-strategist -> course-creator.
+  var TRACK_PROGRESSION = ['smartphone', 'pro-camera', 'short-form', 'weekend-youtuber', 'ai-creator', 'scriptwriting', 'content-strategist', 'course-creator'];
+
   var CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function tracksData(){ return window.SF_TRACKS || {}; }
@@ -74,7 +91,7 @@
   /* ===================== State load / save / migrate ===================== */
 
   function blankState(){
-    return { tracks: {}, activityDates: [], migratedFromV1: false };
+    return { tracks: {}, activityDates: [], migratedFromV1: false, schemaVersion: SCHEMA_VERSION };
   }
 
   function readRawV2(){
@@ -84,6 +101,10 @@
       var parsed = JSON.parse(raw);
       if(!parsed.tracks) parsed.tracks = {};
       if(!parsed.activityDates) parsed.activityDates = [];
+      // Pre-v3 data has no schemaVersion at all -- leave it unset rather than
+      // stamping SCHEMA_VERSION here, so per-lesson entries with no updatedAt
+      // are correctly recognized as legacy (untimestamped) by pickLesson().
+      // saveState() upgrades the top-level marker transparently on next write.
       return parsed;
     }catch(e){
       return null;
@@ -107,6 +128,7 @@
      write of the same object. Callers never need to know which backend(s) are
      live; localStorage stays the write-through cache either way. */
   function saveState(state, opts){
+    state.schemaVersion = SCHEMA_VERSION;
     localStorage.setItem(STORAGE_KEY_V2, JSON.stringify(state));
     var user = window.SFAuth.getUser();
     if(user){
@@ -190,10 +212,19 @@
     var trackState = getTrackState(state, slug);
     var key = String(lessonNum);
     if(!trackState.lessons[key]) trackState.lessons[key] = { checks: [] };
+    var wasChecked = !!trackState.lessons[key].checks[itemIndex];
     var checks = getChecks(trackState, lessonNum, itemCount);
     checks[itemIndex] = checked;
     trackState.lessons[key].checks = checks;
-    recordActivity(state);
+    // Stamp per-lesson updatedAt on every write so a cross-device sync can
+    // merge "newest wins" instead of unioning stale checks back on top of a
+    // deliberate reshoot (see mergeStates()/pickLesson()).
+    trackState.lessons[key].updatedAt = Date.now();
+    // Streak activity is a rep credit, not a checkbox toggle: only the
+    // false -> true transition (actually checking something off) counts.
+    // Unchecking a box (e.g. correcting a mis-click, or starting a reshoot)
+    // must never itself extend or restart the streak.
+    if(checked && !wasChecked) recordActivity(state);
     saveState(state);
     return state;
   }
@@ -201,7 +232,7 @@
   function resetLesson(slug, lessonNum){
     var state = loadState();
     var trackState = getTrackState(state, slug);
-    trackState.lessons[String(lessonNum)] = { checks: [] };
+    trackState.lessons[String(lessonNum)] = { checks: [], updatedAt: Date.now() };
     saveState(state);
     return state;
   }
@@ -246,6 +277,26 @@
     return out;
   }
 
+  // Per-lesson merge rule (schema v3): newer updatedAt wins outright, so a
+  // reshoot (clearing a lesson to redo it) on one device survives a sync from
+  // a stale device that never saw the reshoot. Only when NEITHER side has a
+  // timestamp do we fall back to the old union-of-checks behavior, which
+  // keeps every pre-v3 (legacy) merge working exactly as it did before this
+  // fix. A timestamped side always outranks an untimestamped one, whichever
+  // way the checks actually go, because "we know when this changed" is
+  // strictly more information than "we don't know when this changed."
+  function pickLesson(aLesson, bLesson){
+    if(!aLesson && !bLesson) return null;
+    if(aLesson && !bLesson) return aLesson;
+    if(bLesson && !aLesson) return bLesson;
+    var aTime = aLesson.updatedAt, bTime = bLesson.updatedAt;
+    var aStamped = typeof aTime === 'number', bStamped = typeof bTime === 'number';
+    if(aStamped && bStamped) return (bTime > aTime) ? bLesson : aLesson;
+    if(aStamped) return aLesson;
+    if(bStamped) return bLesson;
+    return { checks: unionChecks(aLesson.checks || [], bLesson.checks || []) };
+  }
+
   function mergeStates(a, b){
     a = a || blankState();
     b = b || blankState();
@@ -261,19 +312,25 @@
       Object.keys(bLessons).forEach(function(k){ keys[k] = true; });
       var lessons = {};
       Object.keys(keys).forEach(function(k){
-        var ac = (aLessons[k] && aLessons[k].checks) || [];
-        var bc = (bLessons[k] && bLessons[k].checks) || [];
-        lessons[k] = { checks: unionChecks(ac, bc) };
+        var picked = pickLesson(aLessons[k], bLessons[k]);
+        if(!picked) return;
+        var entry = { checks: (picked.checks || []).slice() };
+        if(typeof picked.updatedAt === 'number') entry.updatedAt = picked.updatedAt;
+        lessons[k] = entry;
       });
       tracks[slug] = { lessons: lessons };
     });
+    // Activity dates and streak data are append-only facts (a day either had
+    // a checked box or it didn't), so these stay a plain union regardless of
+    // schema version -- there's no "reshoot" concept for a calendar date.
     var dateSet = {};
     (a.activityDates || []).forEach(function(d){ dateSet[d] = true; });
     (b.activityDates || []).forEach(function(d){ dateSet[d] = true; });
     return {
       tracks: tracks,
       activityDates: Object.keys(dateSet).sort(),
-      migratedFromV1: !!(a.migratedFromV1 || b.migratedFromV1)
+      migratedFromV1: !!(a.migratedFromV1 || b.migratedFromV1),
+      schemaVersion: SCHEMA_VERSION
     };
   }
 
@@ -338,6 +395,17 @@
             avatarEl.textContent = firstName.charAt(0).toUpperCase();
           }
         }
+      });
+
+      // Hub + dashboard greeting ("Ready for today's rep, {Name}?"): a plain
+      // span the markup ships with empty, so a signed-out or nameless visitor
+      // sees the fallback copy baked right into the HTML ("Ready for today's
+      // rep?") with zero JS needed. Only a real displayName gets a name here;
+      // an email-only account intentionally falls back rather than showing
+      // "Ready for today's rep, someone@example.com?".
+      document.querySelectorAll('[data-greeting-name]').forEach(function(el){
+        var first = (user && user.displayName) ? user.displayName.trim().split(/\s+/)[0] : '';
+        el.textContent = first ? (', ' + first) : '';
       });
     });
   }
@@ -408,6 +476,21 @@
     var total = 0;
     Object.keys(tracksData()).forEach(function(slug){ total += tracksData()[slug].totalLessons; });
     return total;
+  }
+
+  // Once a track hits 14/14 (any track, fully complete), the dashboard's
+  // continue card suggests where to go next instead of dead-ending on "nice
+  // job." Always walks the same fixed progression list from the top and
+  // returns the first track that still has an incomplete lesson -- a track
+  // that's already fully complete (including whichever one the learner just
+  // finished) is skipped automatically, no special-casing needed.
+  function getSuggestedNextTrack(state){
+    for(var i=0;i<TRACK_PROGRESSION.length;i++){
+      var slug = TRACK_PROGRESSION[i];
+      if(!tracksData()[slug]) continue;
+      if(getFirstIncomplete(state, slug) !== null) return slug;
+    }
+    return null; // every track in the progression is fully complete
   }
 
   /* ===================== Aperture ring builder (signature element) ===================== */
@@ -631,13 +714,33 @@
       if(bigEl) bigEl.textContent = nav.completed + ' of ' + td.totalLessons + ' lessons complete';
       if(smallEl) smallEl.textContent = nav.completed === 0 ? 'No reps logged yet. Lesson 1 takes about ten minutes.' : 'Pick up right where the last checked box left off.';
     } else {
-      if(eyebrowEl) eyebrowEl.textContent = 'All Clear';
-      if(titleEl) titleEl.textContent = 'Track Complete';
-      if(subEl) subEl.textContent = 'All ' + td.totalLessons + ' lessons passed. The skill you trust least is the one worth reshooting this week.';
-      ctaEls.forEach(function(el){ el.textContent = 'Reshoot Lesson 1'; el.setAttribute('href', 'lesson-01.html'); });
+      // 14/14 (any track fully complete): celebrate the criterion and point
+      // forward to the natural next track instead of just "nice job" -- a
+      // completed track is a milestone, not a dead end.
+      var suggestedSlug = getSuggestedNextTrack(state);
+      var suggestedTrack = suggestedSlug ? tracksData()[suggestedSlug] : null;
+      if(eyebrowEl) eyebrowEl.textContent = 'Track Complete';
+      if(titleEl) titleEl.textContent = 'Every lesson passed';
+      if(subEl) subEl.textContent = suggestedTrack
+        ? 'All ' + td.totalLessons + ' lessons passed. Natural next stop: ' + suggestedTrack.name + '.'
+        : 'All ' + td.totalLessons + ' lessons passed. The skill you trust least is the one worth reshooting this week.';
+      ctaEls.forEach(function(el){
+        if(suggestedTrack){
+          el.textContent = 'Start ' + suggestedTrack.name;
+          el.setAttribute('href', '../' + suggestedSlug + '/index.html');
+        } else {
+          el.textContent = 'Reshoot Lesson 1';
+          el.setAttribute('href', 'lesson-01.html');
+        }
+      });
       if(bigEl) bigEl.textContent = td.totalLessons + ' of ' + td.totalLessons + ' lessons complete';
-      if(smallEl) smallEl.textContent = 'Weekly redo: go back to whichever lesson felt shakiest.';
+      if(smallEl) smallEl.textContent = suggestedTrack
+        ? 'Every lesson passed. Reshoot whichever felt shakiest, or carry the streak into ' + suggestedTrack.name + '.'
+        : 'Weekly redo: go back to whichever lesson felt shakiest.';
     }
+
+    var continueCard = document.querySelector('.continue-card');
+    if(continueCard) continueCard.classList.toggle('complete', !nav.firstIncomplete);
 
     renderWeekStrip(document.querySelector('[data-week-strip]'), state);
     document.querySelectorAll('[data-total-complete]').forEach(function(el){ el.textContent = nav.completed; });
@@ -655,6 +758,22 @@
     document.querySelectorAll('[data-academy-complete]').forEach(function(el){
       el.textContent = academyCompleted + ' of ' + academyTotal + ' lessons complete';
     });
+
+    // 97/97: every track, every lesson. The hub headline swaps to a one-line
+    // celebration instead of quietly showing the same "0 tracks left to
+    // start" framing forever. Only fires once academyTotal is real (guards
+    // the pathological 0/0 case) and touches nothing when there's still a
+    // lesson left anywhere.
+    var academyDone = academyTotal > 0 && academyCompleted === academyTotal;
+    var statRow = document.querySelector('[data-hub-stat-row]');
+    if(statRow) statRow.classList.toggle('is-complete', academyDone);
+    var hubTitleEl = document.querySelector('[data-hub-greeting-title]');
+    var hubSmallEl = document.querySelector('[data-hub-greeting-small]');
+    if(academyDone){
+      if(hubTitleEl) hubTitleEl.textContent = academyTotal + ' for ' + academyTotal + '. Every lesson, every track, complete.';
+      if(hubSmallEl) hubSmallEl.textContent = 'The reps do not stop. Reshoot whatever skill you trust least, or help someone else start theirs.';
+    }
+
     document.querySelectorAll('.aperture[data-progress-auto]').forEach(function(el){
       // Hub-level ring (not inside a track-card) shows academy-wide progress.
       if(el.closest('[data-track-card]')) return;
@@ -678,7 +797,7 @@
       var firstIncomplete = getFirstIncomplete(state, slug);
       card.classList.toggle('complete', firstIncomplete === null);
       if(cta){
-        var label = firstIncomplete === null ? 'Review' : (completed === 0 ? 'Start' : 'Continue');
+        var label = firstIncomplete === null ? 'Reshoot' : (completed === 0 ? 'Start' : 'Continue');
         var arrow = cta.querySelector('.cta-arrow');
         cta.textContent = label;
         if(arrow) cta.appendChild(arrow);
@@ -706,6 +825,7 @@
     getFirstIncomplete: getFirstIncomplete,
     getAcademyCompleted: getAcademyCompleted,
     getAcademyTotal: getAcademyTotal,
+    getSuggestedNextTrack: getSuggestedNextTrack,
     getStreak: getStreak,
     setCheck: setCheck,
     resetLesson: resetLesson,
@@ -716,6 +836,7 @@
     initMobileNav: initMobileNav,
     refreshApertures: refreshApertures,
     mergeStates: mergeStates,
+    pickLesson: pickLesson,
     initAuthUI: initAuthUI,
     initContentGate: initContentGate
   };

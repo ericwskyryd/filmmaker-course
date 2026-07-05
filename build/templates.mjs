@@ -74,13 +74,13 @@ function contentGateHtml(backHref) {
       <p class="gate-title">Sign in to train</p>
       <button class="auth-signin-btn gate-signin-btn" data-auth-signin type="button" aria-label="Sign in with Google">${AUTH_GOOGLE_SVG}<span>Sign in with Google</span></button>
       <p class="gate-privacy">Signing in stores your name, email, and lesson progress. Nothing else.</p>
-      <a class="gate-back-link" href="${backHref}">${ARROW_LEFT}<span>Back to overview</span></a>
+      <a class="gate-back-link" href="${backHref}">${ARROW_LEFT}<span>Back to Creator Reps</span></a>
     </div>
     <div class="gate-card" data-gate-panel="blocked">
       <div class="gate-mark gate-mark-quiet">${APERTURE_MARK_SVG}</div>
       <p class="gate-body">Can&rsquo;t verify your session right now. Check your connection and retry.</p>
       <button class="auth-signin-btn gate-signin-btn" data-gate-retry type="button">${RESHOOT_SVG}<span>Retry</span></button>
-      <a class="gate-back-link" href="${backHref}">${ARROW_LEFT}<span>Back to overview</span></a>
+      <a class="gate-back-link" href="${backHref}">${ARROW_LEFT}<span>Back to Creator Reps</span></a>
     </div>
   </div>`;
 }
@@ -242,7 +242,7 @@ ${sidebarHtml(track, assetPrefix)}
     <header class="statusbar">
       <div>
         <p class="greeting-eyebrow" style="font-size:var(--fs-14);color:var(--text-secondary);font-weight:500;margin:0 0 8px;">${renderInline(track.title)}</p>
-        <h1 class="greeting-title" style="font-family:var(--font-display);font-size:var(--fs-39);font-weight:500;color:var(--text-primary);margin:0;letter-spacing:-0.005em;">Ready for today&rsquo;s rep, Eric?</h1>
+        <h1 class="greeting-title" style="font-family:var(--font-display);font-size:var(--fs-39);font-weight:500;color:var(--text-primary);margin:0;letter-spacing:-0.005em;">Ready for today&rsquo;s rep<span data-greeting-name></span>?</h1>
       </div>
       <div class="stats-cluster">
         <div class="stat">
@@ -351,7 +351,15 @@ ${fail}
         </div>`;
 }
 
-function checklistHtml(lesson) {
+function celebrationCtaHtml(track, lesson, nextLesson) {
+  if (nextLesson) {
+    const nextHref = `lesson-${pad2(nextLesson.n)}.html`;
+    return `<a class="celebration-next-btn" data-celebration-next href="${nextHref}">Next: Lesson ${nextLesson.n}: ${renderInline(nextLesson.title)}${ARROW_RIGHT}</a>`;
+  }
+  return `<a class="celebration-next-btn" data-celebration-next href="index.html">Back to ${renderInline(track.title)} dashboard${ARROW_RIGHT}</a>`;
+}
+
+function checklistHtml(track, lesson, nextLesson) {
   const items = lesson.checklist.map((text, i) => {
     return `            <label class="check-item"><input type="checkbox" id="check-${lesson.n}-${i}"><span class="check-text">${renderInline(text)}</span></label>`;
   }).join('\n');
@@ -361,6 +369,7 @@ function checklistHtml(lesson) {
             <div>
               <p class="celebration-title">Lesson complete</p>
               <p class="celebration-body">Criterion met: ${renderInline(lesson.objective.criterion)}</p>
+              ${celebrationCtaHtml(track, lesson, nextLesson)}
             </div>
           </div>
           <div class="checklist-head">
@@ -576,7 +585,7 @@ ${watchGridHtml(lesson.watchGood, lesson.watchFail)}
 
       <section class="section">
         <p class="section-eyebrow">Pass Checklist</p>
-${checklistHtml(lesson)}
+${checklistHtml(track, lesson, nextLesson)}
       </section>
 
       <section class="section">
@@ -598,7 +607,7 @@ ${coachPanelHtml(track, lesson)}
 
     <nav class="lesson-footer-nav">
       <a class="footer-nav-card prev" href="index.html"><span class="footer-nav-label">${ARROW_LEFT}Back to</span><span class="footer-nav-title">Track Dashboard</span></a>
-      ${nextLesson ? `<a class="footer-nav-card next" href="${nextHref}"><span class="footer-nav-label">Next${ARROW_RIGHT}</span><span class="footer-nav-title">Lesson ${nextLesson.n}: ${renderInline(nextLesson.title)}</span></a>` : `<a class="footer-nav-card next disabled" href="index.html"><span class="footer-nav-label">Track Complete${ARROW_RIGHT}</span><span class="footer-nav-title">Back to ${renderInline(track.title)}</span></a>`}
+      ${nextLesson ? `<a class="footer-nav-card next" href="${nextHref}"><span class="footer-nav-label">Next${ARROW_RIGHT}</span><span class="footer-nav-title">Lesson ${nextLesson.n}: ${renderInline(nextLesson.title)}</span></a>` : `<a class="footer-nav-card next" href="index.html"><span class="footer-nav-label">Track Complete${ARROW_RIGHT}</span><span class="footer-nav-title">Back to Track Dashboard</span></a>`}
     </nav>
 
     </div>
@@ -729,12 +738,12 @@ ${HEAD_FONTS}
       </div>
       <div class="hub-greeting-signedin" data-hub-signedin>
         <p class="greeting-eyebrow" style="font-size:var(--fs-14);color:var(--text-secondary);font-weight:500;margin:0 0 8px;">Creator Reps Academy</p>
-        <h1 class="greeting-title" style="font-family:var(--font-display);font-size:var(--fs-39);font-weight:500;color:var(--text-primary);margin:0 0 24px;letter-spacing:-0.005em;">Ready for today&rsquo;s rep, Eric?</h1>
-        <div class="hub-stat-row">
+        <h1 class="greeting-title" data-hub-greeting-title style="font-family:var(--font-display);font-size:var(--fs-39);font-weight:500;color:var(--text-primary);margin:0 0 24px;letter-spacing:-0.005em;">Ready for today&rsquo;s rep<span data-greeting-name></span>?</h1>
+        <div class="hub-stat-row" data-hub-stat-row>
           ${aperture({ size: 88, label: `0/${totalAcademyLessons}`, labelSize: 22 })}
           <div class="hub-stat-copy">
             <div class="big" data-academy-complete>0 of ${totalAcademyLessons} lessons complete</div>
-            <div class="small">Across all 8 tracks. Pick one up where you left off, or start something new.</div>
+            <div class="small" data-hub-greeting-small>Across all 8 tracks. Pick one up where you left off, or start something new.</div>
           </div>
         </div>
       </div>
