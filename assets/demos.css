@@ -30,7 +30,11 @@
 .demo-body-text.is-quiet{ color: var(--text-secondary); }
 
 .demo-stopwatch-row{ display:flex; align-items:baseline; gap: var(--sp-2); margin: var(--sp-3) 0; }
-.demo-stopwatch{ font-family: var(--font-mono); font-size: 30px; font-weight:600; color: var(--text-primary); font-variant-numeric: tabular-nums; }
+/* IBM Plex Mono's baseline sits visibly lower in its em-box than the
+   Neue Haas Grotesk "sec" label next to it, so a plain baseline alignment
+   reads as the digits sagging below the label. A small relative nudge
+   corrects the optical mismatch without touching the actual layout box. */
+.demo-stopwatch{ font-family: var(--font-mono); font-size: 30px; font-weight:600; color: var(--text-primary); font-variant-numeric: tabular-nums; position:relative; top:-0.07em; }
 .demo-stopwatch-unit{ font-size:12px; color: var(--text-tertiary); }
 .demo-stopwatch.is-over{ color: var(--warning); }
 .demo-stopwatch.is-clean{ color: var(--success); }

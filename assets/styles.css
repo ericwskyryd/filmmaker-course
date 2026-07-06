@@ -97,11 +97,16 @@ p{ margin:0; }
 
 .lesson.active{ background: var(--accent-soft); border-left: 2px solid var(--accent); }
 .lesson.active .lesson-index{ background: var(--accent); color: var(--accent-ink); font-weight:700; }
-.lesson.active .lesson-name{ color: var(--text-primary); font-weight: 600; }
+.lesson.active .lesson-name{ color: var(--text-primary); font-weight: 500; }
 
 .sidebar-footer{ margin-top: var(--sp-6); padding: var(--sp-4) var(--sp-3); border-top: 1px solid var(--border-hairline); }
-.sidebar-footer-label{ display:flex; justify-content:space-between; align-items:baseline; font-size: var(--fs-12); color: var(--text-secondary); margin-bottom: var(--sp-2); letter-spacing: 0.03em; }
-.sidebar-footer-label .mono{ color: var(--text-primary); font-weight:600; font-size: var(--fs-14); }
+.sidebar-footer-label{ display:flex; justify-content:space-between; align-items:center; font-size: var(--fs-12); color: var(--text-secondary); margin-bottom: var(--sp-2); letter-spacing: 0.03em; }
+
+/* Count pill: the small "N/14" / "N / 6" progress counts (sidebar footer
+   fraction, per-lesson checklist progress). Amber at 12% opacity background
+   (--accent-soft is already exactly that), full-opacity amber text -- never
+   a plain unstyled number floating in the layout. */
+.count-pill{ display:inline-flex; align-items:center; color: var(--accent); font-weight:600; font-size: var(--fs-12); background: var(--accent-soft); border-radius:999px; padding: 3px 10px; }
 .linear-track{ height: 2px; background: var(--track); border-radius: 2px; overflow:hidden; }
 .linear-fill{ height:100%; background: var(--accent); border-radius:2px; transition: width 400ms ease-out; }
 
@@ -113,6 +118,8 @@ p{ margin:0; }
 .statusbar{ display:flex; align-items:center; justify-content:space-between; padding-bottom: var(--sp-6); margin-bottom: var(--sp-8); border-bottom: 1px solid var(--border-hairline); gap: var(--sp-4); flex-wrap: wrap; }
 .breadcrumb{ font-size: var(--fs-14); color: var(--text-secondary); font-weight: 500; }
 .breadcrumb .current{ color: var(--text-primary); font-weight:600; }
+.breadcrumb-link{ color: var(--text-secondary); font-weight:500; border-bottom: 1px solid transparent; transition: color 120ms ease-out, border-color 120ms ease-out; }
+.breadcrumb-link:hover{ color: var(--text-primary); border-color: var(--border-hairline-strong); }
 .breadcrumb .sep{ margin: 0 var(--sp-2); color: var(--text-tertiary); }
 
 .stats-cluster{ display:flex; align-items:center; gap: var(--sp-6); flex-wrap: wrap; }
@@ -224,6 +231,22 @@ body[data-gate-state="blocked"] .gate-card[data-gate-panel="blocked"]{ display:f
 .video-gap-note p{ font-size: 13px; line-height:1.5; color: var(--text-primary); }
 .video-gap-note p b{ color: var(--warning); font-weight:600; }
 
+/* Capstone submission panel: stands in for the video-stage slot on the four
+   capstones with no demo and no video pick (there's nothing to watch for a
+   "go make your own finished piece" lesson). Premium/neutral, not the
+   warning-toned gap note used elsewhere -- this isn't a content problem,
+   it's the intended design for a capstone. */
+.capstone-panel{ background: var(--surface); border:1px solid rgba(232,163,61,0.22); border-radius:12px; padding: var(--sp-6); }
+.capstone-eyebrow{ font-size: var(--fs-12); font-weight:700; letter-spacing:0.09em; text-transform:uppercase; color: var(--accent); margin: 0 0 var(--sp-2); }
+.capstone-note{ font-size: var(--fs-14); color: var(--text-secondary); line-height:1.55; margin: 0 0 var(--sp-5, 20px); max-width: 62ch; }
+.capstone-block{ margin-bottom: var(--sp-5, 20px); }
+.capstone-block:last-of-type{ margin-bottom: var(--sp-4); }
+.capstone-block-label{ font-size: 11px; font-weight:700; letter-spacing:0.07em; text-transform:uppercase; color: var(--text-secondary); margin: 0 0 var(--sp-2); }
+.capstone-checklist-list{ display:flex; flex-direction:column; gap: var(--sp-2); }
+.capstone-checklist-list li{ font-size: var(--fs-14); line-height:1.5; color: var(--text-primary); padding-left: var(--sp-4); position:relative; }
+.capstone-checklist-list li::before{ content:''; position:absolute; left:2px; top:9px; width:4px; height:4px; border-radius:50%; background: var(--accent); opacity:0.7; }
+.capstone-coach-link{ padding-top: var(--sp-4); border-top: 1px solid var(--border-hairline); }
+
 /* ===================== CONTENT SECTIONS ===================== */
 .content-col{ max-width: 680px; }
 .section{ margin-bottom: var(--sp-8); }
@@ -260,7 +283,7 @@ body[data-gate-state="blocked"] .gate-card[data-gate-panel="blocked"]{ display:f
 /* Pass checklist (interactive) */
 .checklist-card{ background: var(--surface); border: 1px solid var(--border-hairline); border-radius: 12px; padding: var(--sp-6); }
 .checklist-head{ display:flex; align-items:center; justify-content:space-between; gap: var(--sp-3); margin-bottom: var(--sp-4); flex-wrap: wrap; }
-.checklist-progress{ font-size: 13px; color: var(--text-secondary); font-family: var(--font-mono); }
+.checklist-progress{ font-family: var(--font-mono); }
 .checklist{ display:flex; flex-direction:column; gap: var(--sp-1); margin-bottom: var(--sp-2); }
 .check-item{ display:flex; align-items:flex-start; gap: var(--sp-3); padding: var(--sp-3); border-radius: 10px; cursor:pointer; transition: background 120ms ease-out; }
 .check-item:hover{ background: rgba(255,255,255,0.03); }
@@ -356,7 +379,7 @@ body[data-gate-state="blocked"] .gate-card[data-gate-panel="blocked"]{ display:f
 .coach-textarea::placeholder{ color: var(--text-secondary); }
 .coach-textarea:focus{ outline:none; border-color: var(--accent); }
 .coach-textarea:disabled{ opacity:0.55; cursor:not-allowed; }
-.coach-send-btn{ flex:0 0 auto; display:flex; align-items:center; justify-content:center; gap:6px; min-height:44px; background: var(--accent); color: var(--accent-ink); font-size: var(--fs-14); font-weight:700; padding: var(--sp-3) var(--sp-5, 20px); border-radius:10px; transition: background 120ms ease-out; }
+.coach-send-btn{ flex:0 0 auto; display:flex; align-items:center; justify-content:center; gap:6px; min-height:44px; background: var(--accent); color: var(--accent-ink); font-size: var(--fs-14); font-weight:700; padding: var(--sp-3) var(--sp-5, 20px); border-radius:10px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.35); transition: background 120ms ease-out; }
 .coach-send-btn svg{ width:14px; height:14px; }
 .coach-send-btn:hover:not(:disabled){ background: var(--accent-hover); }
 .coach-send-btn:disabled{ opacity:0.5; cursor:not-allowed; }
@@ -531,7 +554,7 @@ body[data-gate-state="blocked"] .gate-card[data-gate-panel="blocked"]{ display:f
     padding: var(--sp-3) var(--sp-4); padding-bottom: calc(var(--sp-3) + env(safe-area-inset-bottom, 0));
     background: linear-gradient(to top, var(--bg) 60%, rgba(11,15,18,0));
   }
-  .dash-mobile-cta a{ display:flex; align-items:center; justify-content:center; width:100%; min-height:48px; background: var(--accent); color: var(--accent-ink); font-size: var(--fs-16); font-weight:700; border-radius:10px; }
+  .dash-mobile-cta a{ display:flex; align-items:center; justify-content:center; width:100%; min-height:48px; background: var(--accent); color: var(--accent-ink); font-size: var(--fs-16); font-weight:700; border-radius:10px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.35); }
   body.dashboard .stage{ padding-bottom: calc(48px + var(--sp-8) + var(--sp-4)); }
 }
 
@@ -583,9 +606,21 @@ body.is-signed-in .hub-greeting-signedin{ display:block; }
 .track-card-desc{ font-size: var(--fs-14); color: var(--text-secondary); line-height:1.55; flex:1 1 auto; }
 .track-card-foot{ display:flex; align-items:center; justify-content:space-between; gap: var(--sp-2); padding-top: var(--sp-3); border-top: 1px solid var(--border-hairline); }
 .track-card-modules{ font-size:12px; color: var(--text-tertiary); }
-.track-card-cta{ display:flex; align-items:center; gap:4px; font-size:13px; font-weight:700; color: var(--accent); }
-.track-card-cta .cta-arrow{ width:14px; height:14px; }
+/* ===================== TERTIARY BUTTON (text + chevron, no fill/border) =====================
+   Third tier below the primary (filled amber) and secondary (hairline
+   border) button: bare accent-colored text with a trailing chevron that
+   nudges forward on hover, for a link-weight action inside an already-
+   interactive container (e.g. a track card that's a link in its own right). */
+.btn-tertiary{ display:flex; align-items:center; gap:4px; font-size:13px; font-weight:700; color: var(--accent); transition: color 120ms ease-out; }
+.btn-tertiary .cta-arrow{ width:14px; height:14px; transition: transform 120ms ease-out; }
+.btn-tertiary:hover{ color: var(--accent-hover); }
+.btn-tertiary:hover .cta-arrow{ transform: translateX(2px); }
+
+.track-card-cta.btn-tertiary{ font-size:13px; }
 .track-card.complete .track-card-cta{ color: var(--success); }
+.track-card:hover .track-card-cta{ color: var(--accent-hover); }
+.track-card.complete:hover .track-card-cta{ color: var(--success); }
+.track-card:hover .track-card-cta .cta-arrow{ transform: translateX(2px); }
 
 @media (max-width: 900px){
   .hub-shell{ padding: var(--sp-4) var(--sp-4) calc(var(--sp-8) + var(--sp-4)); }

@@ -676,58 +676,14 @@
     return best;
   }
 
-  /* ===================== Aperture ring builder (signature element) ===================== */
+  /* ===================== Aperture ring builder (signature element) =====================
+     Geometry lives in one place, assets/aperture.js (window.SFAperture), loaded
+     just before this file on every page. That single function draws real
+     overlapping iris blades (fixed hinge edge, curved leading edge, all blades
+     sweeping in sync) rather than a plain segmented donut fill, and it's the
+     same function used for the static brand/gate/coach mark at build time. */
   function buildAperture(el){
-    var SVGNS = 'http://www.w3.org/2000/svg';
-    function polar(cx, cy, r, angleDeg){ var rad = angleDeg * Math.PI / 180; return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)]; }
-    function sectorPath(cx, cy, rOuter, rInner, a0, a1){
-      var p1 = polar(cx, cy, rOuter, a0), p2 = polar(cx, cy, rOuter, a1), p3 = polar(cx, cy, rInner, a1), p4 = polar(cx, cy, rInner, a0);
-      var largeArc = (a1 - a0) > 180 ? 1 : 0;
-      return 'M ' + p1[0] + ' ' + p1[1] + ' A ' + rOuter + ' ' + rOuter + ' 0 ' + largeArc + ' 1 ' + p2[0] + ' ' + p2[1] +
-        ' L ' + p3[0] + ' ' + p3[1] + ' A ' + rInner + ' ' + rInner + ' 0 ' + largeArc + ' 0 ' + p4[0] + ' ' + p4[1] + ' Z';
-    }
-    var progress = Math.max(0, Math.min(1, parseFloat(el.dataset.progress) || 0));
-    var blades = parseInt(el.dataset.blades, 10) || 8;
-    var hasLabel = el.dataset.label !== undefined;
-    var cx = 50, cy = 50, rOuter = 47, rInner = hasLabel ? 29 : 34;
-    var gap = 2.6, bladeAngle = 360 / blades;
-    var svg = document.createElementNS(SVGNS, 'svg');
-    svg.setAttribute('viewBox', '0 0 100 100'); svg.setAttribute('width', '100%'); svg.setAttribute('height', '100%');
-    var ring = document.createElementNS(SVGNS, 'circle');
-    ring.setAttribute('cx', cx); ring.setAttribute('cy', cy); ring.setAttribute('r', rOuter + 1.5);
-    ring.setAttribute('fill', 'none'); ring.setAttribute('stroke', 'rgba(255,255,255,0.10)'); ring.setAttribute('stroke-width', '1');
-    svg.appendChild(ring);
-    for (var i = 0; i < blades; i++){
-      var bladeStart = -90 + i * bladeAngle + gap / 2, bladeEnd = -90 + (i + 1) * bladeAngle - gap / 2;
-      var fracStart = i / blades, fracEnd = (i + 1) / blades;
-      var basePath = document.createElementNS(SVGNS, 'path');
-      basePath.setAttribute('d', sectorPath(cx, cy, rOuter, rInner, bladeStart, bladeEnd));
-      basePath.setAttribute('fill', 'rgba(255,255,255,0.07)'); basePath.setAttribute('stroke', 'rgba(255,255,255,0.05)'); basePath.setAttribute('stroke-width', '0.5');
-      svg.appendChild(basePath);
-      if (progress > fracStart){
-        var amberFrac = Math.min(1, (progress - fracStart) / (fracEnd - fracStart));
-        var amberEnd = bladeStart + (bladeEnd - bladeStart) * amberFrac;
-        var amberPath = document.createElementNS(SVGNS, 'path');
-        amberPath.setAttribute('d', sectorPath(cx, cy, rOuter, rInner, bladeStart, amberEnd));
-        amberPath.setAttribute('fill', (i % 2 === 0) ? '#E8A33D' : '#E5A544');
-        amberPath.setAttribute('stroke', 'rgba(11,15,18,0.35)'); amberPath.setAttribute('stroke-width', '0.6');
-        amberPath.setAttribute('class', 'ap-blade-amber');
-        svg.appendChild(amberPath);
-      }
-    }
-    var hole = document.createElementNS(SVGNS, 'circle');
-    hole.setAttribute('cx', cx); hole.setAttribute('cy', cy); hole.setAttribute('r', rInner - 1);
-    hole.setAttribute('fill', el.dataset.holeColor || '#0B0F12');
-    svg.appendChild(hole);
-    if (hasLabel){
-      var text = document.createElementNS(SVGNS, 'text');
-      text.setAttribute('x', cx); text.setAttribute('y', cy + 5); text.setAttribute('text-anchor', 'middle');
-      text.setAttribute('font-family', "'IBM Plex Mono', monospace"); text.setAttribute('font-size', el.dataset.labelSize || '16'); text.setAttribute('font-weight', '600'); text.setAttribute('fill', '#F2EFE9');
-      text.textContent = el.dataset.label;
-      svg.appendChild(text);
-    }
-    el.innerHTML = '';
-    el.appendChild(svg);
+    if (window.SFAperture) window.SFAperture.buildAperture(el);
   }
 
   function refreshApertures(){
@@ -1058,6 +1014,15 @@
         cta.textContent = label;
         if(arrow) cta.appendChild(arrow);
       }
+      // Deep-link once real progress exists: jump straight to the next
+      // incomplete lesson instead of dropping back at the dashboard overview
+      // every time. A brand-new track (nothing started yet) still lands on
+      // the dashboard first, same as a fully complete track (reshoot is a
+      // dashboard-level decision, not a specific lesson).
+      var deepHref = (completed > 0 && firstIncomplete !== null)
+        ? slug + '/lesson-' + String(firstIncomplete).padStart(2,'0') + '.html'
+        : slug + '/index.html';
+      card.setAttribute('href', deepHref);
     });
 
     // At most one line, academy-wide: whichever track's weekly redo has been

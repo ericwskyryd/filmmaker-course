@@ -2,22 +2,29 @@
 // String-builder templates. No client framework; output is static HTML that
 // assets/progress.js hydrates in the browser via localStorage.
 
+import { createRequire } from 'module';
 import { pad2, renderInline, renderParagraphs, renderResurfaces } from './lib.mjs';
+
+// The Aperture Ring lives in ONE place, assets/aperture.js, shared verbatim
+// between this Node build step (loaded here via createRequire, since the file
+// is a plain CommonJS-compatible script) and the browser (assets/progress.js
+// calls the identical function at runtime for every live progress ring). No
+// second implementation to drift out of sync.
+const require = createRequire(import.meta.url);
+const { buildApertureMarkup } = require('../assets/aperture.js');
 
 const HEAD_FONTS = `<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">`;
 
-const APERTURE_MARK_SVG = `<svg class="brand-mark" viewBox="0 0 32 32" fill="none">
-  <circle cx="16" cy="16" r="15" stroke="var(--accent)" stroke-width="1.4" opacity="0.55"/>
-  <g stroke="var(--accent)" stroke-width="1.4" opacity="0.9">
-    <line x1="16" y1="4" x2="16" y2="10"/><line x1="16" y1="22" x2="16" y2="28"/>
-    <line x1="4" y1="16" x2="10" y2="16"/><line x1="22" y1="16" x2="28" y2="16"/>
-    <line x1="7.5" y1="7.5" x2="11.8" y2="11.8"/><line x1="20.2" y1="20.2" x2="24.5" y2="24.5"/>
-    <line x1="7.5" y1="24.5" x2="11.8" y2="20.2"/><line x1="20.2" y1="11.8" x2="24.5" y2="7.5"/>
-  </g>
-  <circle cx="16" cy="16" r="4.5" fill="var(--accent)"/>
-</svg>`;
+// The brand/gate/coach mark: a fixed, non-progress rendering of the same
+// Aperture Ring component at a deliberately chosen "pleasing openness" --
+// never a sun icon, never tied to any learner's actual percent complete.
+// Forced to the simplified (fewer-blade) geometry regardless of its literal
+// display size (24 to 56px across its various homes), since it's a static
+// identity mark, not a data-driven ring -- clean and legible everywhere it
+// appears, not just above the 32px threshold.
+const APERTURE_MARK_SVG = buildApertureMarkup({ size: 44, progress: 0.42, simplified: true, className: 'brand-mark' });
 
 const CHECK_SVG_INLINE = `<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.5L13 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 const MENU_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>`;
@@ -85,13 +92,17 @@ function contentGateHtml(backHref) {
   </div>`;
 }
 
+// Server-rendered as an empty, sized placeholder div; assets/progress.js
+// (via assets/aperture.js, the shared component) draws the actual iris SVG
+// into it once real progress data is available -- blade count and detail
+// level are decided from the instance's rendered size at that point, not
+// hardcoded here.
 function aperture({ size, progress = 0, label, labelSize, auto = true }) {
   const attrs = [
     `class="aperture"`,
     auto ? 'data-progress-auto' : '',
     `style="--ap-size:${size}px"`,
     `data-progress="${progress}"`,
-    `data-blades="8"`,
     label !== undefined ? `data-label="${label}"` : '',
     labelSize ? `data-label-size="${labelSize}"` : '',
   ].filter(Boolean).join(' ');
@@ -140,7 +151,7 @@ ${skillTreeHtml(track)}
     </nav>
 
     <div class="sidebar-footer">
-      <div class="sidebar-footer-label"><span>Track progress</span><span class="mono" data-progress-fraction>0/${track.totalLessons}</span></div>
+      <div class="sidebar-footer-label"><span>Track progress</span><span class="mono count-pill" data-progress-fraction>0/${track.totalLessons}</span></div>
       <div class="linear-track"><div class="linear-fill" data-progress-bar style="width:0%"></div></div>
     </div>
   </aside>
@@ -181,6 +192,7 @@ function tabbarMobileHtml({ track, backHref, prevHref, nextHref, homeHref }) {
 
 function scriptsHtml({ assetPrefix, trackSlug, itemCounts, call }) {
   return `<script src="${assetPrefix}assets/tracks-data.js"></script>
+<script src="${assetPrefix}assets/aperture.js"></script>
 <script src="${assetPrefix}assets/progress.js"></script>
 <script type="module" src="${assetPrefix}assets/firebase.js"></script>
 <script>
@@ -408,7 +420,7 @@ function checklistHtml(track, lesson, nextLesson) {
             </div>
           </div>
           <div class="checklist-head">
-            <span class="checklist-progress" data-checklist-progress="${lesson.n}">0 / ${lesson.checklist.length}</span>
+            <span class="checklist-progress count-pill" data-checklist-progress="${lesson.n}">0 / ${lesson.checklist.length}</span>
           </div>
           <div class="checklist" data-lesson-checklist="${lesson.n}">
 ${items}
@@ -436,9 +448,38 @@ function demoStageHtml(demo) {
     </section>`;
 }
 
-function videoStageHtml(videoPick, demo) {
+// The four capstones with neither a demo nor a video pick: there's no canned
+// footage that could stand in for "go make your own finished piece," so
+// instead of the generic amber-warning gap note, these get a dedicated
+// submission panel built entirely from the lesson's own drill and checklist
+// (no new content authored) plus a pointer down to the AI coach.
+const CAPSTONE_NO_MEDIA = new Set(['pro-camera:12', 'ai-creator:13', 'course-creator:13', 'short-form:11']);
+
+function capstonePanelHtml(lesson) {
+  const items = lesson.checklist.map((text) => `          <li>${renderInline(text)}</li>`).join('\n');
+  return `    <section class="video-stage">
+      <div class="capstone-panel">
+        <p class="capstone-eyebrow">Your Capstone Submission</p>
+        <p class="capstone-note">There's no demo clip for a capstone: this one is proof of what you can do on your own, not something to watch first.</p>
+        <div class="capstone-block">
+          <p class="capstone-block-label">What to produce</p>
+          <div class="prose">${renderParagraphs(lesson.drill)}</div>
+        </div>
+        <div class="capstone-block">
+          <p class="capstone-block-label">Submission checklist (${lesson.checklist.length} items)</p>
+          <ul class="capstone-checklist-list">
+${items}
+          </ul>
+        </div>
+        <a class="btn-tertiary capstone-coach-link" href="#coach">Get it reviewed by the AI Coach below${ARROW_RIGHT}</a>
+      </div>
+    </section>`;
+}
+
+function videoStageHtml(videoPick, demo, capstoneKey, lesson) {
   if (demo) return demoStageHtml(demo);
   if (!videoPick || videoPick.gap) {
+    if (CAPSTONE_NO_MEDIA.has(capstoneKey)) return capstonePanelHtml(lesson);
     const note = videoPick ? videoPick.gapText : 'No demo video meets the bar for this one; the technique section carries it.';
     return `    <section class="video-stage">
       <div class="video-gap-note" style="margin-top:0;"><span class="warn-dot"></span><p><b>No video for this one:</b> ${note}</p></div>
@@ -501,7 +542,7 @@ function coachPanelHtml(track, lesson) {
             </label>
             <p class="coach-file-error" data-coach-file-error></p>` : '';
 
-  return `      <section class="section coach-section">
+  return `      <section class="section coach-section" id="coach">
         <p class="section-eyebrow">AI Coach</p>
         <p style="margin:-6px 0 12px;font-size:12px;color:var(--text-secondary);">Conversations clear when you leave the page.</p>
         <div class="coach-panel" data-coach-panel data-coach-state="offline">
@@ -561,7 +602,7 @@ ${sidebarHtml(track, assetPrefix)}
   <main class="stage">
 
     <header class="statusbar">
-      <div class="breadcrumb">${renderInline(track.title)} <span class="sep">/</span> <span class="current">Module ${lesson.moduleNum} &middot; Lesson ${lesson.n} of ${track.totalLessons}</span></div>
+      <div class="breadcrumb"><a class="breadcrumb-link" href="index.html">${renderInline(track.title)}</a> <span class="sep">/</span> <span class="current">Module ${lesson.moduleNum} &middot; Lesson ${lesson.n} of ${track.totalLessons}</span></div>
       <div class="stats-cluster">
         <div class="stat">
           ${aperture({ size: 52, label: `0/${track.totalLessons}` })}
@@ -588,7 +629,7 @@ ${sidebarHtml(track, assetPrefix)}
       <p class="lesson-objective">${renderInline(lesson.objective.behavior)}</p>
     </section>
 
-${videoStageHtml(videoPick, demo)}
+${videoStageHtml(videoPick, demo, `${track.slug}:${lesson.n}`, lesson)}
 
     <div class="content-col">
 
@@ -719,7 +760,7 @@ export function renderHub(tracks) {
           <p class="track-card-desc">${renderInline(TRACK_BLURBS[t.slug] || t.tagline)}</p>
           <div class="track-card-foot">
             <span class="track-card-modules">${t.modules.length} modules &middot; ${t.totalLessons} lessons</span>
-            <span class="track-card-cta" data-track-cta>Start<span class="cta-arrow">${ARROW_RIGHT}</span></span>
+            <span class="track-card-cta btn-tertiary" data-track-cta>Start<span class="cta-arrow">${ARROW_RIGHT}</span></span>
           </div>
         </a>`;
   }).join('\n');
@@ -800,6 +841,7 @@ ${trackCards}
   </div>
 
 <script src="assets/tracks-data.js"></script>
+<script src="assets/aperture.js"></script>
 <script src="assets/progress.js"></script>
 <script type="module" src="assets/firebase.js"></script>
 <script>

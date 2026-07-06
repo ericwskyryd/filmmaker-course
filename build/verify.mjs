@@ -157,6 +157,45 @@ function emDashGrep() {
   return hits;
 }
 
+// ---------- 23: design finale static checks (breadcrumb link, capstone panel) ----------
+
+function designFinaleStaticChecks() {
+  console.log('\n[23] Design finale statics: breadcrumb track link, capstone submission panel on exactly 4 pages');
+  const TRACK_SLUGS = ['smartphone', 'pro-camera', 'ai-creator', 'weekend-youtuber', 'short-form', 'course-creator', 'content-strategist', 'scriptwriting'];
+  const lessonPages = [];
+  TRACK_SLUGS.forEach((slug) => {
+    const dir = path.join(SITE_ROOT, slug);
+    fs.readdirSync(dir).filter((f) => /^lesson-\d+\.html$/.test(f)).forEach((f) => {
+      lessonPages.push({ slug, file: path.join(dir, f) });
+    });
+  });
+
+  const missingBreadcrumbLink = [];
+  lessonPages.forEach(({ file }) => {
+    const html = fs.readFileSync(file, 'utf8');
+    if (!/<a class="breadcrumb-link" href="index\.html">/.test(html)) missingBreadcrumbLink.push(path.relative(SITE_ROOT, file));
+  });
+  check('every lesson page\'s desktop breadcrumb links the track name back to index.html', missingBreadcrumbLink.length === 0, missingBreadcrumbLink.slice(0, 5).join('; '));
+
+  const CAPSTONE_NO_MEDIA = new Set(['pro-camera:12', 'ai-creator:13', 'course-creator:13', 'short-form:11']);
+  const capstonePages = [];
+  const wrongPages = [];
+  lessonPages.forEach(({ slug, file }) => {
+    const nMatch = path.basename(file).match(/^lesson-(\d+)\.html$/);
+    const n = parseInt(nMatch[1], 10);
+    const html = fs.readFileSync(file, 'utf8');
+    const hasPanel = html.includes('class="capstone-panel"');
+    const expected = CAPSTONE_NO_MEDIA.has(`${slug}:${n}`);
+    if (hasPanel) capstonePages.push(`${slug}/lesson-${nMatch[1]}.html`);
+    if (hasPanel !== expected) wrongPages.push(`${slug}/lesson-${nMatch[1]}.html (hasPanel=${hasPanel}, expected=${expected})`);
+  });
+  check('capstone submission panel appears on exactly the 4 no-media capstones', capstonePages.length === 4 && wrongPages.length === 0, wrongPages.join('; ') || `found on: ${capstonePages.join(', ')}`);
+  check('capstone panel links down to the AI Coach section (#coach) and the coach section carries that id', capstonePages.length === 0 || (() => {
+    const sample = fs.readFileSync(path.join(SITE_ROOT, 'pro-camera', 'lesson-12.html'), 'utf8');
+    return sample.includes('href="#coach"') && sample.includes('id="coach"');
+  })());
+}
+
 // ---------- 11: AI Coach panel static checks (presence + file-input track split) ----------
 
 function coachStaticChecks() {
@@ -1135,6 +1174,57 @@ async function hubRedoLineTest(browser) {
   await page.close();
 }
 
+// ---------- 24: hub track-card deep-link (first incomplete lesson, dashboard fallback) ----------
+
+async function hubDeepLinkTest(browser) {
+  console.log('\n[24] Hub track-card deep-link: jumps to the first incomplete lesson once progress exists, dashboard for a fresh track');
+  const page = await browser.newPage();
+  const fakeUser = { uid: 'deeplink-test-uid', displayName: 'Deep Link Test', email: 'deeplink-test@example.com' };
+  await page.goto(`http://localhost:${PORT}/index.html`, { waitUntil: 'networkidle0' });
+  await page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+  await page.evaluate(() => localStorage.clear());
+
+  await page.evaluate(() => {
+    const itemCounts = window.SF_TRACKS['content-strategist'].itemCounts;
+    const lessons = {
+      '1': { checks: Array(itemCounts['1']).fill(true), updatedAt: Date.now() },
+      '2': { checks: Array(itemCounts['2']).fill(true), updatedAt: Date.now() },
+    };
+    const state = { tracks: { 'content-strategist': { lessons } }, activityDates: [], migratedFromV1: false, schemaVersion: 3 };
+    localStorage.setItem('sf_progress_v2', JSON.stringify(state));
+  });
+  await page.reload({ waitUntil: 'networkidle0' });
+  await page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+  await new Promise((r) => setTimeout(r, 300));
+
+  const hrefs = await page.evaluate(() => {
+    return {
+      inProgress: document.querySelector('[data-track-card="content-strategist"]').getAttribute('href'),
+      untouched: document.querySelector('[data-track-card="scriptwriting"]').getAttribute('href'),
+    };
+  });
+  check('a track with 2/11 done deep-links straight to lesson-03.html (the first incomplete lesson)', hrefs.inProgress === 'content-strategist/lesson-03.html', `got "${hrefs.inProgress}"`);
+  check('a track with zero progress still links to its dashboard, not lesson-01.html', hrefs.untouched === 'scriptwriting/index.html', `got "${hrefs.untouched}"`);
+
+  // A fully complete track (Reshoot state) also falls back to the dashboard --
+  // there's no single "next" lesson to deep-link to once everything has passed.
+  await page.evaluate(() => {
+    const itemCounts = window.SF_TRACKS['scriptwriting'].itemCounts;
+    const lessons = {};
+    Object.keys(itemCounts).forEach((n) => { lessons[n] = { checks: Array(itemCounts[n]).fill(true), updatedAt: Date.now() }; });
+    const state = JSON.parse(localStorage.getItem('sf_progress_v2'));
+    state.tracks['scriptwriting'] = { lessons };
+    localStorage.setItem('sf_progress_v2', JSON.stringify(state));
+  });
+  await page.reload({ waitUntil: 'networkidle0' });
+  await page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+  await new Promise((r) => setTimeout(r, 300));
+  const completeHref = await page.evaluate(() => document.querySelector('[data-track-card="scriptwriting"]').getAttribute('href'));
+  check('a fully complete track (Reshoot) links to its dashboard, not a specific lesson', completeHref === 'scriptwriting/index.html', `got "${completeHref}"`);
+
+  await page.close();
+}
+
 async function main() {
   const server = await startServer();
   console.log(`Local server on http://localhost:${PORT}`);
@@ -1142,6 +1232,7 @@ async function main() {
   linkCheck();
   emDashGrep();
   coachStaticChecks();
+  designFinaleStaticChecks();
 
   const browser = await puppeteer.launch({ executablePath: CHROME_PATH, headless: 'new' });
   await migrationTest(browser);
@@ -1162,6 +1253,7 @@ async function main() {
   await redoTargetPickingTest(browser);
   await redoDismissTest(browser);
   await hubRedoLineTest(browser);
+  await hubDeepLinkTest(browser);
   await browser.close();
   server.close();
 
