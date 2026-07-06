@@ -293,6 +293,10 @@ ${sidebarHtml(track, assetPrefix)}
       </div>
       <div class="howto-grid">
 ${howtoItems}
+        <div class="howto-item">
+          <p class="howto-item-label">The AI Coach</p>
+          <p>Every lesson has an AI coach. Paste your drill output, or attach your clip on filming tracks, and get notes against that lesson's pass checklist.</p>
+        </div>
       </div>
     </section>
 
@@ -468,6 +472,7 @@ function coachPanelHtml(track, lesson) {
 
   return `      <section class="section coach-section">
         <p class="section-eyebrow">AI Coach</p>
+        <p style="margin:-6px 0 12px;font-size:12px;color:var(--text-secondary);">Conversations clear when you leave the page.</p>
         <div class="coach-panel" data-coach-panel data-coach-state="offline">
           <script type="application/json" data-coach-lesson>${cfgJson}</script>
           <div class="coach-thread" data-coach-thread aria-live="polite">
@@ -580,6 +585,7 @@ ${watchGridHtml(lesson.watchGood, lesson.watchFail)}
         <p class="section-eyebrow">Your Drill</p>
         <div class="card drill-card">
           <div class="prose" style="font-size:var(--fs-16);color:var(--text-primary);">${renderParagraphs(lesson.drill)}</div>
+          <p style="margin:14px 0 0;font-size:var(--fs-14);color:var(--text-secondary);">${COACH_FILMMAKING_TRACKS.has(track.slug) ? 'Shot it? The AI coach below reviews your clip against this lesson\'s pass checklist.' : 'Done? Paste what you made into the AI coach below for notes against this lesson\'s pass checklist.'}</p>
         </div>
       </section>
 
@@ -733,7 +739,7 @@ ${HEAD_FONTS}
       <div class="hub-greeting-signedout" data-hub-signedout>
         <p class="greeting-eyebrow" style="font-size:var(--fs-14);color:var(--text-secondary);font-weight:500;margin:0 0 8px;">Creator Reps Academy</p>
         <h1 class="greeting-title" style="font-family:var(--font-display);font-size:var(--fs-39);font-weight:500;color:var(--text-primary);margin:0 0 12px;letter-spacing:-0.005em;">Creator skills, built one rep at a time.</h1>
-        <p class="hub-pitch">Filmmaking, AI content, YouTube, short-form, strategy, and scriptwriting: ${tracks.length} tracks, ${tracks.reduce((n, t) => n + t.totalLessons, 0)} lessons, one rule. Every lesson ends with something real you made. Sign in with Google to save your progress and pick up where you left off.</p>
+        <p class="hub-pitch">Filmmaking, AI content, YouTube, short-form, strategy, and scriptwriting: ${tracks.length} tracks, ${tracks.reduce((n, t) => n + t.totalLessons, 0)} lessons, one rule. Every lesson ends with something real you made, and an AI coach reviews it against that lesson's pass checklist. Sign in with Google to save your progress and pick up where you left off.</p>
         <button class="auth-signin-btn gate-signin-btn" data-auth-signin type="button" aria-label="Sign in with Google">${AUTH_GOOGLE_SVG}<span>Sign in with Google</span></button>
       </div>
       <div class="hub-greeting-signedin" data-hub-signedin>

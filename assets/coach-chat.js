@@ -80,6 +80,7 @@
     var coachUrl = String(window.SF_COACH_URL || '').trim();
     var online = !!coachUrl;
     var busy = false;
+    var limited = false; // daily limit reached; composer stays disabled until reset
     var pendingVideo = null; // { base64, mimeType, name }
     var history = []; // full running list, sliced to last HISTORY_LIMIT per request
 
@@ -125,16 +126,53 @@
       row.appendChild(bubble);
       thread.appendChild(row);
       thread.scrollTop = thread.scrollHeight;
+      return row;
     }
 
     function setBusy(b) {
       busy = b;
-      sendBtn.disabled = b || !online;
-      textarea.disabled = b || !online;
-      if (fileInput) fileInput.disabled = b || !online;
-      if (fileRow) fileRow.classList.toggle('is-disabled', b || !online);
+      var off = b || !online || limited;
+      sendBtn.disabled = off;
+      textarea.disabled = off;
+      if (fileInput) fileInput.disabled = off;
+      if (fileRow) fileRow.classList.toggle('is-disabled', off);
       if (typing) typing.hidden = !b;
       if (b) thread.scrollTop = thread.scrollHeight;
+    }
+
+    function enterLimitedState(body) {
+      limited = true;
+      panel.setAttribute('data-coach-state', 'limited');
+      updateRemaining((body && body.remaining) || { text: 0, video: 0 });
+      var resetMsg = 'You have used today’s coaching limit. Your drill work still counts.';
+      var resetsAt = body && body.resetsAtUtc ? new Date(body.resetsAtUtc) : null;
+      if (resetsAt && !isNaN(resetsAt.getTime())) {
+        resetMsg += ' Resets at ' + resetsAt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) + '.';
+        var waitMs = resetsAt.getTime() - Date.now();
+        if (waitMs > 0 && waitMs < 26 * 3600 * 1000) {
+          setTimeout(function () {
+            limited = false;
+            panel.setAttribute('data-coach-state', 'ready');
+            setError('');
+            setBusy(false);
+          }, waitMs + 5000);
+        }
+      }
+      setError(resetMsg);
+      setBusy(false);
+    }
+
+    function readCheckedState() {
+      var out = [];
+      var list = document.querySelector('.checklist[data-lesson-checklist]');
+      if (!list) return out;
+      var rows = list.querySelectorAll('input[type="checkbox"]');
+      Array.prototype.forEach.call(rows, function (box, i) {
+        var label = box.closest('label');
+        var item = label ? label.textContent.trim() : (cfg.checklist && cfg.checklist[i]) || '';
+        out.push({ item: item, checked: !!box.checked });
+      });
+      return out;
     }
 
     function pluralize(n, singular, plural) {
@@ -170,7 +208,7 @@
       });
     }
 
-    function sendToCoach(userMessage, video, historyForRequest) {
+    function sendToCoach(userMessage, video, historyForRequest, onSuccess, onFailure) {
       var payload = {
         mode: video ? 'video' : 'text',
         track: cfg.track,
@@ -178,6 +216,7 @@
         lessonTitle: cfg.lessonTitle,
         objective: cfg.objective,
         checklist: cfg.checklist,
+        checkedState: readCheckedState(),
         userMessage: userMessage,
         history: historyForRequest,
       };
@@ -197,7 +236,7 @@
         if (res.status === 429) {
           return res.json().catch(function () { return {}; }).then(function (body) {
             var err = new Error('rate-limited');
-            err.friendly = (body && body.message) || 'You have used today’s coaching limit. It resets tomorrow, and your drill work up to this point still counts.';
+            err.rateLimitBody = body || {};
             throw err;
           });
         }
@@ -213,7 +252,13 @@
         appendMessage('coach', reply);
         history.push({ role: 'coach', text: reply });
         updateRemaining(data && data.remaining);
+        if (onSuccess) onSuccess();
       }).catch(function (err) {
+        if (onFailure) onFailure();
+        if (err && err.rateLimitBody) {
+          enterLimitedState(err.rateLimitBody);
+          return;
+        }
         setBusy(false);
         setError((err && err.friendly) || 'Coach is unreachable right now. Your drill still counts, check yourself against the list above and retry later.');
       });
@@ -221,22 +266,28 @@
 
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      if (busy || !online) return;
+      if (busy || !online || limited) return;
       var text = (textarea.value || '').trim();
       var video = pendingVideo;
       if (!text && !video) return;
 
       setError('');
-      appendMessage('user', text || 'Sent a clip for review.');
+      var userRow = appendMessage('user', text || 'Sent a clip for review.');
       // Snapshot history (prior turns only) before this message joins it, so
       // the backend never sees the current userMessage duplicated inside history.
       var historyForRequest = history.slice(-HISTORY_LIMIT);
       history.push({ role: 'user', text: text || '(clip attached, no message)' });
 
-      textarea.value = '';
-      clearAttachedFile();
-
-      sendToCoach(text, video, historyForRequest);
+      // Input is cleared ONLY on success. On failure the message and clip are
+      // restored so the user never retypes or re-attaches after an error.
+      sendToCoach(text, video, historyForRequest, function onSuccess() {
+        textarea.value = '';
+        clearAttachedFile();
+      }, function onFailure() {
+        if (userRow && userRow.parentNode) userRow.parentNode.removeChild(userRow);
+        history.pop();
+        if (emptyState && !thread.querySelector('.coach-msg')) emptyState.style.display = '';
+      });
     });
   }
 
