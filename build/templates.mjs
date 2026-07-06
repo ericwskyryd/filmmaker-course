@@ -455,6 +455,12 @@ function demoStageHtml(demo) {
 // (no new content authored) plus a pointer down to the AI coach.
 const CAPSTONE_NO_MEDIA = new Set(['pro-camera:12', 'ai-creator:13', 'course-creator:13', 'short-form:11']);
 
+// Creative direction round 2: commissioned cinematic posters replace the
+// embed's initial state on these blocks; tap loads the real video.
+const POSTER_OVERRIDES = {
+  'smartphone:1': ['assets/img/poster-ninja-grip.jpeg', 'assets/img/poster-lens-flare.jpeg'],
+};
+
 function capstonePanelHtml(lesson) {
   const items = lesson.checklist.map((text) => `          <li>${renderInline(text)}</li>`).join('\n');
   return `    <section class="video-stage">
@@ -486,16 +492,34 @@ function videoStageHtml(videoPick, demo, capstoneKey, lesson) {
     </section>`;
   }
   const twoUp = videoPick.entries.length > 1 ? ' two-up' : '';
-  const blocks = videoPick.entries.map((e) => {
+  const posters = POSTER_OVERRIDES[capstoneKey || ''] || null;
+  const blocks = videoPick.entries.map((e, idx) => {
     const params = e.startSec !== null ? `&start=${e.startSec}&end=${e.endSec}` : '';
-    const metaParts = [e.channel, e.totalLen, e.rangeDisplay].filter(Boolean);
+    const poster = posters && posters[idx] ? `../${posters[idx]}` : null;
+    const metaParts = [
+      e.channel ? renderInline(e.channel) : null,
+      e.totalLen ? `<span class="mono">${renderInline(e.totalLen)}</span>` : null,
+      e.rangeDisplay ? `<span class="mono">${renderInline(e.rangeDisplay)}</span>` : null,
+    ].filter(Boolean);
+    if (poster) {
+      return `        <div class="video-block">
+          <div class="video-embed video-facade" data-video-id="${e.videoId}" data-video-params="${params}" style="background-image:url('${poster}')" role="button" tabindex="0" aria-label="Play: ${renderInline(e.title)}">
+            <span class="video-facade-play"><svg viewBox="0 0 24 24"><path d="M7 4.5l13 7.5-13 7.5V4.5z"/></svg></span>
+          </div>
+          <div class="video-caption">
+            <p class="video-caption-title">${renderInline(e.title)}</p>
+            ${metaParts.length ? `<p class="video-caption-meta">${metaParts.join(' &middot; ')}</p>` : ''}
+            ${e.why ? `<p class="video-caption-why">${renderInline(e.why)}</p>` : ''}
+          </div>
+        </div>`;
+    }
     return `        <div class="video-block">
           <div class="video-embed">
             <iframe src="https://www.youtube-nocookie.com/embed/${e.videoId}?rel=0${params}" title="${renderInline(e.title)}" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
           </div>
           <div class="video-caption">
             <p class="video-caption-title">${renderInline(e.title)}</p>
-            ${metaParts.length ? `<p class="video-caption-meta">${metaParts.map(renderInline).join(' &middot; ')}</p>` : ''}
+            ${metaParts.length ? `<p class="video-caption-meta">${metaParts.join(' &middot; ')}</p>` : ''}
             ${e.why ? `<p class="video-caption-why">${renderInline(e.why)}</p>` : ''}
           </div>
         </div>`;
@@ -824,7 +848,7 @@ ${HEAD_FONTS}
             <div class="small" data-hub-greeting-small>Across all 8 tracks. Pick one up where you left off, or start something new.</div>
           </div>
         </div>
-        <a class="hub-redo-line" data-hub-redo-line href="#" hidden>A weekly redo is waiting in <span data-hub-redo-track></span>.${ARROW_RIGHT}</a>
+        <a class="hub-redo-line" data-hub-redo-line href="#" hidden>A weekly redo is waiting in your queue${ARROW_RIGHT}</a>
       </div>
     </section>
 

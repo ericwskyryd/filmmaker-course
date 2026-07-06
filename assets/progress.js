@@ -1037,8 +1037,7 @@
         var pendingTrack = tracksData()[pending.slug];
         redoLine.hidden = false;
         redoLine.setAttribute('href', pending.slug + '/index.html');
-        var trackNameEl = redoLine.querySelector('[data-hub-redo-track]');
-        if(trackNameEl) trackNameEl.textContent = pendingTrack ? pendingTrack.name : pending.slug;
+        // Copy is fixed ('waiting in your queue'); the href still targets the track.
       } else {
         redoLine.hidden = true;
       }
@@ -1093,3 +1092,30 @@
     initContentGate();
   });
 })();
+
+  // ---- Video poster facade: tap swaps the commissioned poster for the real embed ----
+  (function(){
+    function activateFacade(el){
+      var id = el.getAttribute('data-video-id');
+      if(!id) return;
+      var params = el.getAttribute('data-video-params') || '';
+      var iframe = document.createElement('iframe');
+      iframe.src = 'https://www.youtube-nocookie.com/embed/' + id + '?rel=0&autoplay=1' + params;
+      iframe.title = el.getAttribute('aria-label') || 'Video';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      el.classList.remove('video-facade');
+      el.style.backgroundImage = '';
+      el.innerHTML = '';
+      el.appendChild(iframe);
+    }
+    document.addEventListener('click', function(e){
+      var el = e.target && e.target.closest ? e.target.closest('.video-facade') : null;
+      if(el) activateFacade(el);
+    });
+    document.addEventListener('keydown', function(e){
+      if((e.key === 'Enter' || e.key === ' ') && e.target && e.target.classList && e.target.classList.contains('video-facade')){
+        e.preventDefault(); activateFacade(e.target);
+      }
+    });
+  })();

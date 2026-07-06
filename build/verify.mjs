@@ -1155,9 +1155,9 @@ async function hubRedoLineTest(browser) {
     return { hidden: el ? el.hasAttribute('hidden') : true, href: el ? el.getAttribute('href') : null, text: el ? el.textContent.trim() : null, trackName: trackName ? trackName.textContent.trim() : null };
   });
   check('hub redo line is visible when a track has a pending redo', line.hidden === false, JSON.stringify(line));
-  check('hub redo line names the track whose redo has been waiting longest (AI Creator, not Scriptwriting)', line.trackName === 'AI Creator', `got "${line.trackName}"`);
+  // Copy no longer names the track (creative direction round 2); the href assertion below still proves the oldest-redo track is targeted.
   check('hub redo line links to that track\'s dashboard', line.href === 'ai-creator/index.html', `got "${line.href}"`);
-  check('hub redo line reads "A weekly redo is waiting in {track}."', !!line.text && line.text.startsWith('A weekly redo is waiting in') && line.text.endsWith('.'), `got "${line.text}"`);
+  check('hub redo line reads the fixed queue copy', !!line.text && line.text.indexOf('A weekly redo is waiting in your queue') === 0, `got "${line.text}"`);
 
   // Dismissing the winning track's redo should hand the hub line to the
   // remaining pending track instead of hiding it outright.
