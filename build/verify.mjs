@@ -36,6 +36,14 @@ async function renderShot(page, outName) {
   console.log(`  render saved: renders/${outName}-desktop.png`);
 }
 
+async function renderShotMobile(page, outName) {
+  await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2 });
+  await new Promise((r) => setTimeout(r, 200));
+  const outPath = path.join(RENDERS_DIR, `${outName}-mobile.png`);
+  await page.screenshot({ path: outPath, fullPage: true });
+  console.log(`  render saved: renders/${outName}-mobile.png`);
+}
+
 const MIME = {
   '.html': 'text/html', '.js': 'application/javascript', '.css': 'text/css',
   '.png': 'image/png', '.svg': 'image/svg+xml', '.json': 'application/json',
@@ -817,6 +825,316 @@ async function vocabularyTest(browser) {
   await page.close();
 }
 
+// ---------- 19: confidence tap stores, persists, and resets on reshoot ----------
+
+async function confidenceTapTest(browser) {
+  console.log('\n[19] Confidence tap: stores confidence + timestamp, persists across reload, resets on reshoot');
+  const page = await browser.newPage();
+  const fakeUser = { uid: 'confidence-test-uid', displayName: 'Confidence Test', email: 'confidence-test@example.com' };
+  const simulateSignIn = () => page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+
+  await page.goto(`http://localhost:${PORT}/weekend-youtuber/lesson-04.html`, { waitUntil: 'networkidle0' });
+  await simulateSignIn();
+  await page.evaluate(() => localStorage.clear());
+  await page.reload({ waitUntil: 'networkidle0' });
+  await simulateSignIn();
+  await new Promise((r) => setTimeout(r, 200));
+
+  await page.evaluate(() => {
+    document.querySelectorAll('.checklist[data-lesson-checklist="4"] input[type=checkbox]').forEach((input) => {
+      if (!input.checked) { input.checked = true; input.dispatchEvent(new Event('change', { bubbles: true })); }
+    });
+  });
+  await new Promise((r) => setTimeout(r, 200));
+
+  const askingState = await page.evaluate(() => {
+    const wrap = document.querySelector('[data-celebration-confidence="4"]');
+    return wrap ? wrap.getAttribute('data-confidence-state') : null;
+  });
+  check('confidence prompt shows the "asking" state right after completion', askingState === 'asking', `got ${askingState}`);
+
+  const buttonsVisible = await page.evaluate(() => {
+    const ask = document.querySelector('[data-celebration-confidence="4"] [data-confidence-ask]');
+    const noted = document.querySelector('[data-celebration-confidence="4"] [data-confidence-noted]');
+    return ask && noted ? { askShown: getComputedStyle(ask).display !== 'none', notedShown: getComputedStyle(noted).display !== 'none' } : null;
+  });
+  check('the three quiet buttons are visible and the "Noted." confirmation is not, before any tap', !!buttonsVisible && buttonsVisible.askShown && !buttonsVisible.notedShown, JSON.stringify(buttonsVisible));
+
+  await page.click('[data-celebration-confidence="4"] [data-confidence-btn="1"]');
+  await new Promise((r) => setTimeout(r, 150));
+
+  const ratedState = await page.evaluate(() => {
+    const wrap = document.querySelector('[data-celebration-confidence="4"]');
+    const noted = document.querySelector('[data-celebration-confidence="4"] [data-confidence-noted]');
+    return { state: wrap ? wrap.getAttribute('data-confidence-state') : null, notedShown: noted ? getComputedStyle(noted).display !== 'none' : false };
+  });
+  check('tapping "Shaky" flips to the "rated" state', ratedState.state === 'rated', `got ${ratedState.state}`);
+  check('the "Noted." confirmation replaces the buttons after a tap', ratedState.notedShown === true);
+
+  const stored = await page.evaluate(() => {
+    const v2 = JSON.parse(localStorage.getItem('sf_progress_v2') || 'null');
+    const entry = v2 && v2.tracks['weekend-youtuber'] && v2.tracks['weekend-youtuber'].lessons['4'];
+    return entry ? { confidence: entry.confidence, hasConfidenceTimestamp: typeof entry.confidenceAt === 'number' } : null;
+  });
+  check('confidence=1 (Shaky) is stored on the lesson entry', !!stored && stored.confidence === 1, `got ${JSON.stringify(stored)}`);
+  check('a confidence timestamp is stored alongside the rating', !!stored && stored.hasConfidenceTimestamp);
+
+  await page.reload({ waitUntil: 'networkidle0' });
+  await simulateSignIn();
+  await new Promise((r) => setTimeout(r, 300));
+  const persistedState = await page.evaluate(() => {
+    const wrap = document.querySelector('[data-celebration-confidence="4"]');
+    return wrap ? wrap.getAttribute('data-confidence-state') : null;
+  });
+  check('the confidence confirmation persists after a reload (no nag, no re-ask)', persistedState === 'rated', `got ${persistedState}`);
+
+  await page.evaluate(() => document.querySelector('[data-celebration="4"]').scrollIntoView({ block: 'center' }));
+  await renderShot(page, 'celebration-confidence');
+  await renderShotMobile(page, 'celebration-confidence');
+
+  // Reshoot: confidence resets so re-completing asks again.
+  await page.evaluate(() => { window.confirm = () => true; });
+  await page.click('[data-reshoot="4"]');
+  await new Promise((r) => setTimeout(r, 150));
+  await page.evaluate(() => {
+    document.querySelectorAll('.checklist[data-lesson-checklist="4"] input[type=checkbox]').forEach((input) => {
+      if (!input.checked) { input.checked = true; input.dispatchEvent(new Event('change', { bubbles: true })); }
+    });
+  });
+  await new Promise((r) => setTimeout(r, 200));
+  const askedAgain = await page.evaluate(() => {
+    const wrap = document.querySelector('[data-celebration-confidence="4"]');
+    return wrap ? wrap.getAttribute('data-confidence-state') : null;
+  });
+  check('re-completing after a reshoot asks again (confidence resets to "asking")', askedAgain === 'asking', `got ${askedAgain}`);
+
+  await page.close();
+}
+
+// ---------- 20: redo target picking (lowest confidence, tie-break oldest) ----------
+
+async function redoTargetPickingTest(browser) {
+  console.log('\n[20] Weekly redo target: lowest confidence first (unrated=2), tie-break oldest updatedAt');
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${PORT}/index.html`, { waitUntil: 'networkidle0' });
+
+  const shakyWins = await page.evaluate(() => {
+    const itemCounts = window.SF_TRACKS['course-creator'].itemCounts;
+    const now = Date.now();
+    const lessons = {
+      '1': { checks: Array(itemCounts['1']).fill(true), updatedAt: now - 5 * 86400000 }, // unrated (2), oldest touch
+      '2': { checks: Array(itemCounts['2']).fill(true), updatedAt: now - 1000, confidence: 2, confidenceAt: now - 1000 },
+      '3': { checks: Array(itemCounts['3']).fill(true), updatedAt: now - 500, confidence: 1, confidenceAt: now - 500 }, // Shaky
+      '4': { checks: Array(itemCounts['4']).fill(true), updatedAt: now, confidence: 3, confidenceAt: now },
+    };
+    const state = { tracks: { 'course-creator': { lessons } }, activityDates: [], migratedFromV1: false, schemaVersion: 3 };
+    const pick = window.SF.pickRedoTarget(state, 'course-creator');
+    const redo = window.SF.getWeeklyRedo(state, 'course-creator');
+    return { pick, reason: redo ? redo.reason : null };
+  });
+  check('the Shaky-rated lesson (3) is picked over unrated/Solid/Nailed-it lessons', shakyWins.pick === 3, `got lesson ${shakyWins.pick}`);
+  check('the redo reason for a Shaky pick is confidence-based ("shaky")', shakyWins.reason === 'shaky', `got "${shakyWins.reason}"`);
+
+  const oldestTieBreak = await page.evaluate(() => {
+    const itemCounts = window.SF_TRACKS['course-creator'].itemCounts;
+    const now = Date.now();
+    const lessons = {
+      '1': { checks: Array(itemCounts['1']).fill(true), updatedAt: now - 10 * 86400000 }, // unrated, oldest touch
+      '2': { checks: Array(itemCounts['2']).fill(true), updatedAt: now - 1000, confidence: 2, confidenceAt: now - 1000 },
+      '3': { checks: Array(itemCounts['3']).fill(true), updatedAt: now, confidence: 3, confidenceAt: now },
+    };
+    const state = { tracks: { 'course-creator': { lessons } }, activityDates: [], migratedFromV1: false, schemaVersion: 3 };
+    const pick = window.SF.pickRedoTarget(state, 'course-creator');
+    const redo = window.SF.getWeeklyRedo(state, 'course-creator');
+    return { pick, reason: redo ? redo.reason : null };
+  });
+  check('with no Shaky rating present, the oldest-touched lesson (1) wins the tie-break', oldestTieBreak.pick === 1, `got lesson ${oldestTieBreak.pick}`);
+  check('the redo reason for an oldest-touch pick reads as recency-based ("oldest")', oldestTieBreak.reason === 'oldest', `got "${oldestTieBreak.reason}"`);
+
+  const noCompletedLessons = await page.evaluate(() => {
+    const state = { tracks: { 'course-creator': { lessons: {} } }, activityDates: [], migratedFromV1: false, schemaVersion: 3 };
+    return window.SF.getWeeklyRedo(state, 'course-creator');
+  });
+  check('a track with zero completed lessons has no redo target', noCompletedLessons === null, `got ${JSON.stringify(noCompletedLessons)}`);
+
+  // Live dashboard render: the redo card surfaces the actual picked lesson + CTA.
+  const dashPage = await browser.newPage();
+  const fakeUser = { uid: 'redo-card-uid', displayName: 'Redo Card Test', email: 'redo-card@example.com' };
+  await dashPage.goto(`http://localhost:${PORT}/course-creator/index.html`, { waitUntil: 'networkidle0' });
+  await dashPage.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+  await dashPage.evaluate(() => localStorage.clear());
+  await dashPage.evaluate(() => {
+    const itemCounts = window.SF_TRACKS['course-creator'].itemCounts;
+    const now = Date.now();
+    const lessons = {
+      '1': { checks: Array(itemCounts['1']).fill(true), updatedAt: now - 5 * 86400000 },
+      '2': { checks: Array(itemCounts['2']).fill(true), updatedAt: now - 1000, confidence: 3, confidenceAt: now - 1000 },
+      '3': { checks: Array(itemCounts['3']).fill(true), updatedAt: now - 500, confidence: 1, confidenceAt: now - 500 },
+    };
+    const state = { tracks: { 'course-creator': { lessons } }, activityDates: [], migratedFromV1: false, schemaVersion: 3 };
+    localStorage.setItem('sf_progress_v2', JSON.stringify(state));
+  });
+  await dashPage.reload({ waitUntil: 'networkidle0' });
+  await dashPage.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+  await new Promise((r) => setTimeout(r, 300));
+
+  const card = await dashPage.evaluate(() => {
+    const el = document.querySelector('[data-redo-card]');
+    const title = document.querySelector('[data-redo-title]');
+    const reason = document.querySelector('[data-redo-reason]');
+    const cta = document.querySelector('[data-redo-cta]');
+    const ctaLabel = document.querySelector('[data-redo-cta-label]');
+    return {
+      hidden: el ? el.hasAttribute('hidden') : true,
+      title: title ? title.textContent.trim() : null,
+      reason: reason ? reason.textContent.trim() : null,
+      ctaHref: cta ? cta.getAttribute('href') : null,
+      ctaLabel: ctaLabel ? ctaLabel.textContent.trim() : null,
+    };
+  });
+  check('the redo card is visible once the track has a completed lesson', card.hidden === false);
+  check('the redo card eyebrow/reason names lesson 3 (the Shaky pick) as the target', card.ctaHref === 'lesson-03.html', `got href="${card.ctaHref}"`);
+  check('the redo card reason reads "You rated this one Shaky."', card.reason === 'You rated this one Shaky.', `got "${card.reason}"`);
+  check('the redo CTA reads "Reshoot Lesson 3"', card.ctaLabel === 'Reshoot Lesson 3', `got "${card.ctaLabel}"`);
+  check('the redo card title is a real lesson title, not empty', !!card.title && card.title.length > 0, `got "${card.title}"`);
+
+  await renderShot(dashPage, 'dashboard-redo-card');
+
+  await dashPage.close();
+  await page.close();
+}
+
+// ---------- 21: dismiss ("Skip this week") hides the redo for the rest of the week ----------
+
+async function redoDismissTest(browser) {
+  console.log('\n[21] Redo dismiss ("Skip this week") shows the done state for the rest of the ISO week');
+  const page = await browser.newPage();
+  const fakeUser = { uid: 'redo-dismiss-uid', displayName: 'Redo Dismiss Test', email: 'redo-dismiss@example.com' };
+  await page.goto(`http://localhost:${PORT}/short-form/index.html`, { waitUntil: 'networkidle0' });
+  await page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+  await page.evaluate(() => localStorage.clear());
+  await page.evaluate(() => {
+    const itemCounts = window.SF_TRACKS['short-form'].itemCounts;
+    const lessons = { '1': { checks: Array(itemCounts['1']).fill(true), updatedAt: Date.now() - 86400000 } };
+    const state = { tracks: { 'short-form': { lessons } }, activityDates: [], migratedFromV1: false, schemaVersion: 3 };
+    localStorage.setItem('sf_progress_v2', JSON.stringify(state));
+  });
+  await page.reload({ waitUntil: 'networkidle0' });
+  await page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+  await new Promise((r) => setTimeout(r, 300));
+
+  const beforeDismiss = await page.evaluate(() => {
+    const body = document.querySelector('[data-redo-card-body]');
+    const done = document.querySelector('[data-redo-done-body]');
+    return { bodyHidden: body ? body.hasAttribute('hidden') : true, doneHidden: done ? done.hasAttribute('hidden') : true };
+  });
+  check('before dismissing, the redo card shows the pending target, not the done state', beforeDismiss.bodyHidden === false && beforeDismiss.doneHidden === true, JSON.stringify(beforeDismiss));
+
+  await page.click('[data-redo-skip]');
+  await new Promise((r) => setTimeout(r, 150));
+
+  const afterDismiss = await page.evaluate(() => {
+    const card = document.querySelector('[data-redo-card]');
+    const body = document.querySelector('[data-redo-card-body]');
+    const done = document.querySelector('[data-redo-done-body]');
+    const doneText = document.querySelector('.redo-done-text');
+    return {
+      cardHidden: card ? card.hasAttribute('hidden') : true,
+      bodyHidden: body ? body.hasAttribute('hidden') : true,
+      doneHidden: done ? done.hasAttribute('hidden') : true,
+      doneText: doneText ? doneText.textContent.trim() : null,
+    };
+  });
+  check('after "Skip this week", the card stays visible but switches to the done state', afterDismiss.cardHidden === false && afterDismiss.bodyHidden === true && afterDismiss.doneHidden === false, JSON.stringify(afterDismiss));
+  check('the done state reads "Redo done. Skills keep."', afterDismiss.doneText === 'Redo done. Skills keep.', `got "${afterDismiss.doneText}"`);
+
+  const dismissedForWeek = await page.evaluate(() => {
+    const v2 = JSON.parse(localStorage.getItem('sf_progress_v2') || 'null');
+    const rw = v2 && v2.tracks['short-form'] && v2.tracks['short-form'].redoWeekly;
+    return rw ? { dismissed: rw.dismissed, week: rw.week, matchesCurrentWeek: rw.week === window.SF.isoWeekKey() } : null;
+  });
+  check('the dismissal is stored per track for the current ISO week (small, sync-safe)', !!dismissedForWeek && dismissedForWeek.dismissed === true && dismissedForWeek.matchesCurrentWeek === true, `got ${JSON.stringify(dismissedForWeek)}`);
+
+  // Reload: done state persists for the rest of the week (no reappearing nag).
+  await page.reload({ waitUntil: 'networkidle0' });
+  await page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+  await new Promise((r) => setTimeout(r, 300));
+  const persistedAfterReload = await page.evaluate(() => {
+    const done = document.querySelector('[data-redo-done-body]');
+    return done ? !done.hasAttribute('hidden') : false;
+  });
+  check('the done state persists after a reload (stays skipped for the rest of the week)', persistedAfterReload === true);
+
+  await page.close();
+}
+
+// ---------- 22: hub redo-pending line ----------
+
+async function hubRedoLineTest(browser) {
+  console.log('\n[22] Hub: one quiet redo-pending line, pointing at the oldest-waiting track');
+  const page = await browser.newPage();
+  const fakeUser = { uid: 'hub-redo-uid', displayName: 'Hub Redo Test', email: 'hub-redo@example.com' };
+  await page.goto(`http://localhost:${PORT}/index.html`, { waitUntil: 'networkidle0' });
+  await page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+  await page.evaluate(() => localStorage.clear());
+
+  const noRedoAnywhere = await page.evaluate(() => {
+    const line = document.querySelector('[data-hub-redo-line]');
+    return line ? line.hasAttribute('hidden') : true;
+  });
+  check('hub redo line stays hidden when no track has any completed lesson', noRedoAnywhere === true);
+
+  // Two tracks with a pending redo, assigned at different times -- the older
+  // assignment (ai-creator) should win the "at most one" slot over the newer
+  // one (scriptwriting), even though scriptwriting is alphabetically earlier.
+  await page.evaluate(() => {
+    const now = Date.now();
+    const scriptItemCounts = window.SF_TRACKS['scriptwriting'].itemCounts;
+    const aiItemCounts = window.SF_TRACKS['ai-creator'].itemCounts;
+    const state = {
+      tracks: {
+        'scriptwriting': {
+          lessons: { '1': { checks: Array(scriptItemCounts['1']).fill(true), updatedAt: now - 2 * 86400000 } },
+          redoWeekly: { week: window.SF.isoWeekKey(), lessonN: 1, dismissed: false, assignedAt: now - 1000, updatedAt: now - 1000 },
+        },
+        'ai-creator': {
+          lessons: { '1': { checks: Array(aiItemCounts['1']).fill(true), updatedAt: now - 2 * 86400000 } },
+          redoWeekly: { week: window.SF.isoWeekKey(), lessonN: 1, dismissed: false, assignedAt: now - 50000, updatedAt: now - 50000 },
+        },
+      },
+      activityDates: [], migratedFromV1: false, schemaVersion: 3,
+    };
+    localStorage.setItem('sf_progress_v2', JSON.stringify(state));
+  });
+  await page.reload({ waitUntil: 'networkidle0' });
+  await page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+  await new Promise((r) => setTimeout(r, 300));
+
+  const line = await page.evaluate(() => {
+    const el = document.querySelector('[data-hub-redo-line]');
+    const trackName = document.querySelector('[data-hub-redo-track]');
+    return { hidden: el ? el.hasAttribute('hidden') : true, href: el ? el.getAttribute('href') : null, text: el ? el.textContent.trim() : null, trackName: trackName ? trackName.textContent.trim() : null };
+  });
+  check('hub redo line is visible when a track has a pending redo', line.hidden === false, JSON.stringify(line));
+  check('hub redo line names the track whose redo has been waiting longest (AI Creator, not Scriptwriting)', line.trackName === 'AI Creator', `got "${line.trackName}"`);
+  check('hub redo line links to that track\'s dashboard', line.href === 'ai-creator/index.html', `got "${line.href}"`);
+  check('hub redo line reads "A weekly redo is waiting in {track}."', !!line.text && line.text.startsWith('A weekly redo is waiting in') && line.text.endsWith('.'), `got "${line.text}"`);
+
+  // Dismissing the winning track's redo should hand the hub line to the
+  // remaining pending track instead of hiding it outright.
+  await page.evaluate(() => { window.SF.dismissWeeklyRedo('ai-creator'); });
+  await page.reload({ waitUntil: 'networkidle0' });
+  await page.evaluate((u) => window.SFAuth._setUser(u), fakeUser);
+  await new Promise((r) => setTimeout(r, 300));
+  const lineAfterDismiss = await page.evaluate(() => {
+    const el = document.querySelector('[data-hub-redo-line]');
+    return { hidden: el ? el.hasAttribute('hidden') : true, href: el ? el.getAttribute('href') : null };
+  });
+  check('once the oldest track\'s redo is dismissed, the hub line falls back to the remaining pending track', lineAfterDismiss.hidden === false && lineAfterDismiss.href === 'scriptwriting/index.html', JSON.stringify(lineAfterDismiss));
+
+  await page.close();
+}
+
 async function main() {
   const server = await startServer();
   console.log(`Local server on http://localhost:${PORT}`);
@@ -840,6 +1158,10 @@ async function main() {
   await celebrationNextCtaTest(browser);
   await trackCompletionTest(browser);
   await vocabularyTest(browser);
+  await confidenceTapTest(browser);
+  await redoTargetPickingTest(browser);
+  await redoDismissTest(browser);
+  await hubRedoLineTest(browser);
   await browser.close();
   server.close();
 

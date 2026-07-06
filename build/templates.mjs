@@ -286,6 +286,22 @@ ${sidebarHtml(track, assetPrefix)}
       </aside>
     </section>
 
+    <section class="redo-card" data-redo-card hidden>
+      <div class="redo-card-body" data-redo-card-body>
+        <p class="redo-eyebrow">This Week&rsquo;s Redo</p>
+        <h3 class="redo-title" data-redo-title>&nbsp;</h3>
+        <p class="redo-reason" data-redo-reason>&nbsp;</p>
+        <div class="redo-actions">
+          <a class="redo-cta" data-redo-cta href="#">${RESHOOT_SVG}<span data-redo-cta-label>Reshoot</span></a>
+          <button type="button" class="redo-skip" data-redo-skip>Skip this week</button>
+        </div>
+      </div>
+      <div class="redo-done-body" data-redo-done-body hidden>
+        <p class="redo-eyebrow">This Week&rsquo;s Redo</p>
+        <p class="redo-done-text">${GOOD_SVG}Redo done. Skills keep.</p>
+      </div>
+    </section>
+
     <section class="howto-section">
       <div class="howto-header">
         <h3 class="howto-title">How to Use This Track</h3>
@@ -363,6 +379,20 @@ function celebrationCtaHtml(track, lesson, nextLesson) {
   return `<a class="celebration-next-btn" data-celebration-next href="index.html">Back to ${renderInline(track.title)} dashboard${ARROW_RIGHT}</a>`;
 }
 
+function celebrationConfidenceHtml(lesson) {
+  return `<div class="celebration-confidence" data-celebration-confidence="${lesson.n}" data-confidence-state="asking">
+                <div class="confidence-ask" data-confidence-ask>
+                  <p class="confidence-prompt">How solid did that feel?</p>
+                  <div class="confidence-buttons">
+                    <button type="button" class="confidence-btn" data-confidence-btn="1">Shaky</button>
+                    <button type="button" class="confidence-btn" data-confidence-btn="2">Solid</button>
+                    <button type="button" class="confidence-btn" data-confidence-btn="3">Nailed it</button>
+                  </div>
+                </div>
+                <p class="confidence-noted" data-confidence-noted>Noted.</p>
+              </div>`;
+}
+
 function checklistHtml(track, lesson, nextLesson) {
   const items = lesson.checklist.map((text, i) => {
     return `            <label class="check-item"><input type="checkbox" id="check-${lesson.n}-${i}"><span class="check-text">${renderInline(text)}</span></label>`;
@@ -374,6 +404,7 @@ function checklistHtml(track, lesson, nextLesson) {
               <p class="celebration-title">Lesson complete</p>
               <p class="celebration-body">Criterion met: ${renderInline(lesson.objective.criterion)}</p>
               ${celebrationCtaHtml(track, lesson, nextLesson)}
+              ${celebrationConfidenceHtml(lesson)}
             </div>
           </div>
           <div class="checklist-head">
@@ -752,6 +783,7 @@ ${HEAD_FONTS}
             <div class="small" data-hub-greeting-small>Across all 8 tracks. Pick one up where you left off, or start something new.</div>
           </div>
         </div>
+        <a class="hub-redo-line" data-hub-redo-line href="#" hidden>A weekly redo is waiting in <span data-hub-redo-track></span>.${ARROW_RIGHT}</a>
       </div>
     </section>
 

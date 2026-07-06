@@ -232,7 +232,28 @@
   function resetLesson(slug, lessonNum){
     var state = loadState();
     var trackState = getTrackState(state, slug);
+    // Replacing the whole entry (rather than clearing checks in place) also
+    // drops any prior confidence/confidenceAt: "re-completing after a
+    // reshoot asks again" falls out of this for free, no extra flag needed.
     trackState.lessons[String(lessonNum)] = { checks: [], updatedAt: Date.now() };
+    saveState(state);
+    return state;
+  }
+
+  // Confidence tap (celebration block, once a lesson's checklist is fully
+  // checked): one optional, skippable rating stored on that lesson's entry.
+  // Stamps updatedAt too -- a confidence tap is a real touch on the lesson,
+  // same as a checkbox change, so it counts toward the redo picker's
+  // "longest since you last touched it" tie-break and propagates correctly
+  // through the per-lesson latest-wins sync merge (see mergeStates below).
+  function setConfidence(slug, lessonNum, level){
+    var state = loadState();
+    var trackState = getTrackState(state, slug);
+    var key = String(lessonNum);
+    if(!trackState.lessons[key]) trackState.lessons[key] = { checks: [] };
+    trackState.lessons[key].confidence = level;
+    trackState.lessons[key].confidenceAt = Date.now();
+    trackState.lessons[key].updatedAt = Date.now();
     saveState(state);
     return state;
   }
@@ -297,6 +318,23 @@
     return { checks: unionChecks(aLesson.checks || [], bLesson.checks || []) };
   }
 
+  // Latest-wins pick for small per-track metadata objects that carry their
+  // own updatedAt (currently just redoWeekly). Same shape of rule as
+  // pickLesson's timestamped branch, split out because it has no per-lesson
+  // "legacy union" fallback to worry about -- this metadata didn't exist
+  // before this feature, so there's no untimestamped legacy data to reproduce.
+  function pickTrackMeta(aMeta, bMeta){
+    if(!aMeta && !bMeta) return null;
+    if(aMeta && !bMeta) return aMeta;
+    if(bMeta && !aMeta) return bMeta;
+    var aTime = aMeta.updatedAt, bTime = bMeta.updatedAt;
+    var aStamped = typeof aTime === 'number', bStamped = typeof bTime === 'number';
+    if(aStamped && bStamped) return (bTime > aTime) ? bMeta : aMeta;
+    if(aStamped) return aMeta;
+    if(bStamped) return bMeta;
+    return aMeta;
+  }
+
   function mergeStates(a, b){
     a = a || blankState();
     b = b || blankState();
@@ -305,8 +343,10 @@
     Object.keys(b.tracks || {}).forEach(function(s){ slugs[s] = true; });
     var tracks = {};
     Object.keys(slugs).forEach(function(slug){
-      var aLessons = (a.tracks[slug] && a.tracks[slug].lessons) || {};
-      var bLessons = (b.tracks[slug] && b.tracks[slug].lessons) || {};
+      var aTrack = a.tracks[slug] || {};
+      var bTrack = b.tracks[slug] || {};
+      var aLessons = aTrack.lessons || {};
+      var bLessons = bTrack.lessons || {};
       var keys = {};
       Object.keys(aLessons).forEach(function(k){ keys[k] = true; });
       Object.keys(bLessons).forEach(function(k){ keys[k] = true; });
@@ -314,11 +354,19 @@
       Object.keys(keys).forEach(function(k){
         var picked = pickLesson(aLessons[k], bLessons[k]);
         if(!picked) return;
-        var entry = { checks: (picked.checks || []).slice() };
-        if(typeof picked.updatedAt === 'number') entry.updatedAt = picked.updatedAt;
+        // Copy every field off the picked (whole, already-newest) entry, not
+        // just checks/updatedAt: this is what lets the per-lesson entry
+        // shape extend safely (confidence, confidenceAt, and any future
+        // field) without a merge-specific allowlist that silently drops
+        // whatever it doesn't know about yet.
+        var entry = Object.assign({}, picked);
+        entry.checks = (picked.checks || []).slice();
         lessons[k] = entry;
       });
-      tracks[slug] = { lessons: lessons };
+      var trackOut = { lessons: lessons };
+      var redoWeekly = pickTrackMeta(aTrack.redoWeekly, bTrack.redoWeekly);
+      if(redoWeekly) trackOut.redoWeekly = Object.assign({}, redoWeekly);
+      tracks[slug] = trackOut;
     });
     // Activity dates and streak data are append-only facts (a day either had
     // a checked box or it didn't), so these stay a plain union regardless of
@@ -493,6 +541,141 @@
     return null; // every track in the progression is fully complete
   }
 
+  /* ===================== Weekly redo (confidence-driven reshoot target) =====================
+     "Once a week, reshoot the lesson you passed with the least confidence."
+     Picking is dynamic (lowest confidence, tie-break oldest updatedAt) but the
+     actual assignment for the CURRENT ISO week is picked once and pinned to
+     trackState.redoWeekly so it doesn't drift mid-week as other lessons get
+     touched, and so a completed/dismissed redo can show a stable "done" state
+     for the rest of the week instead of the picker just handing back a new
+     target the moment the old one stops looking shakiest. */
+
+  function isoWeekKey(d){
+    d = d || new Date();
+    // ISO week of the LOCAL calendar date: build a date from Y/M/D and do the
+    // ISO week math against it as if it were UTC midnight, which sidesteps
+    // timezone-offset edge cases while still keying off the visitor's local day.
+    var date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    var dayNum = date.getUTCDay() || 7; // Monday=1 ... Sunday=7
+    date.setUTCDate(date.getUTCDate() + 4 - dayNum); // shift to this week's Thursday
+    var yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+    var weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+    return date.getUTCFullYear() + '-W' + String(weekNo).padStart(2, '0');
+  }
+
+  // Unrated counts as a 2 ("Solid") baseline -- worse than a real "Nailed it"
+  // (3), better than an explicit "Shaky" (1), so an unrated lesson can still
+  // lose the pick to a lesson someone actually flagged as shaky, but isn't
+  // penalized just for never having been asked.
+  function getEffectiveConfidence(lessonEntry){
+    return (lessonEntry && typeof lessonEntry.confidence === 'number') ? lessonEntry.confidence : 2;
+  }
+
+  function getRedoCandidates(state, slug){
+    var td = tracksData()[slug];
+    if(!td) return [];
+    var trackState = getTrackState(state, slug);
+    var out = [];
+    for(var n=1;n<=td.totalLessons;n++){
+      var ic = td.itemCounts[n];
+      if(!ic || !isLessonComplete(trackState, n, ic)) continue;
+      var entry = trackState.lessons[String(n)] || {};
+      out.push({
+        n: n,
+        confidence: getEffectiveConfidence(entry),
+        // Untimestamped (legacy) completions read as the oldest possible
+        // touch, same "we don't know when this changed, so it's not newer
+        // than anything that has a timestamp" logic pickLesson() already uses.
+        updatedAt: (typeof entry.updatedAt === 'number') ? entry.updatedAt : -1
+      });
+    }
+    return out;
+  }
+
+  // Lowest confidence first, tie-break oldest updatedAt (longest since touched).
+  function pickRedoTarget(state, slug){
+    var candidates = getRedoCandidates(state, slug);
+    if(!candidates.length) return null;
+    candidates.sort(function(a, b){
+      if(a.confidence !== b.confidence) return a.confidence - b.confidence;
+      return a.updatedAt - b.updatedAt;
+    });
+    return candidates[0].n;
+  }
+
+  // Assigns this week's redo target if one isn't already pinned for the
+  // current ISO week. Returns the (mutated, not-yet-saved) redoWeekly record
+  // when a fresh assignment was made, or null when nothing changed -- callers
+  // use that to decide whether a saveState() write is actually needed.
+  function ensureWeeklyRedoAssigned(state, slug){
+    if(getCompletedCount(state, slug) === 0) return null;
+    var trackState = getTrackState(state, slug);
+    var week = isoWeekKey();
+    var rw = trackState.redoWeekly;
+    if(rw && rw.week === week && rw.lessonN) return null;
+    var lessonN = pickRedoTarget(state, slug);
+    if(!lessonN) return null;
+    var now = Date.now();
+    trackState.redoWeekly = { week: week, lessonN: lessonN, dismissed: false, assignedAt: now, updatedAt: now };
+    return trackState.redoWeekly;
+  }
+
+  // Returns null when the track has no completed lesson yet (redo card/hub
+  // line both stay hidden in that case). Otherwise: { lessonN, reason, done }.
+  // reason is derived fresh from the target's own confidence rather than
+  // stored, so it never goes stale: a lesson only reads "shaky" if it's
+  // actually rated 1, everything else (unrated or tie-broken by recency)
+  // reads as the oldest-touch reason, which matches how it was actually picked.
+  function getWeeklyRedo(state, slug){
+    if(!tracksData()[slug]) return null;
+    if(getCompletedCount(state, slug) === 0) return null;
+    var trackState = getTrackState(state, slug);
+    var changed = ensureWeeklyRedoAssigned(state, slug);
+    if(changed) saveState(state);
+    var rw = trackState.redoWeekly;
+    if(!rw) return null;
+    var entry = trackState.lessons[String(rw.lessonN)] || {};
+    var confidence = getEffectiveConfidence(entry);
+    var reason = (confidence === 1) ? 'shaky' : 'oldest';
+    var doneByCompletion = !!(typeof entry.updatedAt === 'number' && entry.updatedAt > rw.assignedAt);
+    return { lessonN: rw.lessonN, reason: reason, done: !!rw.dismissed || doneByCompletion, assignedAt: rw.assignedAt };
+  }
+
+  // Quiet dismiss ("Skip this week"): pins the done state for the rest of the
+  // ISO week without requiring a reshoot. Also assigns a target first if
+  // somehow none exists yet (dismiss clicked before the card ever computed
+  // one), so dismissing never leaves redoWeekly in a half-set state.
+  function dismissWeeklyRedo(slug){
+    var state = loadState();
+    var trackState = getTrackState(state, slug);
+    var week = isoWeekKey();
+    var rw = trackState.redoWeekly;
+    var now = Date.now();
+    if(!rw || rw.week !== week || !rw.lessonN){
+      var lessonN = pickRedoTarget(state, slug);
+      rw = { week: week, lessonN: lessonN, assignedAt: now };
+    }
+    rw.dismissed = true;
+    rw.updatedAt = now;
+    trackState.redoWeekly = rw;
+    saveState(state);
+    return state;
+  }
+
+  // Hub-wide: at most one line, pointing at whichever track's pending
+  // (not-yet-done) redo has been waiting longest -- i.e. the oldest assignedAt.
+  function getHubRedoPending(state){
+    var best = null;
+    Object.keys(tracksData()).forEach(function(slug){
+      var redo = getWeeklyRedo(state, slug);
+      if(!redo || redo.done) return;
+      if(!best || redo.assignedAt < best.assignedAt){
+        best = { slug: slug, lessonN: redo.lessonN, assignedAt: redo.assignedAt };
+      }
+    });
+    return best;
+  }
+
   /* ===================== Aperture ring builder (signature element) ===================== */
   function buildAperture(el){
     var SVGNS = 'http://www.w3.org/2000/svg';
@@ -639,6 +822,16 @@
       if(celebration){
         celebration.classList.toggle('show', complete);
       }
+      // Confidence tap only matters while the celebration is showing; its
+      // state (asking vs. already rated this completion) is read straight
+      // off the lesson entry every render, so a reshoot (which replaces the
+      // whole entry, dropping confidence) naturally flips it back to asking.
+      var confidenceWrap = document.querySelector('[data-celebration-confidence="' + lessonNum + '"]');
+      if(confidenceWrap){
+        var lessonEntry = trackState.lessons[String(lessonNum)];
+        var rated = !!(lessonEntry && typeof lessonEntry.confidence === 'number');
+        confidenceWrap.setAttribute('data-confidence-state', rated ? 'rated' : 'asking');
+      }
       hydrateNav(slug, lessonNum);
     }
 
@@ -658,6 +851,16 @@
         render();
       });
     }
+
+    // Skippable by design: no listener ever forces a choice, nothing nags if
+    // it's ignored. A tap just stores the rating and swaps to "Noted."
+    document.querySelectorAll('[data-celebration-confidence="' + lessonNum + '"] [data-confidence-btn]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var level = parseInt(btn.getAttribute('data-confidence-btn'), 10);
+        setConfidence(slug, lessonNum, level);
+        render();
+      });
+    });
 
     setRehydrate(render);
     render();
@@ -729,8 +932,14 @@
           el.textContent = 'Start ' + suggestedTrack.name;
           el.setAttribute('href', '../' + suggestedSlug + '/index.html');
         } else {
-          el.textContent = 'Reshoot Lesson 1';
-          el.setAttribute('href', 'lesson-01.html');
+          // Every track in the progression is complete (the 97/97 case): no
+          // more "next track" to suggest, so point at the real weekly redo
+          // target for THIS track instead of a hardcoded "Lesson 1" -- every
+          // track has at least one completed lesson here, so this is never null.
+          var fallbackRedoN = pickRedoTarget(state, slug);
+          var fallbackNN = String(fallbackRedoN).padStart(2, '0');
+          el.textContent = 'Reshoot Lesson ' + fallbackRedoN;
+          el.setAttribute('href', 'lesson-' + fallbackNN + '.html');
         }
       });
       if(bigEl) bigEl.textContent = td.totalLessons + ' of ' + td.totalLessons + ' lessons complete';
@@ -744,6 +953,53 @@
 
     renderWeekStrip(document.querySelector('[data-week-strip]'), state);
     document.querySelectorAll('[data-total-complete]').forEach(function(el){ el.textContent = nav.completed; });
+
+    renderRedoCard(slug, td, state);
+  }
+
+  // This Week's Redo card: only appears once the track has at least one
+  // completed lesson (nothing to reshoot before that). Re-run on every
+  // hydrate (page load, post-sync rehydrate, and after every checklist
+  // change via the shared _rehydrate hook) so completing or dismissing the
+  // redo flips the card to its done state immediately, same tab, no reload.
+  function renderRedoCard(slug, td, state){
+    var card = document.querySelector('[data-redo-card]');
+    if(!card) return;
+    var redo = getWeeklyRedo(state, slug);
+    if(!redo){
+      card.hidden = true;
+      return;
+    }
+    card.hidden = false;
+    var body = card.querySelector('[data-redo-card-body]');
+    var doneBody = card.querySelector('[data-redo-done-body]');
+    if(redo.done){
+      if(body) body.hidden = true;
+      if(doneBody) doneBody.hidden = false;
+      return;
+    }
+    if(body) body.hidden = false;
+    if(doneBody) doneBody.hidden = true;
+
+    var lesson = td.lessons.filter(function(l){ return l.n === redo.lessonN; })[0];
+    var nn = String(redo.lessonN).padStart(2, '0');
+    var titleEl = card.querySelector('[data-redo-title]');
+    var reasonEl = card.querySelector('[data-redo-reason]');
+    var ctaEl = card.querySelector('[data-redo-cta]');
+    var ctaLabelEl = card.querySelector('[data-redo-cta-label]');
+    if(titleEl) titleEl.textContent = lesson ? lesson.title : ('Lesson ' + redo.lessonN);
+    if(reasonEl) reasonEl.textContent = (redo.reason === 'shaky') ? 'You rated this one Shaky.' : 'Longest since you last touched it.';
+    if(ctaEl) ctaEl.setAttribute('href', 'lesson-' + nn + '.html');
+    if(ctaLabelEl) ctaLabelEl.textContent = 'Reshoot Lesson ' + redo.lessonN;
+
+    var skipBtn = card.querySelector('[data-redo-skip]');
+    if(skipBtn && !skipBtn.dataset.bound){
+      skipBtn.dataset.bound = '1';
+      skipBtn.addEventListener('click', function(){
+        dismissWeeklyRedo(slug);
+        renderRedoCard(slug, td, loadState());
+      });
+    }
   }
 
   /* ===================== Hub hydration (academy-wide) ===================== */
@@ -804,6 +1060,25 @@
       }
     });
 
+    // At most one line, academy-wide: whichever track's weekly redo has been
+    // waiting longest. Every track with a completed lesson gets its redo
+    // target assigned here (getHubRedoPending walks all of them), so this is
+    // also what makes a brand-new week's assignment sync-safe across devices
+    // even before the learner opens that specific track's dashboard.
+    var redoLine = document.querySelector('[data-hub-redo-line]');
+    if(redoLine){
+      var pending = getHubRedoPending(state);
+      if(pending){
+        var pendingTrack = tracksData()[pending.slug];
+        redoLine.hidden = false;
+        redoLine.setAttribute('href', pending.slug + '/index.html');
+        var trackNameEl = redoLine.querySelector('[data-hub-redo-track]');
+        if(trackNameEl) trackNameEl.textContent = pendingTrack ? pendingTrack.name : pending.slug;
+      } else {
+        redoLine.hidden = true;
+      }
+    }
+
     refreshApertures();
   }
 
@@ -829,6 +1104,12 @@
     getStreak: getStreak,
     setCheck: setCheck,
     resetLesson: resetLesson,
+    setConfidence: setConfidence,
+    isoWeekKey: isoWeekKey,
+    pickRedoTarget: pickRedoTarget,
+    getWeeklyRedo: getWeeklyRedo,
+    dismissWeeklyRedo: dismissWeeklyRedo,
+    getHubRedoPending: getHubRedoPending,
     hydrateNav: hydrateNav,
     hydrateChecklist: hydrateChecklist,
     hydrateDashboard: hydrateDashboard,
