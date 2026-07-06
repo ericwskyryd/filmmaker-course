@@ -19,10 +19,25 @@
    rim) and a LEADING edge that sweeps clockwise and bows into a curve as
    progress advances. All blades move together, in sync, overlapping their
    neighbor once progress is underway -- unlike a donut chart's segments,
-   which are exclusive and fill one at a time. At progress 0 the ring is fully
-   open (no blade coverage, bare housing ring). At progress 1 every blade's
-   sweep has overtaken its neighbor's start angle, so the amber band closes
-   solid all the way around, an iris-out. */
+   which are exclusive and fill one at a time.
+
+   A camera iris shows its blades at every f-stop, including wide open --
+   that's what makes it read as a mechanism instead of a ring of segments.
+   So every blade is drawn TWICE at 32px and up: a fixed-size "resting" wedge
+   (dim, same hue as the accent so it reads as quiet metal, never generic
+   grey) that is always present regardless of progress, giving the motif its
+   overlap and swirl even at 0%; and, on top, the progress-driven "active"
+   wedge in full amber, sized by `sweep` exactly as before. At progress 0 the
+   active wedge has zero size, so only the dim resting blades show -- an iris
+   at a pleasing middle f-stop, not a bare housing ring. As progress advances
+   the amber wedge grows and overtakes the resting one from the hinge
+   outward, so the part of each blade progress hasn't reached yet still
+   reads as dim blade, never empty track. At progress 1 the amber sweep has
+   overtaken every neighbor's start angle, so the band closes solid all the
+   way around, an iris-out, exactly as before. Under 32px the resting layer
+   is skipped entirely (kept as the sanctioned simplified ring) -- blade
+   overlap is a texture that turns to mud below that size, so we don't force
+   it. */
 (function () {
   'use strict';
 
@@ -73,22 +88,51 @@
     var simplified = typeof opts.simplified === 'boolean' ? opts.simplified : size < 32;
     var blades = opts.blades || (simplified ? 5 : 8);
     var overlap = simplified ? 1.55 : 1.35; // how far the leading edge overtakes the next blade's start
-    var bow = simplified ? 0 : 0.5; // straight leading edge under 32px -- a curve just aliases into noise
+    // Curve/seam detail is a function of rendered size, not blade count: a
+    // fixed-openness mark can be "simplified" (fewer, wider blades, for
+    // legibility down to 24px) while still earning the curved scythe edge
+    // once it's rendered at 32px or up, where a curve reads as a blade
+    // instead of aliasing into noise.
+    var bow = size < 32 ? 0 : 0.5;
 
     var cx = 50, cy = 50, rOuter = 47;
     var rInner = hasLabel ? 29 : 34;
     var step = 360 / blades;
     var sweep = step * overlap * progress;
 
+    // Resting-blade layer: a fixed sweep, independent of progress, that puts
+    // every blade at a pleasing middle f-stop so the iris reads as a
+    // mechanism at rest instead of an empty ring. Tuned so neighbors overlap
+    // with a thin sliver of housing between them (the "swirl"), not a wide
+    // gap (that reads as a segmented donut) and not full closure (that
+    // reads as 100% complete when it isn't). Skipped under 32px: blade
+    // overlap is too fine a texture to read at icon scale, so those sizes
+    // keep the plain simplified ring instead of a muddy approximation.
+    var showResting = size >= 32;
+    var restSweep = step * (simplified ? 0.85 : 0.8);
+
     // Hairline strokes sized in viewBox units so they read as a consistent
     // ~1px regardless of the instance's actual pixel size -- a fixed unit
-    // value goes invisible at 16px and looks heavy at 120px.
+    // value goes invisible at 16px and looks heavy at 120px. Seam strokes
+    // between amber blades are a size call too, same reasoning as bow: a
+    // fixed mark earns them once it's rendered large enough to read as
+    // separate overlapping blades rather than a busy outline.
     var housingStroke = Math.max(0.8, 100 / size);
-    var seamStroke = simplified ? 0 : Math.max(0.3, 45 / size);
+    var seamStroke = size < 32 ? 0 : Math.max(0.3, 45 / size);
+    var restStroke = Math.max(0.3, 60 / size);
 
     var svg = '<svg viewBox="0 0 100 100" width="100%" height="100%" fill="none"' +
       (opts.className ? ' class="' + opts.className + '"' : '') + '>';
     svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + n(rOuter + 1.5) + '" fill="none" stroke="rgba(255,255,255,0.10)" stroke-width="' + n(housingStroke) + '"/>';
+
+    if (showResting) {
+      for (var r = 0; r < blades; r++) {
+        var restBaseAngle = -90 + r * step;
+        var restD = bladePath(cx, cy, rOuter, rInner, restBaseAngle, restSweep, bow);
+        var restFill = r % 2 === 0 ? 'rgba(232,163,61,0.24)' : 'rgba(229,165,68,0.19)';
+        svg += '<path d="' + restD + '" fill="' + restFill + '" stroke="rgba(232,163,61,0.16)" stroke-width="' + n(restStroke) + '" class="ap-blade-rest"/>';
+      }
+    }
 
     for (var i = 0; i < blades; i++) {
       if (progress <= 0) break;
